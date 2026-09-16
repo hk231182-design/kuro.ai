@@ -183,7 +183,9 @@ async function updatePrice() {
         if (priceHistory.length > 10) {
             priceHistory.shift();
         }
-
+        
+drawChart();
+        
         analyzeMarket();
 
     } catch (error) {
