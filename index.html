@@ -151,27 +151,32 @@ const symbols = {
     "USD/CAD": "USDCAD"
 };
 
+let previousPrice = null;
+
 async function updatePrice() {
     const symbol = symbols[assetSelect.value];
-
-    currentPrice.textContent = "Loading...";
 
     try {
         const response = await fetch(
             "https://biquote.io/api/" + symbol
         );
 
-        if (!response.ok) {
-            throw new Error("API Error: " + response.status);
-        }
+        if (!response.ok) throw new Error("API Error");
 
         const data = await response.json();
 
-        if (typeof data.mid === "number") {
-            currentPrice.textContent = data.mid;
-        } else {
-            throw new Error("Price not found");
+        if (typeof data.mid !== "number") {
+            throw new Error("Price unavailable");
         }
+
+        const newPrice = data.mid;
+        currentPrice.textContent = newPrice;
+
+        if (previousPrice !== null) {
+            generateSignal(previousPrice, newPrice);
+        }
+
+        previousPrice = newPrice;
 
     } catch (error) {
         console.error(error);
@@ -179,9 +184,37 @@ async function updatePrice() {
     }
 }
 
-assetSelect.addEventListener("change", updatePrice);
+function generateSignal(oldPrice, newPrice) {
+    const signalBox = document.querySelector(".signal-box");
+    const status = document.querySelector(".status");
+    const confidence = document.querySelector(".card:nth-of-type(4) .value");
+
+    if (newPrice > oldPrice) {
+        signalBox.textContent = "CALL";
+        status.textContent = "Price Movement: UP";
+        confidence.textContent = "Demo";
+    } 
+    else if (newPrice < oldPrice) {
+        signalBox.textContent = "PUT";
+        status.textContent = "Price Movement: DOWN";
+        confidence.textContent = "Demo";
+    } 
+    else {
+        signalBox.textContent = "WAIT";
+        status.textContent = "No Price Movement";
+        confidence.textContent = "Demo";
+    }
+}
+
+assetSelect.addEventListener("change", () => {
+    previousPrice = null;
+    currentPrice.textContent = "Loading...";
+    updatePrice();
+});
 
 updatePrice();
+
+setInterval(updatePrice, 5000);
 </script>
 </body>
 </html>
