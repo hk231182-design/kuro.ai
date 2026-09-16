@@ -152,31 +152,30 @@ const symbols = {
 };
 
 async function updatePrice() {
-    const asset = assetSelect.value;
-    const symbol = symbols[asset];
+    const symbol = symbols[assetSelect.value];
 
     currentPrice.textContent = "Loading...";
 
     try {
         const response = await fetch(
-            https://biquote.io/api/${symbol}
+            "https://biquote.io/api/" + symbol
         );
 
         if (!response.ok) {
-            throw new Error("Price unavailable");
+            throw new Error("API Error: " + response.status);
         }
 
         const data = await response.json();
 
-        if (data.mid) {
+        if (typeof data.mid === "number") {
             currentPrice.textContent = data.mid;
         } else {
-            currentPrice.textContent = "Unavailable";
+            throw new Error("Price not found");
         }
 
     } catch (error) {
         console.error(error);
-        currentPrice.textContent = "Connection Error";
+        currentPrice.textContent = "Unavailable";
     }
 }
 
