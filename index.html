@@ -156,7 +156,7 @@ const selectedAsset = document.getElementById("assetSelect").value;
         status.textContent = "No Clear Setup";
         confidence.textContent = "50%";
     } else {
-        status.textContent = "Demo Signal Generated";
+        status.textContent = selectedAsset + " — Demo Signal Generated";
         confidence.textContent =
             Math.floor(Math.random() * 16 + 75) + "%";
     }
