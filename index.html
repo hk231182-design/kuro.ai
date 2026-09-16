@@ -1,14 +1,131 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>KURO AI</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>KURO AI</title>
+
+<style>
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: #05070b;
+    color: white;
+}
+
+.header {
+    padding: 25px;
+    text-align: center;
+    border-bottom: 1px solid #1d2633;
+}
+
+.logo {
+    font-size: 32px;
+    font-weight: bold;
+}
+
+.subtitle {
+    color: #7f8b99;
+    margin-top: 8px;
+}
+
+.dashboard {
+    max-width: 700px;
+    margin: 40px auto;
+    padding: 20px;
+}
+
+.card {
+    background: #0c1118;
+    border: 1px solid #1d2633;
+    border-radius: 18px;
+    padding: 25px;
+    margin-bottom: 20px;
+}
+
+.label {
+    color: #7f8b99;
+    font-size: 14px;
+    margin-bottom: 8px;
+}
+
+.value {
+    font-size: 24px;
+    font-weight: bold;
+}
+
+.signal {
+    text-align: center;
+}
+
+.signal-box {
+    font-size: 38px;
+    font-weight: bold;
+    margin: 20px 0;
+}
+
+.status {
+    color: #62e6a5;
+    font-weight: bold;
+}
+
+button {
+    width: 100%;
+    padding: 15px;
+    border: none;
+    border-radius: 12px;
+    background: white;
+    color: black;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+}
+</style>
 </head>
+
 <body>
 
-    <h1>KURO AI</h1>
-    <p>AI Trading Signals</p>
+<div class="header">
+    <div class="logo">KURO AI</div>
+    <div class="subtitle">AI Trading Signal Dashboard</div>
+</div>
+
+<div class="dashboard">
+
+    <div class="card">
+        <div class="label">ASSET</div>
+        <div class="value">EUR/USD</div>
+    </div>
+
+    <div class="card">
+        <div class="label">CURRENT PRICE</div>
+        <div class="value">Waiting...</div>
+    </div>
+
+    <div class="card signal">
+        <div class="label">KURO AI SIGNAL</div>
+        <div class="signal-box">WAIT</div>
+        <div class="status">System Ready</div>
+    </div>
+
+    <div class="card">
+        <div class="label">CONFIDENCE</div>
+        <div class="value">--%</div>
+    </div>
+
+    <button onclick="generateSignal()">GENERATE SIGNAL</button>
+
+</div>
+
+<script>
+function generateSignal() {
+    alert("Signal engine will be connected in the next step.");
+}
+</script>
 
 </body>
 </html>
