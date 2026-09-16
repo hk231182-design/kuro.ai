@@ -1,273 +1,54 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>KURO AI</title>
+currentPrice.textContent =
+            "Loading...";
 
-<style>
-    
-    select {
-    width: 100%;
-    padding: 14px;
-    margin-top: 5px;
-    border-radius: 10px;
-    border: 1px solid #1d2633;
-    background: #05070b;
-    color: white;
-    font-size: 16px;
-}
-* {
-    box-sizing: border-box;
-}
+        marketStatus.textContent =
+            "Connecting...";
 
-body {
-    margin: 0;
-    font-family: Arial, sans-serif;
-    background: #05070b;
-    color: white;
-}
+        signalBox.textContent =
+            "WAIT";
 
-.header {
-    padding: 25px;
-    text-align: center;
-    border-bottom: 1px solid #1d2633;
-}
+        status.textContent =
+            "Collecting Market Data";
 
-.logo {
-    font-size: 32px;
-    font-weight: bold;
-}
+        confidence.textContent =
+            "--%";
 
-.subtitle {
-    color: #7f8b99;
-    margin-top: 8px;
-}
+        drawChart();
 
-.dashboard {
-    max-width: 700px;
-    margin: 40px auto;
-    padding: 20px;
-}
+        updatePrice();
+    }
+);
 
-.card {
-    background: #0c1118;
-    border: 1px solid #1d2633;
-    border-radius: 18px;
-    padding: 25px;
-    margin-bottom: 20px;
-}
 
-.label {
-    color: #7f8b99;
-    font-size: 14px;
-    margin-bottom: 8px;
-}
+/* =========================
+   GENERATE SIGNAL
+========================= */
 
-.value {
-    font-size: 24px;
-    font-weight: bold;
-}
+document
+    .getElementById("generateButton")
+    .addEventListener(
+        "click",
+        () => {
 
-.signal {
-    text-align: center;
-}
+            analyzeMarket();
+            drawChart();
 
-.signal-box {
-    font-size: 38px;
-    font-weight: bold;
-    margin: 20px 0;
-}
-
-.status {
-    color: #62e6a5;
-    font-weight: bold;
-}
-
-button {
-    width: 100%;
-    padding: 15px;
-    border: none;
-    border-radius: 12px;
-    background: white;
-    color: black;
-    font-size: 16px;
-    font-weight: bold;
-    cursor: pointer;
-}
-</style>
-</head>
-
-<body>
-
-<div class="header">
-    <div class="logo">KURO AI</div>
-    <div class="subtitle">AI Trading Signal Dashboard</div>
-</div>
-
-<div class="dashboard">
-
-    <div class="card">
-    <div class="label">SELECT ASSET</div>
-
-    <select id="assetSelect">
-        <option>EUR/USD</option>
-        <option>GBP/USD</option>
-        <option>USD/JPY</option>
-        <option>AUD/USD</option>
-        <option>USD/CAD</option>
-    </select>
-</div>
-
-    <div class="card">
-        <div class="label">CURRENT PRICE</div>
-       <div class="value" id="currentPrice">Loading...</div>
-    </div>
-    
-    <div class="card">
-    <h3>PRICE CHART</h3>
-    <canvas id="priceChart" width="600" height="250"></canvas>
-</div>
-
-    <div class="card signal">
-        <div class="label">KURO AI SIGNAL</div>
-        <div class="signal-box">WAIT</div>
-        <div class="status">System Ready</div>
-    </div>
-
-    <div class="card">
-        <div class="label">CONFIDENCE</div>
-        <div class="value">--%</div>
-    </div>
-
-    <button onclick="generateSignal()">GENERATE SIGNAL</button>
-
-</div>
-
-<script>
-const assetSelect = document.getElementById("assetSelect");
-const currentPrice = document.getElementById("currentPrice");
-
-const symbols = {
-    "EUR/USD": "EURUSD",
-    "GBP/USD": "GBPUSD",
-    "USD/JPY": "USDJPY",
-    "AUD/USD": "AUDUSD",
-    "USD/CAD": "USDCAD"
-};
-
-let priceHistory = [];
-
-async function updatePrice() {
-    const symbol = symbols[assetSelect.value];
-
-    try {
-        const response = await fetch(
-            "https://biquote.io/api/" + symbol
-        );
-
-        if (!response.ok) throw new Error("API Error");
-
-        const data = await response.json();
-
-        if (typeof data.mid !== "number") {
-            throw new Error("Price unavailable");
         }
+    );
 
-        const newPrice = data.mid;
 
-        currentPrice.textContent = newPrice;
-
-        priceHistory.push(newPrice);
-
-        if (priceHistory.length > 10) {
-            priceHistory.shift();
-        }
-        
-drawChart();
-        
-        analyzeMarket();
-
-    } catch (error) {
-        console.error(error);
-        currentPrice.textContent = "Unavailable";
-    }
-}
-
-function analyzeMarket() {
-    const signalBox = document.querySelector(".signal-box");
-    const status = document.querySelector(".status");
-    const confidence = document.querySelector(".card:nth-of-type(4) .value");
-
-    if (priceHistory.length < 5) {
-        signalBox.textContent = "WAIT";
-        status.textContent = "Collecting Market Data";
-        confidence.textContent = "Demo";
-        return;
-    }
-
-    const first = priceHistory[0];
-    const last = priceHistory[priceHistory.length - 1];
-
-    const change = ((last - first) / first) * 100;
-
-    if (change > 0.01) {
-        signalBox.textContent = "CALL";
-        status.textContent = "Short-Term Uptrend";
-    }
-    else if (change < -0.01) {
-        signalBox.textContent = "PUT";
-        status.textContent = "Short-Term Downtrend";
-    }
-    else {
-        signalBox.textContent = "WAIT";
-        status.textContent = "Market Unclear";
-    }
-
-    confidence.textContent = "Demo";
-}
-
-assetSelect.addEventListener("change", () => {
-    priceHistory = [];
-    currentPrice.textContent = "Loading...";
-    updatePrice();
-});
+/* =========================
+   START KURO AI
+========================= */
 
 updatePrice();
 
-setInterval(updatePrice, 5000); 
-    
-    const chart = document.getElementById("priceChart");
-const ctx = chart.getContext("2d");
+setInterval(
+    updatePrice,
+    5000
+);
 
-function drawChart() {
-    ctx.clearRect(0, 0, chart.width, chart.height);
-
-    if (priceHistory.length < 2) return;
-
-    const min = Math.min(...priceHistory);
-    const max = Math.max(...priceHistory);
-    const range = max - min || 1;
-
-    ctx.beginPath();
-
-    priceHistory.forEach((price, index) => {
-        const x = (index / (priceHistory.length - 1)) * chart.width;
-        const y = chart.height - ((price - min) / range) * (chart.height - 20) - 10;
-
-        if (index === 0) {
-            ctx.moveTo(x, y);
-        } else {
-            ctx.lineTo(x, y);
-        }
-    });
-
-    ctx.strokeStyle = "#00ff88";
-    ctx.lineWidth = 3;
-    ctx.stroke();
-}
-
-setInterval(drawChart, 5000);
 </script>
+
 </body>
 </html>
