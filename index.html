@@ -143,29 +143,46 @@ button {
 const assetSelect = document.getElementById("assetSelect");
 const currentPrice = document.getElementById("currentPrice");
 
-let price = 0;
+const symbols = {
+    "EUR/USD": "EURUSD",
+    "GBP/USD": "GBPUSD",
+    "USD/JPY": "USDJPY",
+    "AUD/USD": "AUDUSD",
+    "USD/CAD": "USDCAD"
+};
 
-function updatePrice() {
-    // Demo price placeholder
-    // Real market data will be connected next
-    const prices = {
-        "EUR/USD": 1.0850,
-        "GBP/USD": 1.2650,
-        "USD/JPY": 149.50,
-        "AUD/USD": 0.6550,
-        "USD/CAD": 1.3600
-    };
-
+async function updatePrice() {
     const asset = assetSelect.value;
-    price = prices[asset];
+    const symbol = symbols[asset];
 
-    currentPrice.textContent = price.toFixed(4);
+    currentPrice.textContent = "Loading...";
+
+    try {
+        const response = await fetch(
+            https://biquote.io/api/${symbol}
+        );
+
+        if (!response.ok) {
+            throw new Error("Price unavailable");
+        }
+
+        const data = await response.json();
+
+        if (data.mid) {
+            currentPrice.textContent = data.mid;
+        } else {
+            currentPrice.textContent = "Unavailable";
+        }
+
+    } catch (error) {
+        console.error(error);
+        currentPrice.textContent = "Connection Error";
+    }
 }
 
 assetSelect.addEventListener("change", updatePrice);
 
 updatePrice();
 </script>
-
 </body>
 </html>
