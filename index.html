@@ -413,6 +413,15 @@ function analyzeMarket() {
 
     confidence.textContent =
         confidenceValue + "%";
+  // Save signal to Recent Signals
+if (signalBox.textContent === "CALL" || signalBox.textContent === "PUT") {
+    const history = document.getElementById("signalHistory");
+
+    const item = document.createElement("div");
+    item.textContent = signalBox.textContent + " • " + new Date().toLocaleTimeString();
+
+    history.prepend(item);
+}  
 }
 function drawChart() {
 
