@@ -5,7 +5,18 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>KURO AI</title>
 
-<style>
+<style 
+    
+    select {
+    width: 100%;
+    padding: 14px;
+    margin-top: 5px;
+    border-radius: 10px;
+    border: 1px solid #1d2633;
+    background: #05070b;
+    color: white;
+    font-size: 16px;
+}
 * {
     box-sizing: border-box;
 }
@@ -97,9 +108,16 @@ button {
 <div class="dashboard">
 
     <div class="card">
-        <div class="label">ASSET</div>
-        <div class="value">EUR/USD</div>
-    </div>
+    <div class="label">SELECT ASSET</div>
+
+    <select id="assetSelect">
+        <option>EUR/USD</option>
+        <option>GBP/USD</option>
+        <option>USD/JPY</option>
+        <option>AUD/USD</option>
+        <option>USD/CAD</option>
+    </select>
+</div>
 
     <div class="card">
         <div class="label">CURRENT PRICE</div>
