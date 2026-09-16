@@ -1,52 +1,71 @@
-currentPrice.textContent =
-            "Loading...";
-
-        marketStatus.textContent =
-            "Connecting...";
-
-        signalBox.textContent =
-            "WAIT";
-
-        status.textContent =
-            "Collecting Market Data";
-
-        confidence.textContent =
-            "--%";
-
-        drawChart();
-
-        updatePrice();
-    }
-);
-
-
 /* =========================
-   GENERATE SIGNAL
-========================= */
+       ASSET CHANGE
+    ========================= */
 
-document
-    .getElementById("generateButton")
-    .addEventListener(
+    assetSelect.addEventListener(
+        "change",
+        function () {
+
+            priceHistory = [];
+
+            lastPrice = null;
+
+
+            currentPrice.textContent =
+                "Loading...";
+
+
+            marketStatus.textContent =
+                "Connecting...";
+
+
+            signalBox.textContent =
+                "WAIT";
+
+
+            status.textContent =
+                "Collecting Market Data";
+
+
+            confidence.textContent =
+                "--%";
+
+
+            drawChart();
+
+            updatePrice();
+
+        }
+    );
+
+
+    /* =========================
+       GENERATE SIGNAL BUTTON
+    ========================= */
+
+    generateButton.addEventListener(
         "click",
-        () => {
+        function () {
 
             analyzeMarket();
+
             drawChart();
 
         }
     );
 
 
-/* =========================
-   START KURO AI
-========================= */
+    /* =========================
+       START KURO AI
+    ========================= */
 
-updatePrice();
+    updatePrice();
 
-setInterval(
-    updatePrice,
-    5000
-);
+
+    setInterval(
+        updatePrice,
+        5000
+    );
 
 </script>
 
