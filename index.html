@@ -123,7 +123,24 @@ button {
 
 <script>
 function generateSignal() {
-    alert("Signal engine will be connected in the next step.");
+
+    const signals = ["CALL", "PUT", "WAIT"];
+    const randomSignal = signals[Math.floor(Math.random() * signals.length)];
+
+    const signalBox = document.querySelector(".signal-box");
+    const status = document.querySelector(".status");
+    const confidence = document.querySelector(".card:nth-of-type(4) .value");
+
+    signalBox.textContent = randomSignal;
+
+    if (randomSignal === "WAIT") {
+        status.textContent = "No Clear Setup";
+        confidence.textContent = "50%";
+    } else {
+        status.textContent = "Demo Signal Generated";
+        confidence.textContent =
+            Math.floor(Math.random() * 16 + 75) + "%";
+    }
 }
 </script>
 
