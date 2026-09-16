@@ -140,27 +140,31 @@ button {
 </div>
 
 <script>
-function generateSignal() { 
-    
-const selectedAsset = document.getElementById("assetSelect").value;
-    const signals = ["CALL", "PUT", "WAIT"];
-    const randomSignal = signals[Math.floor(Math.random() * signals.length)];
+const assetSelect = document.getElementById("assetSelect");
+const currentPrice = document.getElementById("currentPrice");
 
-    const signalBox = document.querySelector(".signal-box");
-    const status = document.querySelector(".status");
-    const confidence = document.querySelector(".card:nth-of-type(4) .value");
+let price = 0;
 
-    signalBox.textContent = randomSignal;
+function updatePrice() {
+    // Demo price placeholder
+    // Real market data will be connected next
+    const prices = {
+        "EUR/USD": 1.0850,
+        "GBP/USD": 1.2650,
+        "USD/JPY": 149.50,
+        "AUD/USD": 0.6550,
+        "USD/CAD": 1.3600
+    };
 
-    if (randomSignal === "WAIT") {
-        status.textContent = "No Clear Setup";
-        confidence.textContent = "50%";
-    } else {
-        status.textContent = selectedAsset + " — Demo Signal Generated";
-        confidence.textContent =
-            Math.floor(Math.random() * 16 + 75) + "%";
-    }
+    const asset = assetSelect.value;
+    price = prices[asset];
+
+    currentPrice.textContent = price.toFixed(4);
 }
+
+assetSelect.addEventListener("change", updatePrice);
+
+updatePrice();
 </script>
 
 </body>
