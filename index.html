@@ -140,8 +140,9 @@ button {
 </div>
 
 <script>
-function generateSignal() {
-
+function generateSignal() { 
+    
+const selectedAsset = document.getElementById("assetSelect").value;
     const signals = ["CALL", "PUT", "WAIT"];
     const randomSignal = signals[Math.floor(Math.random() * signals.length)];
 
