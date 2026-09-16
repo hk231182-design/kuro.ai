@@ -323,51 +323,97 @@ async function updatePrice() {
 
 function analyzeMarket() {
 
-    if (priceHistory.length < 5) {
+    if (priceHistory.length < 10) {
 
         signalBox.textContent = "WAIT";
-
-        status.textContent =
-            "Collecting Market Data";
-
+        status.textContent = "Collecting Market Data";
         confidence.textContent = "--%";
 
         return;
     }
 
-    const first = priceHistory[0];
+    const prices = priceHistory;
 
-    const last =
-        priceHistory[priceHistory.length - 1];
+    const latest = prices[prices.length - 1];
+    const previous = prices[prices.length - 2];
 
-    const change =
-        ((last - first) / first) * 100;
+    const shortTermStart =
+        prices[prices.length - 5];
 
-    if (change > 0.01) {
+    const mediumTermStart =
+        prices[prices.length - 10];
+
+    let score = 0;
+
+    const shortMove =
+        ((latest - shortTermStart) / shortTermStart) * 100;
+
+    const mediumMove =
+        ((latest - mediumTermStart) / mediumTermStart) * 100;
+
+    const lastMove =
+        ((latest - previous) / previous) * 100;
+
+
+    // Short-term momentum
+    if (shortMove > 0.005) {
+        score += 1;
+    }
+
+    if (shortMove < -0.005) {
+        score -= 1;
+    }
+
+
+    // Medium-term momentum
+    if (mediumMove > 0.01) {
+        score += 2;
+    }
+
+    if (mediumMove < -0.01) {
+        score -= 2;
+    }
+
+
+    // Latest movement
+    if (lastMove > 0) {
+        score += 1;
+    }
+
+    if (lastMove < 0) {
+        score -= 1;
+    }
+
+
+    // Signal decision
+    if (score >= 3) {
 
         signalBox.textContent = "CALL";
+        status.textContent = "Bullish Momentum";
 
-        status.textContent =
-            "Short-Term Uptrend";
-
-    } else if (change < -0.01) {
+    } else if (score <= -3) {
 
         signalBox.textContent = "PUT";
-
-        status.textContent =
-            "Short-Term Downtrend";
+        status.textContent = "Bearish Momentum";
 
     } else {
 
         signalBox.textContent = "WAIT";
-
-        status.textContent =
-            "Market Unclear";
+        status.textContent = "Market Unclear";
     }
 
-    confidence.textContent = "Demo";
-}
 
+    // Confidence
+    let confidenceValue =
+        50 + Math.abs(score) * 10;
+
+    if (confidenceValue > 90) {
+        confidenceValue = 90;
+    }
+
+    confidence.textContent =
+        confidenceValue + "%";
+}
 function drawChart() {
 
     ctx.clearRect(
