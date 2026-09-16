@@ -233,7 +233,39 @@ assetSelect.addEventListener("change", () => {
 
 updatePrice();
 
-setInterval(updatePrice, 5000);
+setInterval(updatePrice, 5000); 
+    
+    const chart = document.getElementById("priceChart");
+const ctx = chart.getContext("2d");
+
+function drawChart() {
+    ctx.clearRect(0, 0, chart.width, chart.height);
+
+    if (priceHistory.length < 2) return;
+
+    const min = Math.min(...priceHistory);
+    const max = Math.max(...priceHistory);
+    const range = max - min || 1;
+
+    ctx.beginPath();
+
+    priceHistory.forEach((price, index) => {
+        const x = (index / (priceHistory.length - 1)) * chart.width;
+        const y = chart.height - ((price - min) / range) * (chart.height - 20) - 10;
+
+        if (index === 0) {
+            ctx.moveTo(x, y);
+        } else {
+            ctx.lineTo(x, y);
+        }
+    });
+
+    ctx.strokeStyle = "#00ff88";
+    ctx.lineWidth = 3;
+    ctx.stroke();
+}
+
+setInterval(drawChart, 5000);
 </script>
 </body>
 </html>
