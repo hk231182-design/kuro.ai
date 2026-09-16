@@ -151,7 +151,7 @@ const symbols = {
     "USD/CAD": "USDCAD"
 };
 
-let previousPrice = null;
+let priceHistory = [];
 
 async function updatePrice() {
     const symbol = symbols[assetSelect.value];
@@ -170,13 +170,16 @@ async function updatePrice() {
         }
 
         const newPrice = data.mid;
+
         currentPrice.textContent = newPrice;
 
-        if (previousPrice !== null) {
-            generateSignal(previousPrice, newPrice);
+        priceHistory.push(newPrice);
+
+        if (priceHistory.length > 10) {
+            priceHistory.shift();
         }
 
-        previousPrice = newPrice;
+        analyzeMarket();
 
     } catch (error) {
         console.error(error);
@@ -184,30 +187,41 @@ async function updatePrice() {
     }
 }
 
-function generateSignal(oldPrice, newPrice) {
+function analyzeMarket() {
     const signalBox = document.querySelector(".signal-box");
     const status = document.querySelector(".status");
     const confidence = document.querySelector(".card:nth-of-type(4) .value");
 
-    if (newPrice > oldPrice) {
+    if (priceHistory.length < 5) {
+        signalBox.textContent = "WAIT";
+        status.textContent = "Collecting Market Data";
+        confidence.textContent = "Demo";
+        return;
+    }
+
+    const first = priceHistory[0];
+    const last = priceHistory[priceHistory.length - 1];
+
+    const change = ((last - first) / first) * 100;
+
+    if (change > 0.01) {
         signalBox.textContent = "CALL";
-        status.textContent = "Price Movement: UP";
-        confidence.textContent = "Demo";
-    } 
-    else if (newPrice < oldPrice) {
+        status.textContent = "Short-Term Uptrend";
+    }
+    else if (change < -0.01) {
         signalBox.textContent = "PUT";
-        status.textContent = "Price Movement: DOWN";
-        confidence.textContent = "Demo";
-    } 
+        status.textContent = "Short-Term Downtrend";
+    }
     else {
         signalBox.textContent = "WAIT";
-        status.textContent = "No Price Movement";
-        confidence.textContent = "Demo";
+        status.textContent = "Market Unclear";
     }
+
+    confidence.textContent = "Demo";
 }
 
 assetSelect.addEventListener("change", () => {
-    previousPrice = null;
+    priceHistory = [];
     currentPrice.textContent = "Loading...";
     updatePrice();
 });
