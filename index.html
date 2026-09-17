@@ -473,7 +473,7 @@ document.getElementById("accuracyValue").textContent =
     window.lastSignalTime = null;
 }
         
-        analyzeMarket();
+        analyzeMarket(false);
 
     } catch (error) {
 
@@ -548,7 +548,7 @@ setInterval(function () {
 
 }, 1000);
     
-function analyzeMarket() {
+function analyzeMarket(manual = false) {
 
     // Need 12 price points = approximately 1 minute
     if (priceHistory.length < 12) {
@@ -628,21 +628,21 @@ function analyzeMarket() {
     }
 
     // Generate signal only once per new minute
-    if (currentMinute !== lastCandleMinute) {
+    if (manual || currentMinute !== lastCandleMinute) {
 
-        lastCandleMinute = currentMinute;
+    lastCandleMinute = currentMinute;
 
-        if (score >= 3) {
+    if (score >= 3) {
 
-            newSignal = "CALL";
-            newStatus = "1-Min Bullish";
+        newSignal = "CALL";
+        newStatus = "1-Min Bullish";
 
-        } else if (score <= -3) {
+    } else if (score <= -3) {
 
-            newSignal = "PUT";
-            newStatus = "1-Min Bearish";
-        }
+        newSignal = "PUT";
+        newStatus = "1-Min Bearish";
     }
+}
 
     signalBox.textContent = newSignal;
 
@@ -819,7 +819,7 @@ generateButton.addEventListener(
     "click",
     function () {
 
-        analyzeMarket();
+        analyzeMarket(true);
         drawChart();
     }
 );
