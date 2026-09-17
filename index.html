@@ -453,19 +453,20 @@ if (currentMinute !== lastCandleMinute) {
     ) {
 
         const history =
-            document.getElementById("signalHistory");
+    document.getElementById("signalHistory");
 
-        const item =
-            document.createElement("div");
+const item =
+    document.createElement("div");
 
-        item.textContent =
-            newSignal +
-            " • " +
-            new Date().toLocaleTimeString();
+item.textContent =
+    newSignal +
+    " • " +
+    new Date().toLocaleTimeString() +
+    " • 1-Min Signal";
 
-        history.prepend(item);
+history.prepend(item);
 
-        window.lastSavedSignal = newSignal;
+window.lastSavedSignal = newSignal;
     }
 }
 function drawChart() {
