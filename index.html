@@ -406,7 +406,48 @@ document.getElementById("accuracyValue").textContent =
 
     loading = false;
 }
+setInterval(function () {
 
+    const timer =
+        document.getElementById("countdownTimer");
+
+    if (!window.signalExpiry) {
+        timer.textContent = "TIME LEFT: --";
+        return;
+    }
+
+    const remaining =
+        Math.max(
+            0,
+            window.signalExpiry - Date.now()
+        );
+
+    const seconds =
+        Math.ceil(remaining / 1000);
+
+    if (seconds > 0) {
+
+        const minutes =
+            Math.floor(seconds / 60);
+
+        const secs =
+            seconds % 60;
+
+        timer.textContent =
+            "TIME LEFT: " +
+            String(minutes).padStart(2, "0") +
+            ":" +
+            String(secs).padStart(2, "0");
+
+    } else {
+
+        timer.textContent =
+            "TIME LEFT: 00:00";
+
+    }
+
+}, 1000);
+    
 function analyzeMarket() {
 
     // Need 12 price points = approximately 1 minute
