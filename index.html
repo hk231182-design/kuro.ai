@@ -595,6 +595,12 @@ function analyzeMarket() {
     confidence.textContent =
         confidenceValue + "%";
 
+    const confidenceFill =
+    document.getElementById("confidenceFill");
+
+confidenceFill.style.width =
+    confidenceValue + "%";
+
     // Save only a NEW CALL/PUT signal
     if (
         (newSignal === "CALL" || newSignal === "PUT") &&
