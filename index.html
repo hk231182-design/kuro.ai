@@ -392,9 +392,31 @@ function analyzeMarket() {
     }
 
 
-    // Signal decision
-    let newSignal = "WAIT";
-    let newStatus = "Market Unclear";
+   // Signal decision
+let newSignal = "WAIT";
+let newStatus = "Market Unclear";
+
+// 1-minute candle timer
+const currentMinute = Math.floor(Date.now() / 60000);
+
+if (lastCandleMinute === null) {
+    lastCandleMinute = currentMinute;
+}
+
+// Only generate CALL/PUT when a new 1-minute candle starts
+if (currentMinute !== lastCandleMinute) {
+
+    lastCandleMinute = currentMinute;
+
+    if (score >= 3) {
+        newSignal = "CALL";
+        newStatus = "1-Min Bullish";
+
+    } else if (score <= -3) {
+        newSignal = "PUT";
+        newStatus = "1-Min Bearish";
+    }
+}
 
     if (score >= 3) {
 
