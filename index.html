@@ -313,6 +313,36 @@ button:hover {
 
 </div><script>
 
+const KURO_ACCESS_KEY = "KURO-2026";
+
+function unlockKURO() {
+
+    const enteredKey =
+        document.getElementById("accessKey").value;
+
+    const error =
+        document.getElementById("keyError");
+
+    if (enteredKey === KURO_ACCESS_KEY) {
+
+        document.getElementById("keyScreen").style.display =
+            "none";
+
+        localStorage.setItem("kuroUnlocked", "true");
+
+    } else {
+
+        error.textContent =
+            "Invalid Access Key";
+    }
+}
+
+if (localStorage.getItem("kuroUnlocked") === "true") {
+
+    document.getElementById("keyScreen").style.display =
+        "none";
+}
+
 const assetSelect = document.getElementById("assetSelect");
 const currentPrice = document.getElementById("currentPrice");
 const signalBox = document.getElementById("signalBox");
@@ -857,5 +887,94 @@ setInterval(
     </div>
 
 </div>
+
+<!-- 🔐 ACCESS KEY SCREEN -->
+
+<div id="keyScreen">
+
+    <div class="keyBox">
+
+        <h1>KURO AI</h1>
+
+        <p>ENTER ACCESS KEY</p>
+
+        <input
+            type="password"
+            id="accessKey"
+            placeholder="Enter your key"
+        >
+
+        <button onclick="unlockKURO()">
+            UNLOCK KURO AI
+        </button>
+
+        <div id="keyError"></div>
+
+    </div>
+
+</div>
+
+<style>
+
+#keyScreen {
+    position: fixed;
+    inset: 0;
+    background: #05070b;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 99999;
+}
+
+.keyBox {
+    width: 90%;
+    max-width: 380px;
+    padding: 30px;
+    text-align: center;
+    background: #0b1018;
+    border: 1px solid #1d2633;
+    border-radius: 16px;
+}
+
+.keyBox h1 {
+    margin-bottom: 10px;
+}
+
+.keyBox p {
+    color: #8b95a5;
+}
+
+#accessKey {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 14px;
+    margin: 15px 0;
+    background: #05070b;
+    color: white;
+    border: 1px solid #263244;
+    border-radius: 8px;
+    outline: none;
+}
+
+.keyBox button {
+    width: 100%;
+    padding: 14px;
+    border: none;
+    border-radius: 8px;
+    background: #00c878;
+    color: #000;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+#keyError {
+    margin-top: 12px;
+    color: #ff4d4d;
+}
+
+</style>
+
+<!-- 🔐 ACCESS KEY SCREEN END -->
+    
 </body>
 </html>
