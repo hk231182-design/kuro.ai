@@ -236,6 +236,10 @@ let lastPrice = null;
 let loading = false;
 let lastCandleMinute = null;  
 
+let totalWins = 0;
+let totalLosses = 0;
+let totalDraws = 0;
+
 function formatPrice(price) {
     if (price >= 100) {
         return price.toFixed(3);
