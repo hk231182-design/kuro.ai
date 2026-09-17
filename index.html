@@ -552,6 +552,15 @@ function analyzeMarket() {
     }
 
     signalBox.textContent = newSignal;
+
+    if (newSignal === "CALL") {
+    signalBox.style.color = "#00c878";
+} else if (newSignal === "PUT") {
+    signalBox.style.color = "#ff4d4d";
+} else {
+    signalBox.style.color = "white";
+}
+    
     status.textContent = newStatus;
 
     // Confidence
