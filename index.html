@@ -391,48 +391,37 @@ function analyzeMarket() {
         score -= 1;
     }
 
+    // Signal decision
+    let newSignal = "WAIT";
+    let newStatus = "Market Unclear";
 
-   // Signal decision
-let newSignal = "WAIT";
-let newStatus = "Market Unclear";
+    // Current 1-minute period
+    const currentMinute =
+        Math.floor(Date.now() / 60000);
 
-// 1-minute candle timer
-const currentMinute = Math.floor(Date.now() / 60000);
-
-if (lastCandleMinute === null) {
-    lastCandleMinute = currentMinute;
-}
-
-// Only generate CALL/PUT when a new 1-minute candle starts
-if (currentMinute !== lastCandleMinute) {
-
-    lastCandleMinute = currentMinute;
-
-    if (score >= 3) {
-        newSignal = "CALL";
-        newStatus = "1-Min Bullish";
-
-    } else if (score <= -3) {
-        newSignal = "PUT";
-        newStatus = "1-Min Bearish";
-    }
-}
-
-    if (score >= 3) {
-
-        newSignal = "CALL";
-        newStatus = "1-Min Bullish";
-
-    } else if (score <= -3) {
-
-        newSignal = "PUT";
-        newStatus = "1-Min Bearish";
+    if (lastCandleMinute === null) {
+        lastCandleMinute = currentMinute;
     }
 
+    // Generate signal only once per new minute
+    if (currentMinute !== lastCandleMinute) {
+
+        lastCandleMinute = currentMinute;
+
+        if (score >= 3) {
+
+            newSignal = "CALL";
+            newStatus = "1-Min Bullish";
+
+        } else if (score <= -3) {
+
+            newSignal = "PUT";
+            newStatus = "1-Min Bearish";
+        }
+    }
 
     signalBox.textContent = newSignal;
     status.textContent = newStatus;
-
 
     // Confidence
     let confidenceValue =
@@ -445,7 +434,6 @@ if (currentMinute !== lastCandleMinute) {
     confidence.textContent =
         confidenceValue + "%";
 
-
     // Save only a NEW CALL/PUT signal
     if (
         (newSignal === "CALL" || newSignal === "PUT") &&
@@ -453,20 +441,20 @@ if (currentMinute !== lastCandleMinute) {
     ) {
 
         const history =
-    document.getElementById("signalHistory");
+            document.getElementById("signalHistory");
 
-const item =
-    document.createElement("div");
+        const item =
+            document.createElement("div");
 
-item.textContent =
-    newSignal +
-    " • " +
-    new Date().toLocaleTimeString() +
-    " • 1-Min Signal";
+        item.textContent =
+            newSignal +
+            " • " +
+            new Date().toLocaleTimeString() +
+            " • 1-Min Signal";
 
-history.prepend(item);
+        history.prepend(item);
 
-window.lastSavedSignal = newSignal;
+        window.lastSavedSignal = newSignal;
     }
 }
 function drawChart() {
