@@ -234,6 +234,7 @@ const symbols = {
 let priceHistory = [];
 let lastPrice = null;
 let loading = false;
+let lastCandleMinute = null;  
 
 function formatPrice(price) {
     if (price >= 100) {
