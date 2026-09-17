@@ -509,6 +509,8 @@ document.getElementById("accuracyValue").textContent =
 
         console.log("Price API error:", error);
 
+        alert("KURO API ERROR: " + error.message);
+
         if (lastPrice !== null) {
 
             currentPrice.textContent =
