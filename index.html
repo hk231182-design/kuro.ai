@@ -1,352 +1,92 @@
-<head>
+            const y =
+                chart.height -
+                ((price - min) / range) *
+                (chart.height - 20) -
+                10;
 
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+            if (index === 0) {
 
-<title>KURO AI</title>
+                ctx.moveTo(x, y);
 
-<style>
+            } else {
 
-* {
-    box-sizing: border-box;
+                ctx.lineTo(x, y);
+            }
+        }
+    );
+
+    ctx.strokeStyle = "#00ff88";
+    ctx.lineWidth = 3;
+    ctx.stroke();
+
+    const lastIndex =
+        priceHistory.length - 1;
+
+    const lastX = chart.width;
+
+    const lastY =
+        chart.height -
+        ((priceHistory[lastIndex] - min) / range) *
+        (chart.height - 20) -
+        10;
+
+    ctx.beginPath();
+
+    ctx.arc(
+        lastX,
+        lastY,
+        5,
+        0,
+        Math.PI * 2
+    );
+
+    ctx.fillStyle = "#ffffff";
+    ctx.fill();
 }
 
-body {
-    margin: 0;
-    padding: 20px;
-    min-height: 100vh;
-    font-family: Arial, sans-serif;
+assetSelect.addEventListener(
+    "change",
+    function () {
 
-    background:
-        radial-gradient(
-            circle at top,
-            #102a5c 0%,
-            #07152f 35%,
-            #020817 75%
-        );
+        priceHistory = [];
+        lastPrice = null;
 
-    color: white;
-}
+        currentPrice.textContent =
+            "Loading...";
 
-.container {
-    width: 100%;
-    max-width: 900px;
-    margin: auto;
-}
+        marketStatus.textContent =
+            "Connecting...";
 
-h1 {
-    text-align: center;
-    margin: 10px 0 5px;
-    font-size: 36px;
+        signalBox.textContent =
+            "WAIT";
 
-    color: #4db8ff;
+        status.textContent =
+            "Collecting Market Data";
 
-    text-shadow:
-        0 0 10px rgba(0,174,255,0.8),
-        0 0 25px rgba(0,110,255,0.5);
-}
+        confidence.textContent =
+            "--%";
 
-.subtitle {
-    text-align: center;
-    color: #8bcaff;
-    margin-bottom: 25px;
-}
+        drawChart();
 
-.card {
-    background: rgba(5,18,42,0.90);
+        updatePrice();
+    }
+);
 
-    border: 1px solid #164d83;
+generateButton.addEventListener(
+    "click",
+    function () {
 
-    border-radius: 16px;
+        analyzeMarket();
+        drawChart();
+    }
+);
 
-    padding: 20px;
+updatePrice();
 
-    margin-bottom: 18px;
+setInterval(
+    updatePrice,
+    5000
+);
 
-    box-shadow:
-        0 0 18px rgba(0,140,255,0.12),
-        inset 0 0 20px rgba(0,80,180,0.05);
-}
-
-.card h3 {
-    margin: 0 0 15px;
-
-    color: #6fc7ff;
-
-    letter-spacing: 1px;
-}
-
-select {
-    width: 100%;
-
-    padding: 14px;
-
-    border: 1px solid #1769a8;
-
-    border-radius: 10px;
-
-    background: #06152d;
-
-    color: white;
-
-    font-size: 16px;
-
-    outline: none;
-}
-
-.grid {
-    display: grid;
-
-    grid-template-columns:
-        repeat(2, 1fr);
-
-    gap: 18px;
-}
-
-.value {
-    font-size: 30px;
-
-    font-weight: bold;
-
-    color: #eaf7ff;
-
-    text-shadow:
-        0 0 8px rgba(0,174,255,0.25);
-}
-
-.signal-box {
-    font-size: 34px;
-
-    font-weight: bold;
-
-    text-align: center;
-
-    padding: 10px 0;
-
-    border-radius: 12px;
-
-    margin-top: 10px;
-
-    background: #06152d;
-
-    border: 1px solid #168cff;
-
-    box-shadow:
-        0 0 15px rgba(0,140,255,0.20),
-        inset 0 0 15px rgba(0,100,255,0.08);
-}
-
-.status {
-    text-align: center;
-
-    color: #83b8e8;
-
-    margin-top: 5px;
-}
-
-.market-status {
-    font-size: 24px;
-
-    font-weight: bold;
-
-    color: #4db8ff;
-
-    text-shadow:
-        0 0 8px rgba(0,174,255,0.45);
-}
-
-canvas {
-    display: block;
-
-    width: 100%;
-
-    height: 260px;
-
-    background: #030d20;
-
-    border-radius: 10px;
-
-    border: 1px solid #123e70;
-
-    box-shadow:
-        0 0 15px rgba(0,120,255,0.10);
-}
-
-button {
-    width: 100%;
-
-    padding: 15px;
-
-    border: none;
-
-    border-radius: 10px;
-
-    background:
-        linear-gradient(
-            135deg,
-            #0077ff,
-            #00b7ff
-        );
-
-    color: white;
-
-    font-size: 16px;
-
-    font-weight: bold;
-
-    cursor: pointer;
-
-    box-shadow:
-        0 0 15px rgba(0,153,255,0.35);
-}
-
-button:hover {
-    box-shadow:
-        0 0 22px rgba(0,174,255,0.55);
-
-    opacity: 1;
-}
-
-.confidence-bar {
-    width: 100%;
-
-    height: 8px;
-
-    background: #071a35;
-
-    border: 1px solid #164d83;
-
-    border-radius: 10px;
-
-    overflow: hidden;
-
-    margin-top: 10px;
-}
-
-.confidence-fill {
-    width: 0%;
-
-    height: 100%;
-
-    background:
-        linear-gradient(
-            90deg,
-            #0077ff,
-            #00c8ff
-        );
-
-    border-radius: 10px;
-
-    box-shadow:
-        0 0 10px rgba(0,190,255,0.55);
-
-    transition:
-        width 0.4s ease;
-}
-
-#accuracyTracker {
-    display: grid;
-
-    grid-template-columns:
-        repeat(3, 1fr);
-
-    gap: 10px;
-
-    margin-top: 15px;
-
-    text-align: center;
-}
-
-#accuracyTracker > div {
-    background: #06152d;
-
-    border: 1px solid #164d83;
-
-    border-radius: 10px;
-
-    padding: 12px 5px;
-
-    font-size: 13px;
-
-    color: #8d98a5;
-}
-
-#accuracyTracker span {
-    display: block;
-
-    margin-top: 5px;
-
-    font-size: 20px;
-
-    font-weight: bold;
-
-    color: #eaf7ff;
-}
-
-#countdownTimer {
-    color: #4db8ff;
-
-    text-align: center;
-
-    font-weight: bold;
-
-    text-shadow:
-        0 0 8px rgba(0,174,255,0.45);
-}
-
-#signalHistory {
-    margin-top: 15px;
-
-    color: #b7c7d8;
-
-    font-size: 14px;
-
-    line-height: 1.8;
-}
-
-.note {
-    text-align: center;
-
-    color: #6386aa;
-
-    font-size: 12px;
-
-    margin-top: 15px;
-}
-
-@media (max-width: 600px) {
-
-    body {
-        padding: 12px;
-    }
-
-    .grid {
-        grid-template-columns: 1fr;
-    }
-
-    h1 {
-        font-size: 30px;
-    }
-
-    #accuracyTracker {
-        grid-template-columns:
-            1fr 1fr 1fr;
-
-        gap: 6px;
-    }
-
-    #accuracyTracker > div {
-        padding: 10px 3px;
-
-        font-size: 12px;
-    }
-
-    #accuracyTracker span {
-        font-size: 18px;
-    }
-
-}
-
-</style>
-
-</head>
+</script></body>
+</html>
