@@ -327,6 +327,27 @@ if (result === "DRAW") {
     totalDraws++;
 }
 
+const totalResults =
+    totalWins + totalLosses + totalDraws;
+
+let accuracy = 0;
+
+if (totalResults > 0) {
+    accuracy =
+        (totalWins / totalResults) * 100;
+}
+
+document.getElementById("winsCount").textContent =
+    totalWins;
+
+document.getElementById("lossesCount").textContent =
+    totalLosses;
+
+document.getElementById("drawsCount").textContent =
+    totalDraws;
+
+document.getElementById("accuracyValue").textContent =
+    accuracy.toFixed(1) + "%";
     } else if (signal === "PUT") {
 
         if (newPrice < signalPrice) {
