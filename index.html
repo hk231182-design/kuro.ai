@@ -325,10 +325,11 @@ async function updatePrice() {
 
 function analyzeMarket() {
 
-    if (priceHistory.length < 10) {
+    // Need 12 price points = approximately 1 minute
+    if (priceHistory.length < 12) {
 
         signalBox.textContent = "WAIT";
-        status.textContent = "Collecting Market Data";
+        status.textContent = "Collecting 1-Min Data";
         confidence.textContent = "--%";
 
         return;
@@ -336,48 +337,51 @@ function analyzeMarket() {
 
     const prices = priceHistory;
 
-    const latest = prices[prices.length - 1];
-    const previous = prices[prices.length - 2];
+    // Last 12 price points ≈ 1 minute
+    const candlePrices = prices.slice(-12);
 
-    const shortTermStart =
-        prices[prices.length - 5];
+    const open = candlePrices[0];
+    const close = candlePrices[candlePrices.length - 1];
 
-    const mediumTermStart =
-        prices[prices.length - 10];
+    const high = Math.max(...candlePrices);
+    const low = Math.min(...candlePrices);
+
+    const candleMove =
+        ((close - open) / open) * 100;
+
+    const range =
+        ((high - low) / open) * 100;
 
     let score = 0;
 
-    const shortMove =
-        ((latest - shortTermStart) / shortTermStart) * 100;
-
-    const mediumMove =
-        ((latest - mediumTermStart) / mediumTermStart) * 100;
-
-    const lastMove =
-        ((latest - previous) / previous) * 100;
-
-
-    // Short-term momentum
-    if (shortMove > 0.005) {
-        score += 1;
-    }
-
-    if (shortMove < -0.005) {
-        score -= 1;
-    }
-
-
-    // Medium-term momentum
-    if (mediumMove > 0.01) {
+    // 1-minute candle direction
+    if (candleMove > 0.005) {
         score += 2;
     }
 
-    if (mediumMove < -0.01) {
+    if (candleMove < -0.005) {
         score -= 2;
     }
 
+    // Candle strength
+    if (range > 0.01) {
 
-    // Latest movement
+        if (close > open) {
+            score += 1;
+        }
+
+        if (close < open) {
+            score -= 1;
+        }
+    }
+
+    // Recent momentum
+    const previous =
+        prices[prices.length - 2];
+
+    const lastMove =
+        ((close - previous) / previous) * 100;
+
     if (lastMove > 0) {
         score += 1;
     }
@@ -388,21 +392,23 @@ function analyzeMarket() {
 
 
     // Signal decision
+    let newSignal = "WAIT";
+    let newStatus = "Market Unclear";
+
     if (score >= 3) {
 
-        signalBox.textContent = "CALL";
-        status.textContent = "Bullish Momentum";
+        newSignal = "CALL";
+        newStatus = "1-Min Bullish";
 
     } else if (score <= -3) {
 
-        signalBox.textContent = "PUT";
-        status.textContent = "Bearish Momentum";
-
-    } else {
-
-        signalBox.textContent = "WAIT";
-        status.textContent = "Market Unclear";
+        newSignal = "PUT";
+        newStatus = "1-Min Bearish";
     }
+
+
+    signalBox.textContent = newSignal;
+    status.textContent = newStatus;
 
 
     // Confidence
@@ -415,15 +421,29 @@ function analyzeMarket() {
 
     confidence.textContent =
         confidenceValue + "%";
-  // Save signal to Recent Signals
-if (signalBox.textContent === "CALL" || signalBox.textContent === "PUT") {
-    const history = document.getElementById("signalHistory");
 
-    const item = document.createElement("div");
-    item.textContent = signalBox.textContent + " • " + new Date().toLocaleTimeString();
 
-    history.prepend(item);
-}  
+    // Save only a NEW CALL/PUT signal
+    if (
+        (newSignal === "CALL" || newSignal === "PUT") &&
+        newSignal !== window.lastSavedSignal
+    ) {
+
+        const history =
+            document.getElementById("signalHistory");
+
+        const item =
+            document.createElement("div");
+
+        item.textContent =
+            newSignal +
+            " • " +
+            new Date().toLocaleTimeString();
+
+        history.prepend(item);
+
+        window.lastSavedSignal = newSignal;
+    }
 }
 function drawChart() {
 
