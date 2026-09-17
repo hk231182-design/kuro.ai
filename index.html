@@ -308,13 +308,24 @@ if (
 
     let result = "DRAW";
 
-    if (signal === "CALL") {
+   if (signal === "CALL") {
 
         if (newPrice > signalPrice) {
             result = "WIN";
         } else if (newPrice < signalPrice) {
             result = "LOSS";
         }
+    if (result === "WIN") {
+    totalWins++;
+}
+
+if (result === "LOSS") {
+    totalLosses++;
+}
+
+if (result === "DRAW") {
+    totalDraws++;
+}
 
     } else if (signal === "PUT") {
 
