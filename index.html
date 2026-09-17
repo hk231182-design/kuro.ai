@@ -1,7 +1,132 @@
 f<!DOCTYPE html><html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0"><title>KURO AI</title><style>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"><title>KURO AI</title> /* ===== KURO AI — DARK NAVY + NEON BLUE THEME ===== */
+
+body {
+    background:
+        radial-gradient(circle at top, #102a5c 0%, #07152f 35%, #020817 75%);
+    color: #eaf4ff;
+}
+
+.container {
+    max-width: 900px;
+}
+
+h1 {
+    color: #4db8ff;
+    text-shadow:
+        0 0 10px rgba(0, 174, 255, 0.7),
+        0 0 25px rgba(0, 110, 255, 0.35);
+}
+
+.subtitle {
+    color: #8bcaff;
+}
+
+.card {
+    background: rgba(5, 18, 42, 0.88);
+    border: 1px solid #164d83;
+    box-shadow:
+        0 0 18px rgba(0, 140, 255, 0.10),
+        inset 0 0 20px rgba(0, 80, 180, 0.05);
+    backdrop-filter: blur(8px);
+}
+
+.card h3 {
+    color: #6fc7ff;
+}
+
+.value {
+    color: #eaf7ff;
+    text-shadow: 0 0 8px rgba(0, 174, 255, 0.25);
+}
+
+.signal-box {
+    background: #06152d;
+    border: 1px solid #168cff;
+    box-shadow:
+        0 0 15px rgba(0, 140, 255, 0.18),
+        inset 0 0 15px rgba(0, 100, 255, 0.08);
+}
+
+.status {
+    color: #83b8e8;
+}
+
+.market-status {
+    color: #4db8ff;
+    text-shadow: 0 0 8px rgba(0, 174, 255, 0.4);
+}
+
+select {
+    background: #06152d;
+    color: #eaf4ff;
+    border: 1px solid #1769a8;
+}
+
+canvas {
+    background: #030d20;
+    border: 1px solid #123e70;
+    box-shadow: 0 0 15px rgba(0, 120, 255, 0.10);
+}
+
+button {
+    background: linear-gradient(
+        135deg,
+        #0077ff,
+        #00b7ff
+    );
+    box-shadow:
+        0 0 15px rgba(0, 153, 255, 0.35);
+}
+
+button:hover {
+    box-shadow:
+        0 0 22px rgba(0, 174, 255, 0.55);
+    opacity: 1;
+}
+
+.confidence-bar {
+    background: #071a35;
+    border: 1px solid #164d83;
+}
+
+.confidence-fill {
+    background: linear-gradient(
+        90deg,
+        #0077ff,
+        #00c8ff
+    );
+    box-shadow:
+        0 0 10px rgba(0, 190, 255, 0.55);
+}
+
+#accuracyTracker > div {
+    background: #06152d;
+    border: 1px solid #164d83;
+    box-shadow: 0 0 10px rgba(0, 120, 255, 0.08);
+}
+
+#accuracyTracker span {
+    color: #eaf7ff;
+}
+
+#countdownTimer {
+    color: #4db8ff;
+    text-shadow: 0 0 8px rgba(0, 174, 255, 0.45);
+}
+
+.note {
+    color: #6386aa;
+}
+
+.signal-box,
+.card,
+button,
+.confidence-bar {
+    transition: all 0.25s ease;
+} <style>
 * {
     box-sizing: border-box;
 }
