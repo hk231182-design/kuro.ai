@@ -290,6 +290,53 @@ async function updatePrice() {
         marketStatus.textContent = "LIVE";
 
         drawChart();
+
+// Check previous 1-minute signal
+if (
+    window.lastSavedSignal &&
+    window.lastSignalPrice &&
+    window.lastSignalTime &&
+    Date.now() - window.lastSignalTime >= 60000
+) {
+
+    const signal = window.lastSavedSignal;
+    const signalPrice = window.lastSignalPrice;
+
+    let result = "DRAW";
+
+    if (signal === "CALL") {
+
+        if (newPrice > signalPrice) {
+            result = "WIN";
+        } else if (newPrice < signalPrice) {
+            result = "LOSS";
+        }
+
+    } else if (signal === "PUT") {
+
+        if (newPrice < signalPrice) {
+            result = "WIN";
+        } else if (newPrice > signalPrice) {
+            result = "LOSS";
+        }
+    }
+
+    const history =
+        document.getElementById("signalHistory");
+
+    const resultItem =
+        document.createElement("div");
+
+    resultItem.textContent =
+        signal + " → " + result;
+
+    history.prepend(resultItem);
+
+    window.lastSavedSignal = null;
+    window.lastSignalPrice = null;
+    window.lastSignalTime = null;
+}
+        
         analyzeMarket();
 
     } catch (error) {
