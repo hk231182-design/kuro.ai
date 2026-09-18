@@ -2494,10 +2494,14 @@ setInterval(
 /* MARKET ANALYSIS */
 /* ============================= */
 
+
 function analyzeMarket(
     manual = false
 ) {
 
+    /* ============================= */
+    /* COLLECTING DATA */
+    /* ============================= */
 
     if (
         priceHistory.length < 12
@@ -2506,28 +2510,94 @@ function analyzeMarket(
         signalBox.textContent =
             "WAIT";
 
-
         status.textContent =
             "Collecting 1-Min Data";
 
-
         confidence.textContent =
             "--%";
-
 
         document.getElementById(
             "confidenceText"
         ).textContent =
             "Waiting for market data";
 
-
         document.getElementById(
             "reasonBox"
         ).textContent =
             "Collecting enough price points for 1-minute momentum analysis.";
 
+        return;
+    }
+
+
+    /* ============================= */
+    /* SIGNAL LOCK / EXPIRY SYSTEM */
+    /* ============================= */
+
+    const now =
+        Date.now();
+
+
+    if (
+        window.activeSignal &&
+        window.signalExpiry &&
+        now < window.signalExpiry
+    ) {
+
+        /* KEEP EXISTING SIGNAL */
+
+        signalBox.textContent =
+            window.activeSignal;
+
+
+        if (
+            window.activeSignal === "CALL"
+        ) {
+
+            status.textContent =
+                "1-Min Bullish";
+
+            signalBox.style.color =
+                "#00ff45";
+
+        }
+
+
+        else if (
+            window.activeSignal === "PUT"
+        ) {
+
+            status.textContent =
+                "1-Min Bearish";
+
+            signalBox.style.color =
+                "#ff3f4f";
+
+        }
+
 
         return;
+    }
+
+
+    /* ============================= */
+    /* SIGNAL EXPIRED */
+    /* ============================= */
+
+    if (
+        window.activeSignal &&
+        window.signalExpiry &&
+        now >= window.signalExpiry
+    ) {
+
+        window.activeSignal =
+            null;
+
+        window.signalExpiry =
+            null;
+
+        window.lastSavedSignal =
+            null;
 
     }
 
@@ -2576,10 +2646,13 @@ function analyzeMarket(
         ) * 100;
 
 
-    let score = 0;
+    let score =
+        0;
 
 
+    /* ============================= */
     /* 1 MINUTE DIRECTION */
+    /* ============================= */
 
     if (
         candleMove > 0.005
@@ -2599,7 +2672,9 @@ function analyzeMarket(
     }
 
 
+    /* ============================= */
     /* CANDLE STRENGTH */
+    /* ============================= */
 
     if (
         range > 0.01
@@ -2625,7 +2700,9 @@ function analyzeMarket(
     }
 
 
+    /* ============================= */
     /* RECENT MOMENTUM */
+    /* ============================= */
 
     const previous =
         prices[
@@ -2658,7 +2735,9 @@ function analyzeMarket(
     }
 
 
+    /* ============================= */
     /* SIGNAL */
+    /* ============================= */
 
     let newSignal =
         "WAIT";
@@ -2683,6 +2762,11 @@ function analyzeMarket(
 
     }
 
+
+    /*
+       NEW SIGNAL ONLY WHEN
+       PREVIOUS SIGNAL HAS EXPIRED
+    */
 
     if (
         manual ||
@@ -2720,6 +2804,38 @@ function analyzeMarket(
                 "1-Min Bearish";
 
         }
+
+    }
+
+
+    /* ============================= */
+    /* ACTIVATE 1-MINUTE SIGNAL */
+    /* ============================= */
+
+    if (
+        newSignal === "CALL" ||
+        newSignal === "PUT"
+    ) {
+
+        window.activeSignal =
+            newSignal;
+
+
+        /*
+           SIGNAL WILL STAY FOR
+           FULL 60 SECONDS
+        */
+
+        window.signalExpiry =
+            Date.now() + 60000;
+
+
+        window.lastSignalPrice =
+            close;
+
+
+        window.lastSignalTime =
+            Date.now();
 
     }
 
@@ -2772,6 +2888,14 @@ function analyzeMarket(
 
         signalCircle.textContent =
             "↑";
+
+
+        signalCircle.style.background =
+            "radial-gradient(circle,#00ff55,#00882c)";
+
+
+        signalCircle.style.boxShadow =
+            "0 0 22px rgba(0,255,100,0.40)";
 
 
         biasValue.textContent =
@@ -2871,7 +2995,8 @@ function analyzeMarket(
         confidenceValue > 90
     ) {
 
-        confidenceValue = 90;
+        confidenceValue =
+            90;
 
     }
 
@@ -2921,7 +3046,7 @@ function analyzeMarket(
 
 
     /* ============================= */
-    /* MARKET ANALYSIS TEXT */
+    /* MARKET ANALYSIS */
     /* ============================= */
 
     let analysisText =
@@ -2936,6 +3061,7 @@ function analyzeMarket(
             "Recent 1-minute price movement is showing bullish momentum according to the current signal logic.";
 
     }
+
 
     else if (
         newSignal === "PUT"
@@ -2982,7 +3108,6 @@ function analyzeMarket(
     /* ============================= */
 
     if (
-
         (
             newSignal === "CALL" ||
             newSignal === "PUT"
@@ -3034,10 +3159,6 @@ function analyzeMarket(
                 .toLocaleTimeString();
 
 
-        window.signalExpiry =
-            Date.now() + 60000;
-
-
         item.textContent =
             newSignal +
             " • ENTRY: " +
@@ -3070,7 +3191,8 @@ function analyzeMarket(
 /* ============================= */
 /* CHART */
 /* ============================= */
-
+    
+    
 function drawChart() {
 
     ctx.clearRect(
