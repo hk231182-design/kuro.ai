@@ -1537,31 +1537,45 @@ button:hover {
         SELECT ASSET
     </div>
 
+   <div style="position:relative; width:100%;">
+
+    <div
+        id="assetDisplay"
+        style="
+            width:100%;
+            padding:14px;
+            border-radius:11px;
+            background:#0b0d15;
+            color:white;
+            border:1px solid #29263a;
+            outline:none;
+            font-size:14px;
+            box-sizing:border-box;
+            cursor:pointer;
+        "
+    >
+        🇪🇺 &nbsp; EUR/USD
+    </div>
+
     <select
-    id="assetSelect"
-    style="
-        width:100%;
-        padding:14px;
-        border-radius:11px;
-        background:#0b0d15;
-        color:white;
-        border:1px solid #29263a;
-        outline:none;
-        font-size:14px;
-    "
->
+        id="assetSelect"
+        style="
+            position:absolute;
+            inset:0;
+            width:100%;
+            height:100%;
+            opacity:0;
+            cursor:pointer;
+        "
+    >
+        <option value="EUR/USD">🇪🇺 EUR/USD</option>
+        <option value="GBP/USD">🇬🇧 GBP/USD</option>
+        <option value="USD/JPY">🇺🇸 USD/JPY</option>
+        <option value="AUD/USD">🇦🇺 AUD/USD</option>
+        <option value="USD/CAD">🇺🇸 USD/CAD</option>
+    </select>
 
-    <option value="EUR/USD">🇪🇺 EUR/USD</option>
-
-    <option value="GBP/USD">🇬🇧 GBP/USD</option>
-
-    <option value="USD/JPY">🇺🇸 USD/JPY</option>
-
-    <option value="AUD/USD">🇦🇺 AUD/USD</option>
-
-    <option value="USD/CAD">🇺🇸 USD/CAD</option>
-
-</select>
+</div>
 
 </div>
 
