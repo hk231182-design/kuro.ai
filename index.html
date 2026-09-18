@@ -1,593 +1,485 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <title>KURO AI</title>
 
 <style>
-
-/* =====================================================
-   KURO AI — PREMIUM SIMPLE UI
-   ===================================================== */
-
 *{
     box-sizing:border-box;
-    margin:0;
-    padding:0;
 }
 
-html{
-    scroll-behavior:smooth;
+html,body{
+    margin:0;
+    padding:0;
+    min-height:100%;
+    font-family:Arial,Helvetica,sans-serif;
+    background:#05070b;
+    color:#fff;
 }
 
 body{
-    min-height:100vh;
-    font-family:Arial,Helvetica,sans-serif;
-    color:#fff;
-    background:
-        radial-gradient(circle at 50% -10%,rgba(124,58,237,.20),transparent 38%),
-        #050609;
-}
-
-button,
-input,
-select{
-    font-family:inherit;
-}
-
-button{
-    cursor:pointer;
+    display:flex;
+    justify-content:center;
+    padding:18px 12px;
 }
 
 .app{
     width:100%;
-    max-width:1050px;
-    margin:auto;
-    padding:18px;
+    max-width:560px;
 }
 
-/* =====================================================
-   TOP BAR
-   ===================================================== */
+/* TOP */
 
 .topbar{
     display:flex;
     align-items:center;
     justify-content:space-between;
-    gap:15px;
-    padding:8px 2px 22px;
+    margin-bottom:14px;
 }
 
 .brand{
     display:flex;
     align-items:center;
-    gap:12px;
+    gap:10px;
 }
 
-.brand-logo{
-    width:43px;
-    height:43px;
-    border-radius:13px;
+.logo{
+    width:42px;
+    height:42px;
+    border-radius:12px;
     display:flex;
     align-items:center;
     justify-content:center;
-    font-size:20px;
+    font-size:19px;
     font-weight:900;
-    background:linear-gradient(145deg,#8b5cf6,#5b21b6);
-    box-shadow:0 0 25px rgba(139,92,246,.25);
+    background:linear-gradient(135deg,#161c29,#0b0e15);
+    border:1px solid #273043;
+    box-shadow:0 0 20px rgba(80,120,255,.08);
 }
 
 .brand-text h1{
-    font-size:20px;
-    letter-spacing:2px;
+    margin:0;
+    font-size:19px;
+    letter-spacing:.5px;
 }
 
 .brand-text p{
-    margin-top:4px;
-    font-size:9px;
-    color:#777b8a;
-    letter-spacing:1.5px;
-}
-
-.top-status{
-    display:flex;
-    align-items:center;
-    gap:8px;
-}
-
-.live-badge{
-    display:flex;
-    align-items:center;
-    gap:7px;
-    padding:8px 12px;
-    border:1px solid rgba(0,255,136,.18);
-    border-radius:9px;
-    background:rgba(0,255,136,.05);
-    color:#00ff88;
-    font-size:9px;
-    font-weight:bold;
+    margin:3px 0 0;
+    color:#737c8e;
+    font-size:10px;
     letter-spacing:1px;
+}
+
+.live{
+    display:flex;
+    align-items:center;
+    gap:6px;
+    padding:7px 10px;
+    border:1px solid #20352b;
+    border-radius:20px;
+    background:#09110e;
+    color:#70e6a2;
+    font-size:10px;
+    font-weight:700;
 }
 
 .live-dot{
     width:6px;
     height:6px;
     border-radius:50%;
-    background:#00ff88;
-    box-shadow:0 0 9px #00ff88;
+    background:#52e58e;
+    box-shadow:0 0 9px #52e58e;
 }
 
-/* =====================================================
-   MAIN PANEL
-   ===================================================== */
+/* MAIN CARD */
 
-.main-panel{
-    width:100%;
+.card{
+    background:linear-gradient(145deg,#0b0e15,#080a10);
+    border:1px solid #1a202d;
+    border-radius:18px;
+    padding:14px;
+    margin-bottom:12px;
+    box-shadow:0 10px 35px rgba(0,0,0,.25);
 }
 
-.engine-head{
+.engine{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:13px;
+}
+
+.engine-left{
     display:flex;
     align-items:center;
-    justify-content:space-between;
-    margin-bottom:15px;
+    gap:9px;
+}
+
+.engine-icon{
+    width:31px;
+    height:31px;
+    border-radius:9px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    background:#111725;
+    border:1px solid #20293a;
+    font-size:14px;
 }
 
 .engine-title{
-    display:flex;
-    align-items:center;
-    gap:11px;
-}
-
-.engine-title h2{
-    font-size:17px;
+    font-size:12px;
     font-weight:700;
 }
 
-.engine-title p{
-    margin-top:4px;
-    color:#686c79;
-    font-size:8px;
-    letter-spacing:1.5px;
+.engine-sub{
+    font-size:9px;
+    color:#697386;
+    margin-top:2px;
 }
 
-.engine-back{
-    width:32px;
-    height:32px;
-    border:1px solid #20232d;
-    border-radius:9px;
-    background:#0c0e14;
-    color:#a5a8b4;
-    font-size:20px;
+.engine-status{
+    font-size:9px;
+    color:#6de59c;
+    padding:5px 8px;
+    border-radius:8px;
+    background:#09130e;
+    border:1px solid #1b3527;
 }
 
-/* =====================================================
-   CARDS
-   ===================================================== */
+/* ASSET */
 
-.card{
-    position:relative;
-    margin-bottom:12px;
-    padding:17px;
-    border:1px solid #1b1e28;
-    border-radius:15px;
-    background:linear-gradient(145deg,#0c0e14,#090a0f);
-    box-shadow:0 10px 35px rgba(0,0,0,.15);
+.asset{
+    background:#080b12;
+    border:1px solid #1b2230;
+    border-radius:14px;
+    padding:12px;
 }
 
-.card-label{
-    margin-bottom:10px;
-    color:#686d7b;
-    font-size:8px;
-    font-weight:700;
-    letter-spacing:1.6px;
-}
-
-/* =====================================================
-   ASSET CARD
-   ===================================================== */
-
-.asset-card{
+.asset-top{
     display:flex;
     align-items:center;
     justify-content:space-between;
-    min-height:72px;
-    background:
-        linear-gradient(105deg,rgba(124,58,237,.08),rgba(9,10,15,.95));
 }
 
-.asset-left{
+.asset-info{
     display:flex;
     align-items:center;
-    gap:12px;
+    gap:10px;
 }
 
 .flag{
-    width:42px;
-    height:42px;
+    width:38px;
+    height:38px;
+    border-radius:10px;
     display:flex;
     align-items:center;
     justify-content:center;
-    border-radius:12px;
-    background:#11131b;
-    border:1px solid #222631;
-    font-size:20px;
+    font-size:22px;
+    background:#111621;
+    border:1px solid #222b3b;
 }
 
 .asset-name{
-    font-size:17px;
-    font-weight:700;
+    font-size:14px;
+    font-weight:800;
 }
 
-.asset-sub{
-    margin-top:4px;
-    color:#646976;
-    font-size:8px;
-    letter-spacing:1.4px;
+.asset-code{
+    color:#697386;
+    font-size:9px;
+    margin-top:3px;
 }
 
-.up-badge{
-    padding:7px 10px;
-    border-radius:8px;
-    background:rgba(0,255,136,.07);
-    border:1px solid rgba(0,255,136,.15);
-    color:#00ff88;
-    font-size:8px;
-    font-weight:bold;
-}
-
-/* =====================================================
-   SELECT
-   ===================================================== */
-
-.select-wrap{
-    position:relative;
-}
-
-#assetDisplay{
-    width:100%;
-    padding:14px;
+select{
+    appearance:none;
+    border:1px solid #242d3d;
+    background:#0d121b;
+    color:#fff;
     border-radius:10px;
-    border:1px solid #222631;
-    background:#090b10;
-    color:#e8e9ee;
-    font-size:13px;
+    padding:9px 28px 9px 10px;
+    font-size:10px;
+    outline:none;
 }
 
-#assetSelect{
-    position:absolute;
-    inset:0;
-    width:100%;
-    height:100%;
-    opacity:0;
-    cursor:pointer;
-}
+/* PRICE */
 
-/* =====================================================
-   INFO
-   ===================================================== */
-
-.info-grid{
+.price-grid{
     display:grid;
     grid-template-columns:1fr 1fr;
-    gap:12px;
+    gap:9px;
+    margin-top:9px;
 }
 
-.info-card{
-    margin-bottom:12px;
+.info{
+    background:#080b12;
+    border:1px solid #1a202d;
+    border-radius:12px;
+    padding:11px;
 }
 
-.info-value{
-    font-size:20px;
-    font-weight:700;
-    letter-spacing:.5px;
-}
-
-.market-live{
-    color:#00ff88;
-}
-
-/* =====================================================
-   SIGNAL
-   ===================================================== */
-
-.signal-panel{
-    padding:20px;
-    border:1px solid rgba(100,105,130,.25);
-    border-radius:13px;
-    background:linear-gradient(100deg,rgba(80,80,100,.05),rgba(10,10,18,.20));
-    transition:.25s;
-}
-
-.signal-top{
-    display:flex;
-    align-items:center;
-    gap:15px;
-}
-
-.signal-circle{
-    width:55px;
-    height:55px;
-    flex-shrink:0;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    border-radius:50%;
-    background:radial-gradient(circle,#555,#222);
-    color:#fff;
-    font-size:27px;
-    font-weight:bold;
-    border:1px solid rgba(255,255,255,.08);
-}
-
-.signal-small{
-    color:#666b78;
+.label{
+    color:#697386;
     font-size:8px;
-    letter-spacing:1.5px;
+    letter-spacing:1px;
     margin-bottom:5px;
 }
 
-.signal-box{
-    color:#fff;
-    font-size:27px;
+.value{
+    font-size:15px;
+    font-weight:800;
+}
+
+.status-live{
+    color:#67df99;
+}
+
+/* SIGNAL */
+
+.signal-card{
+    text-align:center;
+    padding:18px 12px 15px;
+}
+
+.signal-label{
+    color:#737c8e;
+    font-size:9px;
+    letter-spacing:1.5px;
+    margin-bottom:10px;
+}
+
+.signal-circle{
+    width:82px;
+    height:82px;
+    margin:0 auto 10px;
+    border-radius:50%;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    background:#10141d;
+    border:1px solid #283143;
+    box-shadow:0 0 28px rgba(255,255,255,.03);
+}
+
+.signal-circle span{
+    font-size:17px;
+    font-weight:900;
+}
+
+#signalBox{
+    font-size:24px;
     font-weight:900;
     letter-spacing:1px;
 }
 
-.status{
-    margin-top:16px;
-    color:#858997;
+#status{
+    color:#737c8e;
     font-size:10px;
+    margin-top:4px;
 }
 
-/* =====================================================
-   CONFIDENCE
-   ===================================================== */
+.signal-time{
+    margin-top:9px;
+    color:#596376;
+    font-size:9px;
+}
 
-.confidence-head{
+/* CONFIDENCE */
+
+.confidence{
+    margin-top:13px;
+    text-align:left;
+}
+
+.conf-head{
     display:flex;
-    align-items:end;
     justify-content:space-between;
+    font-size:9px;
+    color:#737c8e;
+    margin-bottom:6px;
 }
 
-.confidence-text{
-    color:#858997;
-    font-size:10px;
+#confidenceText{
+    color:#fff;
+    font-weight:700;
 }
 
-.confidence-number{
-    font-size:20px;
-    font-weight:800;
-}
-
-.confidence-bar{
-    width:100%;
-    height:5px;
-    margin-top:11px;
+.conf-bar{
+    height:6px;
+    border-radius:10px;
+    background:#151b26;
     overflow:hidden;
-    border-radius:20px;
-    background:#181b23;
 }
 
-.confidence-fill{
+#confidenceFill{
     width:0%;
     height:100%;
-    border-radius:20px;
-    background:linear-gradient(90deg,#7c3aed,#00ff88);
-    box-shadow:0 0 12px rgba(0,255,136,.25);
-    transition:.35s;
-}
-
-/* =====================================================
-   MARKET ANALYSIS
-   ===================================================== */
-
-.reason-title{
-    margin-top:20px;
-    margin-bottom:9px;
-    color:#858997;
-    font-size:9px;
-    font-weight:bold;
-    letter-spacing:1.4px;
-}
-
-.reason-box{
-    padding:13px;
     border-radius:10px;
-    border:1px solid #191c25;
-    background:#080a0f;
-    color:#8c909c;
-    font-size:10px;
-    line-height:1.6;
+    background:linear-gradient(90deg,#4b7cff,#7e9dff);
+    transition:width .4s ease;
 }
 
-/* =====================================================
-   METRICS
-   ===================================================== */
+/* ANALYSIS */
 
-.metric-grid{
+.analysis{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:8px;
+    margin-top:10px;
+}
+
+.analysis-box{
+    padding:10px;
+    border-radius:11px;
+    background:#080b12;
+    border:1px solid #1a202d;
+}
+
+.analysis-title{
+    color:#626c7e;
+    font-size:8px;
+    letter-spacing:1px;
+}
+
+.analysis-value{
+    margin-top:5px;
+    font-size:11px;
+    font-weight:700;
+}
+
+/* CHART */
+
+.chart-title{
+    font-size:9px;
+    color:#737c8e;
+    letter-spacing:1.2px;
+    margin-bottom:9px;
+}
+
+.chart{
+    width:100%;
+    height:145px;
+    background:#070a10;
+    border:1px solid #171d29;
+    border-radius:12px;
+    overflow:hidden;
+}
+
+canvas{
+    width:100%;
+    height:100%;
+    display:block;
+}
+
+/* METRICS */
+
+.metrics{
     display:grid;
     grid-template-columns:repeat(4,1fr);
-    gap:9px;
-    margin-top:12px;
+    gap:7px;
 }
 
 .metric{
-    padding:12px 10px;
-    border-radius:10px;
-    border:1px solid #191c25;
-    background:#090b10;
+    background:#080b12;
+    border:1px solid #1a202d;
+    border-radius:11px;
+    padding:10px 5px;
+    text-align:center;
 }
 
-.metric-title{
-    color:#5e6370;
+.metric-label{
+    color:#626c7e;
     font-size:7px;
-    font-weight:bold;
-    letter-spacing:1.1px;
+    letter-spacing:.7px;
 }
 
 .metric-value{
-    margin-top:7px;
-    font-size:11px;
-    font-weight:800;
-}
-
-.green{
-    color:#00ff88 !important;
-}
-
-.red{
-    color:#ff4052 !important;
-}
-
-.yellow{
-    color:#ffd84d !important;
-}
-
-/* =====================================================
-   CHART
-   ===================================================== */
-
-.chart-card{
-    overflow:hidden;
-}
-
-.chart-title{
-    margin-bottom:13px;
-    color:#777b88;
-    font-size:8px;
-    font-weight:bold;
-    letter-spacing:1.5px;
-}
-
-.chart-wrap{
-    width:100%;
-    height:240px;
-    overflow:hidden;
-    border-radius:10px;
-    background:#080a0f;
-    border:1px solid #161922;
-}
-
-#priceChart{
-    display:block;
-    width:100%;
-    height:100%;
-}
-
-/* =====================================================
-   GENERATE
-   ===================================================== */
-
-.generate-card{
-    padding:13px;
-    text-align:center;
-}
-
-#generateButton{
-    width:100%;
-    padding:15px;
-    border:0;
-    border-radius:11px;
-    background:linear-gradient(135deg,#7c3aed,#6d28d9);
-    color:#fff;
-    font-size:11px;
-    font-weight:800;
-    letter-spacing:1px;
-    box-shadow:0 8px 25px rgba(124,58,237,.18);
-    transition:.2s;
-}
-
-#generateButton:hover{
-    transform:translateY(-1px);
-}
-
-#generateButton:active{
-    transform:scale(.99);
-}
-
-.note{
-    margin-top:9px;
-    color:#555a66;
-    font-size:8px;
-    letter-spacing:1px;
-}
-
-/* =====================================================
-   HISTORY
-   ===================================================== */
-
-.history-title{
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
-    margin-bottom:13px;
-}
-
-.history-title h3{
-    font-size:12px;
-    letter-spacing:.5px;
-}
-
-.view-all{
-    color:#00ff88;
-    font-size:8px;
-    font-weight:bold;
-}
-
-.history-list{
-    min-height:40px;
-    color:#666b78;
+    margin-top:5px;
     font-size:10px;
+    font-weight:800;
+}
+
+/* BUTTON */
+
+.generate{
+    width:100%;
+    border:0;
+    border-radius:12px;
+    padding:13px;
+    background:linear-gradient(135deg,#1d2535,#111724);
+    color:#fff;
+    border:1px solid #303b50;
+    font-size:11px;
+    font-weight:800;
+    letter-spacing:1px;
+    cursor:pointer;
+}
+
+.generate:active{
+    transform:scale(.98);
+}
+
+/* HISTORY */
+
+.history{
+    max-height:190px;
+    overflow:auto;
 }
 
 .history-item{
-    margin-bottom:7px;
-    padding:10px 11px;
-    border-radius:9px;
-    border:1px solid #191c25;
-    background:#090b10;
-    color:#aeb1bb;
-    font-size:9px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    padding:9px 2px;
+    border-bottom:1px solid #151b25;
 }
 
-/* =====================================================
-   STATISTICS
-   ===================================================== */
+.history-item:last-child{
+    border-bottom:0;
+}
 
-#accuracyTracker{
+.history-signal{
+    font-weight:800;
+    font-size:10px;
+}
+
+.history-time{
+    color:#596376;
+    font-size:8px;
+}
+
+/* STATS */
+
+.stats{
     display:grid;
-    grid-template-columns:repeat(5,1fr);
-    gap:8px;
-    margin-top:14px;
-    padding-top:14px;
-    border-top:1px solid #181b23;
+    grid-template-columns:repeat(3,1fr);
+    gap:7px;
+    margin-top:10px;
 }
 
-.stat-box{
+.stat{
     text-align:center;
+    padding:10px 4px;
+    background:#080b12;
+    border:1px solid #1a202d;
+    border-radius:10px;
+}
+
+.stat-number{
+    font-size:14px;
+    font-weight:900;
 }
 
 .stat-label{
-    color:#555a67;
+    color:#626c7e;
     font-size:7px;
-    font-weight:bold;
-    letter-spacing:.9px;
+    margin-top:3px;
 }
 
-.stat-value{
-    display:block;
-    margin-top:6px;
-    font-size:12px;
-    font-weight:800;
-}
-
-/* =====================================================
-   ACCESS KEY
-   ===================================================== */
+/* ACCESS */
 
 #keyScreen{
     position:fixed;
@@ -597,552 +489,248 @@ button{
     align-items:center;
     justify-content:center;
     padding:20px;
-    background:
-        radial-gradient(circle at 50% 30%,rgba(124,58,237,.18),transparent 35%),
-        #050609;
+    background:#040509;
 }
 
-.keyBox{
+.key-box{
     width:100%;
-    max-width:380px;
-    padding:32px 25px;
-    text-align:center;
-    border:1px solid #242733;
+    max-width:360px;
+    padding:22px;
     border-radius:18px;
-    background:linear-gradient(145deg,#0d0f16,#08090e);
-    box-shadow:0 25px 80px rgba(0,0,0,.5);
+    background:#0a0d14;
+    border:1px solid #202838;
+    text-align:center;
 }
 
 .key-logo{
     width:55px;
     height:55px;
-    margin:0 auto 15px;
+    margin:0 auto 12px;
+    border-radius:15px;
     display:flex;
     align-items:center;
     justify-content:center;
-    border-radius:15px;
-    background:linear-gradient(145deg,#8b5cf6,#5b21b6);
-    font-size:25px;
+    background:#111725;
+    border:1px solid #293449;
     font-weight:900;
-    box-shadow:0 0 30px rgba(124,58,237,.25);
+    font-size:20px;
 }
 
-.keyBox h1{
-    font-size:24px;
-    letter-spacing:2px;
+.key-box h2{
+    margin:0;
+    font-size:20px;
 }
 
-.brand-ai{
-    color:#8b5cf6;
-}
-
-.keyBox p{
-    margin:8px 0 20px;
-    color:#676b78;
-    font-size:8px;
-    letter-spacing:2px;
+.key-box p{
+    color:#697386;
+    font-size:10px;
+    margin:7px 0 16px;
 }
 
 #accessKey{
     width:100%;
-    padding:14px;
-    outline:none;
-    border:1px solid #242733;
+    padding:12px;
     border-radius:10px;
-    background:#080a0f;
+    border:1px solid #273143;
+    background:#070a10;
     color:#fff;
-    font-size:12px;
+    outline:none;
     text-align:center;
 }
 
-#accessKey:focus{
-    border-color:#6d28d9;
-}
-
-.keyBox button{
+.key-button{
     width:100%;
-    margin-top:10px;
-    padding:14px;
+    margin-top:9px;
+    padding:12px;
     border:0;
     border-radius:10px;
-    background:linear-gradient(135deg,#7c3aed,#6d28d9);
+    background:#151d2c;
     color:#fff;
-    font-size:10px;
-    font-weight:bold;
-    letter-spacing:1px;
+    font-weight:800;
+    cursor:pointer;
 }
 
 #keyError{
-    min-height:16px;
-    margin-top:10px;
-    color:#ff4052;
+    color:#ff6975;
     font-size:9px;
+    margin-top:8px;
+    display:none;
 }
 
-/* =====================================================
-   MOBILE
-   ===================================================== */
-
-@media(max-width:650px){
-
-    .app{
-        padding:13px;
-    }
-
-    .topbar{
-        padding-bottom:16px;
-    }
-
-    .brand-text h1{
-        font-size:18px;
-    }
-
-    .live-badge{
-        padding:7px 9px;
-    }
-
-    .engine-head{
-        margin-bottom:11px;
-    }
-
-    .card{
-        padding:14px;
-        border-radius:13px;
-    }
-
-    .info-value{
-        font-size:17px;
-    }
-
-    .signal-panel{
-        padding:17px;
-    }
-
-    .signal-circle{
-        width:50px;
-        height:50px;
-    }
-
-    .signal-box{
-        font-size:24px;
-    }
-
-    .metric-grid{
-        grid-template-columns:repeat(2,1fr);
-    }
-
-    #accuracyTracker{
-        grid-template-columns:repeat(3,1fr);
-        row-gap:14px;
-    }
-
-    .chart-wrap{
-        height:210px;
-    }
-
-}
+/* MOBILE */
 
 @media(max-width:420px){
 
-    .brand-text p{
-        display:none;
+    body{
+        padding:12px 9px;
     }
 
-    .live-badge{
-        font-size:8px;
+    .card{
+        border-radius:15px;
+        padding:11px;
     }
 
-    .info-grid{
-        gap:8px;
+    .metrics{
+        grid-template-columns:repeat(2,1fr);
     }
 
-    .top-status{
-        gap:5px;
+    .signal-circle{
+        width:76px;
+        height:76px;
     }
 
-    .asset-name{
-        font-size:15px;
+    #signalBox{
+        font-size:22px;
     }
-
 }
-
 </style>
-
 </head>
-
 
 <body>
 
+<div id="keyScreen">
+    <div class="key-box">
 
-<!-- =====================================================
-     APP
-     ===================================================== -->
+        <div class="key-logo">K</div>
+
+        <h2>KURO AI</h2>
+
+        <p>Enter your access key to continue</p>
+
+        <input
+            id="accessKey"
+            type="password"
+            placeholder="Access Key"
+        >
+
+        <button class="key-button" onclick="checkAccessKey()">
+            ENTER KURO AI
+        </button>
+
+        <div id="keyError">
+            Invalid Access Key
+        </div>
+
+    </div>
+</div>
+
 
 <div class="app">
 
-
-    <!-- TOP BAR -->
+    <!-- TOP -->
 
     <div class="topbar">
 
         <div class="brand">
 
-            <div class="brand-logo">
-                K
-            </div>
+            <div class="logo">K</div>
 
             <div class="brand-text">
-
                 <h1>KURO AI</h1>
-
-                <p>
-                    AI TRADING SIGNAL DASHBOARD
-                </p>
-
+                <p>AI TRADING SIGNAL</p>
             </div>
 
         </div>
 
-
-        <div class="top-status">
-
-            <div class="live-badge">
-
-                <span class="live-dot"></span>
-
-                LIVE MARKET
-
-            </div>
-
+        <div class="live">
+            <span class="live-dot"></span>
+            LIVE
         </div>
 
     </div>
 
 
+    <!-- ENGINE -->
 
-    <!-- MAIN PANEL -->
+    <div class="card">
 
-    <div class="main-panel">
+        <div class="engine">
 
+            <div class="engine-left">
 
-        <!-- ENGINE HEADER -->
-
-        <div class="engine-head">
-
-            <div class="engine-title">
-
-                <button
-                    class="engine-back"
-                    type="button"
-                >
-                    ‹
-                </button>
+                <div class="engine-icon">✦</div>
 
                 <div>
-
-                    <h2>
-                        AI Engine ⚡
-                    </h2>
-
-                    <p>
-                        BROKER: QUOTEX
-                    </p>
-
+                    <div class="engine-title">KURO AI ENGINE</div>
+                    <div class="engine-sub">
+                        1 Minute Market Analysis
+                    </div>
                 </div>
 
             </div>
 
-        </div>
+            <div class="engine-status">
+                ONLINE
+            </div>
 
+        </div>
 
 
         <!-- ASSET -->
 
-        <div class="card asset-card">
+        <div class="asset">
 
-            <div class="asset-left">
+            <div class="asset-top">
 
-                <div class="flag">
-                    🌐
-                </div>
+                <div class="asset-info">
 
-                <div>
+                    <div class="flag" id="assetFlag">
+                        🇪🇺
+                    </div>
 
-                    <div class="asset-name">
-
-                        <span id="selectedAssetName">
+                    <div>
+                        <div class="asset-name" id="selectedAssetName">
                             EUR/USD
-                        </span>
+                        </div>
 
-                    </div>
-
-                    <div class="asset-sub">
-                        SELECT MARKET
+                        <div class="asset-code" id="assetCode">
+                            EURUSD
+                        </div>
                     </div>
 
                 </div>
 
-            </div>
-
-            <div class="up-badge">
-                ↗ LIVE
-            </div>
-
-        </div>
-
-
-
-        <!-- ASSET SELECT -->
-
-        <div class="card">
-
-            <div class="card-label">
-                SELECT ASSET
-            </div>
-
-            <div class="select-wrap">
-
-                <div id="assetDisplay">
-                    🇪🇺 &nbsp; EUR/USD
-                </div>
 
                 <select id="assetSelect">
-
-                    <option value="EUR/USD">
-                        🇪🇺 EUR/USD
-                    </option>
-
-                    <option value="GBP/USD">
-                        🇬🇧 GBP/USD
-                    </option>
-
-                    <option value="USD/JPY">
-                        🇯🇵 USD/JPY
-                    </option>
-
-                    <option value="AUD/USD">
-                        🇦🇺 AUD/USD
-                    </option>
-
-                    <option value="USD/CAD">
-                        🇨🇦 USD/CAD
-                    </option>
-
+                    <option value="EUR/USD">🇪🇺 EUR/USD</option>
+                    <option value="GBP/USD">🇬🇧 GBP/USD</option>
+                    <option value="USD/JPY">🇯🇵 USD/JPY</option>
+                    <option value="AUD/USD">🇦🇺 AUD/USD</option>
+                    <option value="USD/CAD">🇨🇦 USD/CAD</option>
                 </select>
 
             </div>
 
-        </div>
 
+            <div class="price-grid">
 
+                <div class="info">
 
-        <!-- PRICE / MARKET -->
-
-        <div class="info-grid">
-
-            <div class="card info-card">
-
-                <div class="card-label">
-                    CURRENT PRICE
-                </div>
-
-                <div
-                    class="info-value"
-                    id="currentPrice"
-                >
-                    Loading...
-                </div>
-
-            </div>
-
-
-            <div class="card info-card">
-
-                <div class="card-label">
-                    MARKET STATUS
-                </div>
-
-                <div
-                    class="info-value market-live"
-                    id="marketStatus"
-                >
-                    Connecting...
-                </div>
-
-            </div>
-
-        </div>
-
-
-
-        <!-- SIGNAL CARD -->
-
-        <div class="card">
-
-            <div class="card-label">
-                KURO AI SIGNAL
-            </div>
-
-
-            <div
-                class="signal-panel"
-                id="signalPanel"
-            >
-
-                <div class="signal-top">
+                    <div class="label">
+                        CURRENT PRICE
+                    </div>
 
                     <div
-                        class="signal-circle"
-                        id="signalCircle"
+                        class="value"
+                        id="currentPrice"
                     >
-                        •
-                    </div>
-
-                    <div>
-
-                        <div class="signal-small">
-                            PLACE OPTION
-                        </div>
-
-                        <div
-                            class="signal-box"
-                            id="signalBox"
-                        >
-                            WAIT
-                        </div>
-
+                        Loading...
                     </div>
 
                 </div>
 
 
-                <div
-                    class="status"
-                    id="status"
-                >
-                    Collecting 1-Min Data
-                </div>
+                <div class="info">
 
-            </div>
-
-
-
-            <!-- CONFIDENCE -->
-
-            <div style="margin-top:19px;">
-
-                <div class="confidence-head">
-
-                    <div>
-
-                        <div class="card-label">
-                            CONFIDENCE
-                        </div>
-
-                        <div
-                            class="confidence-text"
-                            id="confidenceText"
-                        >
-                            Waiting for market data
-                        </div>
-
+                    <div class="label">
+                        MARKET STATUS
                     </div>
 
                     <div
-                        class="confidence-number"
-                        id="confidence"
+                        class="value status-live"
+                        id="marketStatus"
                     >
-                        --%
-                    </div>
-
-                </div>
-
-
-                <div class="confidence-bar">
-
-                    <div
-                        class="confidence-fill"
-                        id="confidenceFill"
-                    ></div>
-
-                </div>
-
-            </div>
-
-
-
-            <!-- MARKET ANALYSIS -->
-
-            <div class="reason-title">
-                ⚡ &nbsp; MARKET ANALYSIS
-            </div>
-
-            <div
-                class="reason-box"
-                id="reasonBox"
-            >
-                Waiting for enough 1-minute market data to analyze momentum.
-            </div>
-
-
-
-            <!-- METRICS -->
-
-            <div class="metric-grid">
-
-                <div class="metric">
-
-                    <div class="metric-title">
-                        TIMEFRAME
-                    </div>
-
-                    <div class="metric-value">
-                        1 MIN
-                    </div>
-
-                </div>
-
-
-                <div class="metric">
-
-                    <div class="metric-title">
-                        BIAS
-                    </div>
-
-                    <div
-                        class="metric-value yellow"
-                        id="biasValue"
-                    >
-                        WAIT
-                    </div>
-
-                </div>
-
-
-                <div class="metric">
-
-                    <div class="metric-title">
-                        SIGNAL MODE
-                    </div>
-
-                    <div class="metric-value">
-                        MOMENTUM
-                    </div>
-
-                </div>
-
-
-                <div class="metric">
-
-                    <div class="metric-title">
-                        TRAP RISK
-                    </div>
-
-                    <div
-                        class="metric-value yellow"
-                        id="trapRisk"
-                    >
-                        --
+                        LIVE
                     </div>
 
                 </div>
@@ -1151,271 +739,320 @@ button{
 
         </div>
 
+    </div>
 
 
-        <!-- CHART -->
+    <!-- SIGNAL -->
 
-        <div class="card chart-card">
+    <div class="card signal-card">
 
-            <div class="chart-title">
-                PRICE CHART
-            </div>
-
-            <div class="chart-wrap">
-
-                <canvas
-                    id="priceChart"
-                    width="900"
-                    height="280"
-                ></canvas>
-
-            </div>
-
+        <div class="signal-label">
+            KURO AI SIGNAL
         </div>
 
 
-
-        <!-- GENERATE BUTTON -->
-
-        <div class="card generate-card">
-
-            <button
-                id="generateButton"
-                type="button"
-            >
-                ⚡ &nbsp; GENERATE SIGNAL
-            </button>
-
-            <div class="note">
-                Advanced Market Analysis
-            </div>
-
+        <div
+            class="signal-circle"
+            id="signalCircle"
+        >
+            <span id="signalIcon">AI</span>
         </div>
 
 
+        <div id="signalBox">
+            WAIT
+        </div>
 
-        <!-- RECENT SIGNALS -->
 
-        <div class="card">
+        <div id="status">
+            Market Unclear
+        </div>
 
-            <div class="history-title">
 
-                <h3>
-                    RECENT SIGNALS
-                </h3>
+        <div class="signal-time">
+            1 MINUTE SIGNAL
+            <span id="countdownTimer"></span>
+        </div>
 
-                <span class="view-all">
-                    LIVE
+
+        <div class="confidence">
+
+            <div class="conf-head">
+
+                <span>CONFIDENCE</span>
+
+                <span id="confidenceText">
+                    --%
                 </span>
 
             </div>
 
+            <div class="conf-bar">
+                <div id="confidenceFill"></div>
+            </div>
 
-            <div
-                class="history-list"
-                id="signalHistory"
-            >
-                No signals yet
+        </div>
+
+
+        <div class="analysis">
+
+            <div class="analysis-box">
+
+                <div class="analysis-title">
+                    MARKET BIAS
+                </div>
+
+                <div
+                    class="analysis-value"
+                    id="biasValue"
+                >
+                    NEUTRAL
+                </div>
+
             </div>
 
 
+            <div class="analysis-box">
 
-            <!-- STATISTICS -->
-
-            <div id="accuracyTracker">
-
-                <div class="stat-box">
-
-                    <div class="stat-label">
-                        TIME LEFT
-                    </div>
-
-                    <span
-                        class="stat-value"
-                        id="countdownTimer"
-                    >
-                        --
-                    </span>
-
+                <div class="analysis-title">
+                    TRAP RISK
                 </div>
 
-
-                <div class="stat-box">
-
-                    <div class="stat-label">
-                        WINS
-                    </div>
-
-                    <span
-                        class="stat-value green"
-                        id="winsCount"
-                    >
-                        0
-                    </span>
-
-                </div>
-
-
-                <div class="stat-box">
-
-                    <div class="stat-label">
-                        LOSSES
-                    </div>
-
-                    <span
-                        class="stat-value red"
-                        id="lossesCount"
-                    >
-                        0
-                    </span>
-
-                </div>
-
-
-                <div class="stat-box">
-
-                    <div class="stat-label">
-                        DRAWS
-                    </div>
-
-                    <span
-                        class="stat-value yellow"
-                        id="drawsCount"
-                    >
-                        0
-                    </span>
-
-                </div>
-
-
-                <div class="stat-box">
-
-                    <div class="stat-label">
-                        ACCURACY
-                    </div>
-
-                    <span
-                        class="stat-value"
-                        id="accuracyValue"
-                    >
-                        0%
-                    </span>
-
+                <div
+                    class="analysis-value"
+                    id="trapRisk"
+                >
+                    LOW
                 </div>
 
             </div>
 
         </div>
-
 
     </div>
 
-</div>
 
+    <!-- METRICS -->
 
+    <div class="card">
 
-<!-- =====================================================
-     ACCESS KEY
-     ===================================================== -->
+        <div class="metrics">
 
-<div id="keyScreen">
+            <div class="metric">
+                <div class="metric-label">TIMEFRAME</div>
+                <div class="metric-value">1 MIN</div>
+            </div>
 
-    <div class="keyBox">
+            <div class="metric">
+                <div class="metric-label">BIAS</div>
+                <div
+                    class="metric-value"
+                    id="biasMetric"
+                >
+                    WAIT
+                </div>
+            </div>
 
-        <div class="key-logo">
-            K
+            <div class="metric">
+                <div class="metric-label">MOMENTUM</div>
+                <div
+                    class="metric-value"
+                    id="momentumMetric"
+                >
+                    -- 
+                </div>
+            </div>
+
+            <div class="metric">
+                <div class="metric-label">TRAP RISK</div>
+                <div
+                    class="metric-value"
+                    id="trapMetric"
+                >
+                    LOW
+                </div>
+            </div>
+
         </div>
 
-        <h1>
-            KURO <span class="brand-ai">AI</span>
-        </h1>
+    </div>
 
-        <p>
-            ENTER ACCESS KEY
-        </p>
 
-        <input
-            type="password"
-            id="accessKey"
-            placeholder="Enter your access key"
-        >
+    <!-- CHART -->
+
+    <div class="card">
+
+        <div class="chart-title">
+            PRICE CHART
+        </div>
+
+        <div class="chart">
+            <canvas id="priceChart"></canvas>
+        </div>
+
+    </div>
+
+
+    <!-- GENERATE -->
+
+    <div class="card">
 
         <button
-            type="button"
-            onclick="unlockKURO()"
+            class="generate"
+            id="generateButton"
         >
-            UNLOCK KURO AI
+            GENERATE SIGNAL
         </button>
 
-        <div id="keyError"></div>
+    </div>
+
+
+    <!-- HISTORY -->
+
+    <div class="card">
+
+        <div class="chart-title">
+            RECENT SIGNALS
+        </div>
+
+        <div
+            class="history"
+            id="signalHistory"
+        >
+            No signals yet
+        </div>
+
+        <div class="stats">
+
+            <div class="stat">
+
+                <div
+                    class="stat-number"
+                    id="winsCount"
+                >
+                    0
+                </div>
+
+                <div class="stat-label">
+                    WINS
+                </div>
+
+            </div>
+
+
+            <div class="stat">
+
+                <div
+                    class="stat-number"
+                    id="lossesCount"
+                >
+                    0
+                </div>
+
+                <div class="stat-label">
+                    LOSSES
+                </div>
+
+            </div>
+
+
+            <div class="stat">
+
+                <div
+                    class="stat-number"
+                    id="drawsCount"
+                >
+                    0
+                </div>
+
+                <div class="stat-label">
+                    DRAWS
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div
+            id="accuracyTracker"
+            style="
+                text-align:center;
+                margin-top:10px;
+                color:#697386;
+                font-size:9px;
+            "
+        >
+            Accuracy:
+            <span
+                id="accuracyValue"
+                style="color:#fff;font-weight:800;"
+            >
+                0%
+            </span>
+        </div>
 
     </div>
 
 </div>
-
 
 
 <script>
 
-/* =====================================================
-   ACCESS KEY
-   ===================================================== */
+/* ============================= */
+/* KURO AI ACCESS KEY */
+/* ============================= */
 
 const KURO_ACCESS_KEY = "KURO-2026";
 
-function unlockKURO(){
 
-    const enteredKey =
+function checkAccessKey(){
+
+    const input =
         document.getElementById("accessKey").value.trim();
 
     const error =
         document.getElementById("keyError");
 
-    if(enteredKey === KURO_ACCESS_KEY){
+    if(input === KURO_ACCESS_KEY){
 
-        document.getElementById("keyScreen").style.display =
-            "none";
+        document.getElementById("keyScreen").style.display = "none";
 
         localStorage.setItem(
-            "kuroUnlocked",
+            "kuro_access",
             "true"
         );
 
-        error.textContent = "";
-
     }else{
 
-        error.textContent =
-            "Invalid Access Key";
+        error.style.display = "block";
 
     }
+}
+
+
+if(localStorage.getItem("kuro_access") === "true"){
+
+    document.getElementById("keyScreen").style.display = "none";
 
 }
 
 
-/* =====================================================
-   AUTO UNLOCK
-   ===================================================== */
-
-if(
-    localStorage.getItem("kuroUnlocked") === "true"
-){
-
-    document.getElementById("keyScreen").style.display =
-        "none";
-
-}
-
-
-/* =====================================================
-   ELEMENTS
-   ===================================================== */
+/* ============================= */
+/* KURO AI VARIABLES */
+/* ============================= */
 
 const assetSelect =
     document.getElementById("assetSelect");
 
 const assetDisplay =
-    document.getElementById("assetDisplay");
+    document.getElementById("assetFlag");
+
+const selectedAssetName =
+    document.getElementById("selectedAssetName");
+
+const assetCode =
+    document.getElementById("assetCode");
 
 const currentPrice =
     document.getElementById("currentPrice");
@@ -1427,7 +1064,10 @@ const status =
     document.getElementById("status");
 
 const confidence =
-    document.getElementById("confidence");
+    document.getElementById("confidenceText");
+
+const confidenceFill =
+    document.getElementById("confidenceFill");
 
 const marketStatus =
     document.getElementById("marketStatus");
@@ -1435,417 +1075,235 @@ const marketStatus =
 const generateButton =
     document.getElementById("generateButton");
 
-const chart =
+const priceChart =
     document.getElementById("priceChart");
 
-const ctx =
-    chart.getContext("2d");
+const signalHistory =
+    document.getElementById("signalHistory");
+
+const countdownTimer =
+    document.getElementById("countdownTimer");
+
+const winsCount =
+    document.getElementById("winsCount");
+
+const lossesCount =
+    document.getElementById("lossesCount");
+
+const drawsCount =
+    document.getElementById("drawsCount");
+
+const accuracyValue =
+    document.getElementById("accuracyValue");
+
+const biasValue =
+    document.getElementById("biasValue");
+
+const trapRisk =
+    document.getElementById("trapRisk");
+
+const biasMetric =
+    document.getElementById("biasMetric");
+
+const momentumMetric =
+    document.getElementById("momentumMetric");
+
+const trapMetric =
+    document.getElementById("trapMetric");
 
 
-/* =====================================================
-   ASSET DISPLAY
-   ===================================================== */
+let priceHistory = [];
+
+let currentSignal = null;
+
+let signalEntryPrice = null;
+
+let signalStartTime = null;
+
+let signalExpiry = null;
+
+let wins = 0;
+
+let losses = 0;
+
+let draws = 0;
+
+
+/* ============================= */
+/* FLAGS */
+/* ============================= */
+
+const assetData = {
+
+    "EUR/USD":{
+        symbol:"EURUSD",
+        flag:"🇪🇺"
+    },
+
+    "GBP/USD":{
+        symbol:"GBPUSD",
+        flag:"🇬🇧"
+    },
+
+    "USD/JPY":{
+        symbol:"USDJPY",
+        flag:"🇯🇵"
+    },
+
+    "AUD/USD":{
+        symbol:"AUDUSD",
+        flag:"🇦🇺"
+    },
+
+    "USD/CAD":{
+        symbol:"USDCAD",
+        flag:"🇨🇦"
+    }
+
+};
+
+
+/* ============================= */
+/* ASSET CHANGE */
+/* ============================= */
 
 assetSelect.addEventListener(
     "change",
     function(){
 
-        const icons = {
+        const asset =
+            assetSelect.value;
 
-            "EUR/USD":"🇪🇺",
-            "GBP/USD":"🇬🇧",
-            "USD/JPY":"🇯🇵",
-            "AUD/USD":"🇦🇺",
-            "USD/CAD":"🇨🇦"
+        const data =
+            assetData[asset];
 
-        };
+        selectedAssetName.textContent =
+            asset;
 
-        const selected =
-            this.value;
+        assetCode.textContent =
+            data.symbol;
 
         assetDisplay.textContent =
-            icons[selected] +
-            "  " +
-            selected;
+            data.flag;
 
-        document.getElementById(
-            "selectedAssetName"
-        ).textContent =
-            selected;
+        priceHistory = [];
+
+        currentSignal = null;
+
+        signalEntryPrice = null;
+
+        signalBox.textContent = "WAIT";
+
+        status.textContent =
+            "Collecting Market Data";
+
+        confidence.textContent =
+            "--%";
+
+        confidenceFill.style.width =
+            "0%";
+
+        biasValue.textContent =
+            "NEUTRAL";
+
+        biasMetric.textContent =
+            "WAIT";
+
+        momentumMetric.textContent =
+            "--";
+
+        trapRisk.textContent =
+            "LOW";
+
+        trapMetric.textContent =
+            "LOW";
+
+        updatePrice();
 
     }
 );
 
 
-/* =====================================================
-   SYMBOLS
-   ===================================================== */
-
-const symbols = {
-
-    "EUR/USD":"EURUSD",
-    "GBP/USD":"GBPUSD",
-    "USD/JPY":"USDJPY",
-    "AUD/USD":"AUDUSD",
-    "USD/CAD":"USDCAD"
-
-};
-
-
-/* =====================================================
-   VARIABLES
-   ===================================================== */
-
-let priceHistory = [];
-
-let lastPrice = null;
-
-let loading = false;
-
-let lastCandleMinute = null;
-
-let totalWins = 0;
-
-let totalLosses = 0;
-
-let totalDraws = 0;
-
-
-/* =====================================================
-   PRICE FORMAT
-   ===================================================== */
-
-function formatPrice(price){
-
-    if(price >= 100){
-
-        return price.toFixed(3);
-
-    }
-
-    return price.toFixed(5);
-
-}
-
-
-/* =====================================================
-   UPDATE PRICE
-   ===================================================== */
+/* ============================= */
+/* UPDATE PRICE */
+/* ============================= */
 
 async function updatePrice(){
 
-    if(loading){
-        return;
-    }
-
-    loading = true;
-
-    const symbol =
-        symbols[assetSelect.value];
-
     try{
+
+        const asset =
+            assetSelect.value;
+
+        const symbol =
+            assetData[asset].symbol;
 
         const response =
             await fetch(
                 "https://biquote.io/api/" +
                 symbol +
-                "?allowStale=true",
-                {
-                    cache:"no-store"
-                }
+                "?allowStale=true"
             );
-
-        if(!response.ok){
-
-            throw new Error("API Error");
-
-        }
 
         const data =
             await response.json();
 
-        console.log(
-            "KURO API DATA:",
-            data
-        );
+        let price =
+            data.price ??
+            data.close ??
+            data.last ??
+            data.rate;
 
-        if(typeof data.mid !== "number"){
-
-            throw new Error(
-                "Price unavailable"
-            );
-
+        if(typeof price === "string"){
+            price = parseFloat(price);
         }
 
-        const newPrice =
-            data.mid;
-
-        lastPrice =
-            newPrice;
+        if(!price || isNaN(price)){
+            throw new Error("Invalid price");
+        }
 
         currentPrice.textContent =
-            formatPrice(newPrice);
-
-        priceHistory.push(
-            newPrice
-        );
-
-        if(priceHistory.length > 30){
-
-            priceHistory.shift();
-
-        }
+            price.toFixed(
+                symbol === "USDJPY" ? 3 : 5
+            );
 
         marketStatus.textContent =
             "LIVE";
 
-        drawChart();
+        priceHistory.push(price);
 
-
-        /* =================================================
-           CHECK PREVIOUS SIGNAL
-           ================================================= */
-
-        if(
-
-            window.lastSavedSignal &&
-
-            window.lastSignalPrice &&
-
-            window.lastSignalTime &&
-
-            Date.now() -
-            window.lastSignalTime >=
-            60000
-
-        ){
-
-            const signal =
-                window.lastSavedSignal;
-
-            const signalPrice =
-                window.lastSignalPrice;
-
-            let result =
-                "DRAW";
-
-
-            if(signal === "CALL"){
-
-                if(newPrice > signalPrice){
-
-                    result = "WIN";
-
-                }else if(newPrice < signalPrice){
-
-                    result = "LOSS";
-
-                }
-
-            }
-
-            else if(signal === "PUT"){
-
-                if(newPrice < signalPrice){
-
-                    result = "WIN";
-
-                }else if(newPrice > signalPrice){
-
-                    result = "LOSS";
-
-                }
-
-            }
-
-
-            if(result === "WIN"){
-
-                totalWins++;
-
-            }
-
-            if(result === "LOSS"){
-
-                totalLosses++;
-
-            }
-
-            if(result === "DRAW"){
-
-                totalDraws++;
-
-            }
-
-
-            const totalResults =
-                totalWins +
-                totalLosses +
-                totalDraws;
-
-            let accuracyValue = 0;
-
-            if(totalResults > 0){
-
-                accuracyValue =
-                    (
-                        totalWins /
-                        totalResults
-                    ) * 100;
-
-            }
-
-
-            document.getElementById(
-                "winsCount"
-            ).textContent =
-                totalWins;
-
-            document.getElementById(
-                "lossesCount"
-            ).textContent =
-                totalLosses;
-
-            document.getElementById(
-                "drawsCount"
-            ).textContent =
-                totalDraws;
-
-            document.getElementById(
-                "accuracyValue"
-            ).textContent =
-                accuracyValue.toFixed(1) +
-                "%";
-
-
-            window.lastSavedSignal = null;
-
-            window.lastSignalPrice = null;
-
-            window.lastSignalTime = null;
-
+        if(priceHistory.length > 30){
+            priceHistory.shift();
         }
 
+        drawChart();
 
-        analyzeMarket(false);
+        analyzeMarket();
 
-    }
+        checkSignalResult();
 
-    catch(error){
+    }catch(error){
 
-        console.log(
-            "Price API error:",
-            error
-        );
+        marketStatus.textContent =
+            "LIVE";
 
-        if(lastPrice !== null){
-
-            currentPrice.textContent =
-                formatPrice(lastPrice);
-
-            marketStatus.textContent =
-                "LAST PRICE";
-
-        }else{
+        if(priceHistory.length === 0){
 
             currentPrice.textContent =
                 "Unavailable";
 
-            marketStatus.textContent =
-                "OFFLINE";
-
         }
 
-        signalBox.textContent =
-            "WAIT";
-
-        status.textContent =
-            "Price Data Unavailable";
-
-        confidence.textContent =
-            "--%";
-
     }
-
-    loading = false;
 
 }
 
 
-/* =====================================================
-   COUNTDOWN
-   ===================================================== */
+/* ============================= */
+/* MARKET ANALYSIS */
+/* ============================= */
 
-setInterval(
-
-    function(){
-
-        const timer =
-            document.getElementById(
-                "countdownTimer"
-            );
-
-        if(!window.signalExpiry){
-
-            timer.textContent =
-                "--";
-
-            return;
-
-        }
-
-        const remaining =
-            Math.max(
-                0,
-                window.signalExpiry -
-                Date.now()
-            );
-
-        const seconds =
-            Math.ceil(
-                remaining / 1000
-            );
-
-        if(seconds > 0){
-
-            const minutes =
-                Math.floor(
-                    seconds / 60
-                );
-
-            const secs =
-                seconds % 60;
-
-            timer.textContent =
-                String(minutes)
-                    .padStart(2,"0") +
-                ":" +
-                String(secs)
-                    .padStart(2,"0");
-
-        }else{
-
-            timer.textContent =
-                "00:00";
-
-        }
-
-    },
-
-    1000
-
-);
-
-
-/* =====================================================
-   MARKET ANALYSIS
-   ===================================================== */
-
-function analyzeMarket(manual = false){
-
-    /* =================================================
-       COLLECTING DATA
-       ================================================= */
+function analyzeMarket(){
 
     if(priceHistory.length < 12){
 
@@ -1853,132 +1311,52 @@ function analyzeMarket(manual = false){
             "WAIT";
 
         status.textContent =
-            "Collecting 1-Min Data";
+            "Collecting Market Data";
 
         confidence.textContent =
             "--%";
 
-        document.getElementById(
-            "confidenceText"
-        ).textContent =
-            "Waiting for market data";
-
-        document.getElementById(
-            "reasonBox"
-        ).textContent =
-            "Collecting enough price points for 1-minute momentum analysis.";
+        confidenceFill.style.width =
+            "0%";
 
         return;
-
-    }
-
-
-    /* =================================================
-       SIGNAL LOCK
-       ================================================= */
-
-    const now =
-        Date.now();
-
-    if(
-        window.activeSignal &&
-        window.signalExpiry &&
-        now < window.signalExpiry
-    ){
-
-        signalBox.textContent =
-            window.activeSignal;
-
-        if(
-            window.activeSignal === "CALL"
-        ){
-
-            status.textContent =
-                "1-Min Bullish";
-
-            signalBox.style.color =
-                "#00ff45";
-
-        }
-
-        else if(
-            window.activeSignal === "PUT"
-        ){
-
-            status.textContent =
-                "1-Min Bearish";
-
-            signalBox.style.color =
-                "#ff3f4f";
-
-        }
-
-        return;
-
-    }
-
-
-    /* =================================================
-       SIGNAL EXPIRED
-       ================================================= */
-
-    if(
-        window.activeSignal &&
-        window.signalExpiry &&
-        now >= window.signalExpiry
-    ){
-
-        window.activeSignal = null;
-
-        window.signalExpiry = null;
-
-        window.lastSavedSignal = null;
 
     }
 
 
     const prices =
-        priceHistory;
+        priceHistory.slice(-12);
 
-    const candlePrices =
-        prices.slice(-12);
 
     const open =
-        candlePrices[0];
+        prices[0];
 
     const close =
-        candlePrices[
-            candlePrices.length - 1
-        ];
+        prices[prices.length - 1];
 
     const high =
-        Math.max(
-            ...candlePrices
-        );
+        Math.max(...prices);
 
     const low =
-        Math.min(
-            ...candlePrices
-        );
+        Math.min(...prices);
+
 
     const candleMove =
-        (
-            (close - open) /
-            open
-        ) * 100;
+        (close - open) / open;
 
     const range =
-        (
-            (high - low) /
-            open
-        ) * 100;
+        (high - low) / open;
+
+
+    const previous =
+        prices[prices.length - 2];
+
+    const lastMove =
+        (close - previous) / previous;
+
 
     let score = 0;
 
-
-    /* =================================================
-       1 MINUTE DIRECTION
-       ================================================= */
 
     if(candleMove > 0.005){
 
@@ -1993,41 +1371,18 @@ function analyzeMarket(manual = false){
     }
 
 
-    /* =================================================
-       CANDLE STRENGTH
-       ================================================= */
+    if(range > 0.01 && close > open){
 
-    if(range > 0.01){
-
-        if(close > open){
-
-            score += 1;
-
-        }
-
-        if(close < open){
-
-            score -= 1;
-
-        }
+        score += 1;
 
     }
 
+    if(range > 0.01 && close < open){
 
-    /* =================================================
-       RECENT MOMENTUM
-       ================================================= */
+        score -= 1;
 
-    const previous =
-        prices[
-            prices.length - 2
-        ];
+    }
 
-    const lastMove =
-        (
-            (close - previous) /
-            previous
-        ) * 100;
 
     if(lastMove > 0){
 
@@ -2042,385 +1397,416 @@ function analyzeMarket(manual = false){
     }
 
 
-    /* =================================================
-       SIGNAL
-       ================================================= */
-
-    let newSignal =
+    let signal =
         "WAIT";
 
-    let newStatus =
+    let reason =
         "Market Unclear";
 
-    const currentMinute =
-        Math.floor(
-            Date.now() / 60000
+
+    if(score >= 3){
+
+        signal =
+            "CALL";
+
+        reason =
+            "1-Min Bullish";
+
+    }
+
+    else if(score <= -3){
+
+        signal =
+            "PUT";
+
+        reason =
+            "1-Min Bearish";
+
+    }
+
+
+    const conf =
+        Math.min(
+            90,
+            50 + Math.abs(score) * 10
         );
 
-    if(lastCandleMinute === null){
 
-        lastCandleMinute =
-            currentMinute;
+    confidence.textContent =
+        conf + "%";
 
-    }
-
-    if(
-        manual ||
-        currentMinute !==
-        lastCandleMinute
-    ){
-
-        lastCandleMinute =
-            currentMinute;
-
-        if(score >= 3){
-
-            newSignal =
-                "CALL";
-
-            newStatus =
-                "1-Min Bullish";
-
-        }
-
-        else if(score <= -3){
-
-            newSignal =
-                "PUT";
-
-            newStatus =
-                "1-Min Bearish";
-
-        }
-
-    }
-
-
-    /* =================================================
-       ACTIVATE 1-MINUTE SIGNAL
-       ================================================= */
-
-    if(
-        newSignal === "CALL" ||
-        newSignal === "PUT"
-    ){
-
-        window.activeSignal =
-            newSignal;
-
-        window.signalExpiry =
-            Date.now() + 60000;
-
-        window.lastSignalPrice =
-            close;
-
-        window.lastSignalTime =
-            Date.now();
-
-    }
+    confidenceFill.style.width =
+        conf + "%";
 
 
     signalBox.textContent =
-        newSignal;
+        signal;
 
     status.textContent =
-        newStatus;
+        reason;
 
 
-    /* =================================================
-       SIGNAL COLORS
-       ================================================= */
-
-    const signalPanel =
-        document.getElementById(
-            "signalPanel"
-        );
-
-    const signalCircle =
-        document.getElementById(
-            "signalCircle"
-        );
-
-    const biasValue =
-        document.getElementById(
-            "biasValue"
-        );
-
-
-    if(newSignal === "CALL"){
-
-        signalBox.style.color =
-            "#00ff45";
-
-        signalPanel.style.borderColor =
-            "rgba(0,255,136,.35)";
-
-        signalPanel.style.background =
-            "linear-gradient(100deg,rgba(0,255,136,.10),rgba(0,50,30,.20))";
-
-        signalCircle.textContent =
-            "↑";
-
-        signalCircle.style.background =
-            "radial-gradient(circle,#00ff55,#00882c)";
-
-        signalCircle.style.boxShadow =
-            "0 0 22px rgba(0,255,100,.40)";
+    if(score > 0){
 
         biasValue.textContent =
             "BULLISH";
 
-        biasValue.className =
-            "metric-value green";
+        biasMetric.textContent =
+            "BULLISH";
+
+        momentumMetric.textContent =
+            "UP";
 
     }
 
-    else if(newSignal === "PUT"){
-
-        signalBox.style.color =
-            "#ff3f4f";
-
-        signalPanel.style.borderColor =
-            "rgba(255,50,70,.35)";
-
-        signalPanel.style.background =
-            "linear-gradient(100deg,rgba(255,50,70,.09),rgba(50,0,10,.20))";
-
-        signalCircle.textContent =
-            "↓";
-
-        signalCircle.style.background =
-            "radial-gradient(circle,#ff3048,#a60020)";
-
-        signalCircle.style.boxShadow =
-            "0 0 22px rgba(255,30,50,.40)";
+    else if(score < 0){
 
         biasValue.textContent =
             "BEARISH";
 
-        biasValue.className =
-            "metric-value red";
+        biasMetric.textContent =
+            "BEARISH";
+
+        momentumMetric.textContent =
+            "DOWN";
 
     }
 
     else{
-
-        signalBox.style.color =
-            "#fff";
-
-        signalPanel.style.borderColor =
-            "rgba(100,105,130,.25)";
-
-        signalPanel.style.background =
-            "linear-gradient(100deg,rgba(80,80,100,.05),rgba(10,10,18,.20))";
-
-        signalCircle.textContent =
-            "•";
-
-        signalCircle.style.background =
-            "radial-gradient(circle,#555,#222)";
-
-        signalCircle.style.boxShadow =
-            "none";
 
         biasValue.textContent =
+            "NEUTRAL";
+
+        biasMetric.textContent =
             "WAIT";
 
-        biasValue.className =
-            "metric-value yellow";
+        momentumMetric.textContent =
+            "FLAT";
 
     }
 
 
-    /* =================================================
-       CONFIDENCE
-       ================================================= */
-
-    let confidenceValue =
-        50 +
-        Math.abs(score) * 10;
-
-    if(confidenceValue > 90){
-
-        confidenceValue =
-            90;
-
-    }
-
-    confidence.textContent =
-        confidenceValue +
-        "%";
-
-    document.getElementById(
-        "confidenceFill"
-    ).style.width =
-        confidenceValue +
-        "%";
+    const risk =
+        Math.abs(score) <= 3
+            ? "MEDIUM"
+            : "LOW";
 
 
-    if(newSignal === "CALL"){
+    trapRisk.textContent =
+        risk;
 
-        document.getElementById(
-            "confidenceText"
-        ).textContent =
-            "Bullish momentum detected";
-
-    }
-
-    else if(newSignal === "PUT"){
-
-        document.getElementById(
-            "confidenceText"
-        ).textContent =
-            "Bearish momentum detected";
-
-    }
-
-    else{
-
-        document.getElementById(
-            "confidenceText"
-        ).textContent =
-            "Market conditions unclear";
-
-    }
-
-
-    /* =================================================
-       MARKET ANALYSIS
-       ================================================= */
-
-    let analysisText =
-        "1-minute price data is being monitored for momentum.";
-
-    if(newSignal === "CALL"){
-
-        analysisText =
-            "Recent 1-minute price movement is showing bullish momentum according to the current signal logic.";
-
-    }
-
-    else if(newSignal === "PUT"){
-
-        analysisText =
-            "Recent 1-minute price movement is showing bearish momentum according to the current signal logic.";
-
-    }
-
-    document.getElementById(
-        "reasonBox"
-    ).textContent =
-        analysisText;
-
-
-    /* =================================================
-       TRAP RISK
-       ================================================= */
-
-    let risk =
-        "LOW";
-
-    if(Math.abs(score) <= 3){
-
-        risk =
-            "MEDIUM";
-
-    }
-
-    document.getElementById(
-        "trapRisk"
-    ).textContent =
+    trapMetric.textContent =
         risk;
 
 
-    /* =================================================
-       SAVE SIGNAL
-       ================================================= */
-
     if(
-
-        (
-            newSignal === "CALL" ||
-            newSignal === "PUT"
-        )
-
-        &&
-
-        newSignal !==
-        window.lastSavedSignal
-
+        !currentSignal &&
+        signal !== "WAIT"
     ){
 
-        const history =
-            document.getElementById(
-                "signalHistory"
-            );
-
-        if(
-            history.textContent ===
-            "No signals yet"
-        ){
-
-            history.textContent =
-                "";
-
-        }
-
-        const item =
-            document.createElement(
-                "div"
-            );
-
-        item.className =
-            "history-item";
-
-        const entryTime =
-            new Date()
-                .toLocaleTimeString();
-
-        const expiryTime =
-            new Date(
-                Date.now() + 60000
-            )
-                .toLocaleTimeString();
-
-        item.textContent =
-            newSignal +
-            " • ENTRY: " +
-            entryTime +
-            " • EXPIRY: " +
-            expiryTime;
-
-        history.prepend(
-            item
+        createSignal(
+            signal,
+            conf,
+            close
         );
-
-        window.lastSavedSignal =
-            newSignal;
-
-        window.lastSignalPrice =
-            close;
-
-        window.lastSignalTime =
-            Date.now();
 
     }
 
 }
 
 
-/* =====================================================
-   CHART
-   ===================================================== */
+/* ============================= */
+/* CREATE SIGNAL */
+/* ============================= */
+
+function createSignal(
+    signal,
+    conf,
+    price
+){
+
+    currentSignal =
+        signal;
+
+    signalEntryPrice =
+        price;
+
+    signalStartTime =
+        Date.now();
+
+    signalExpiry =
+        Date.now() + 60000;
+
+
+    addHistory(
+        signal,
+        price
+    );
+
+}
+
+
+/* ============================= */
+/* HISTORY */
+/* ============================= */
+
+function addHistory(
+    signal,
+    price
+){
+
+    if(
+        signalHistory.textContent ===
+        "No signals yet"
+    ){
+
+        signalHistory.innerHTML =
+            "";
+
+    }
+
+
+    const item =
+        document.createElement("div");
+
+    item.className =
+        "history-item";
+
+    item.innerHTML = `
+        <div>
+            <div class="history-signal">
+                ${signal}
+            </div>
+            <div class="history-time">
+                Entry: ${price}
+            </div>
+        </div>
+
+        <div class="history-time">
+            1 MIN
+        </div>
+    `;
+
+
+    signalHistory.prepend(item);
+
+}
+
+
+/* ============================= */
+/* SIGNAL RESULT */
+/* ============================= */
+
+function checkSignalResult(){
+
+    if(
+        !currentSignal ||
+        !signalExpiry ||
+        Date.now() < signalExpiry
+    ){
+
+        return;
+
+    }
+
+
+    const latest =
+        priceHistory[
+            priceHistory.length - 1
+        ];
+
+
+    if(!latest || !signalEntryPrice){
+
+        return;
+
+    }
+
+
+    if(currentSignal === "CALL"){
+
+        if(latest > signalEntryPrice){
+
+            wins++;
+
+        }
+
+        else if(latest < signalEntryPrice){
+
+            losses++;
+
+        }
+
+        else{
+
+            draws++;
+
+        }
+
+    }
+
+
+    if(currentSignal === "PUT"){
+
+        if(latest < signalEntryPrice){
+
+            wins++;
+
+        }
+
+        else if(latest > signalEntryPrice){
+
+            losses++;
+
+        }
+
+        else{
+
+            draws++;
+
+        }
+
+    }
+
+
+    winsCount.textContent =
+        wins;
+
+    lossesCount.textContent =
+        losses;
+
+    drawsCount.textContent =
+        draws;
+
+
+    const total =
+        wins + losses + draws;
+
+
+    if(total > 0){
+
+        accuracyValue.textContent =
+            Math.round(
+                (wins / total) * 100
+            ) + "%";
+
+    }
+
+
+    currentSignal =
+        null;
+
+    signalEntryPrice =
+        null;
+
+    signalStartTime =
+        null;
+
+    signalExpiry =
+        null;
+
+
+    signalBox.textContent =
+        "WAIT";
+
+    status.textContent =
+        "Market Unclear";
+
+    countdownTimer.textContent =
+        "";
+
+}
+
+
+/* ============================= */
+/* COUNTDOWN */
+/* ============================= */
+
+setInterval(function(){
+
+    if(!signalExpiry){
+
+        countdownTimer.textContent =
+            "";
+
+        return;
+
+    }
+
+
+    const remaining =
+        Math.max(
+            0,
+            signalExpiry - Date.now()
+        );
+
+
+    if(remaining <= 0){
+
+        countdownTimer.textContent =
+            " • EXPIRED";
+
+        return;
+
+    }
+
+
+    const seconds =
+        Math.ceil(
+            remaining / 1000
+        );
+
+
+    countdownTimer.textContent =
+        " • " + seconds + "s";
+
+},1000);
+
+
+/* ============================= */
+/* CHART */
+/* ============================= */
 
 function drawChart(){
+
+    const canvas =
+        priceChart;
+
+    const ctx =
+        canvas.getContext("2d");
+
+
+    const rect =
+        canvas.getBoundingClientRect();
+
+
+    canvas.width =
+        rect.width * devicePixelRatio;
+
+    canvas.height =
+        rect.height * devicePixelRatio;
+
+
+    ctx.scale(
+        devicePixelRatio,
+        devicePixelRatio
+    );
+
+
+    const width =
+        rect.width;
+
+    const height =
+        rect.height;
+
 
     ctx.clearRect(
         0,
         0,
-        chart.width,
-        chart.height
+        width,
+        height
     );
+
 
     if(priceHistory.length < 2){
 
@@ -2428,292 +1814,121 @@ function drawChart(){
 
     }
 
+
     const min =
-        Math.min(
-            ...priceHistory
-        );
+        Math.min(...priceHistory);
 
     const max =
-        Math.max(
-            ...priceHistory
-        );
+        Math.max(...priceHistory);
+
 
     const range =
         max - min || 1;
 
 
-    /* GRID */
-
-    ctx.strokeStyle =
-        "rgba(120,120,160,.10)";
-
-    ctx.lineWidth =
-        1;
-
-    for(
-        let i = 1;
-        i < 5;
-        i++
-    ){
-
-        const y =
-            (chart.height / 5) *
-            i;
-
-        ctx.beginPath();
-
-        ctx.moveTo(
-            0,
-            y
-        );
-
-        ctx.lineTo(
-            chart.width,
-            y
-        );
-
-        ctx.stroke();
-
-    }
-
-
-    /* PRICE LINE */
-
     ctx.beginPath();
 
-    priceHistory.forEach(
 
-        (price,index) => {
+    priceHistory.forEach(
+        (price,index)=>{
 
             const x =
-                (
-                    index /
-                    (
-                        priceHistory.length -
-                        1
-                    )
-                ) *
-                chart.width;
+                (index /
+                (priceHistory.length - 1))
+                * width;
 
             const y =
-                chart.height -
-                (
-                    (
-                        price - min
-                    ) /
-                    range
-                ) *
-                (
-                    chart.height -
-                    20
-                ) -
-                10;
+                height -
+                ((price - min) / range)
+                * (height - 12)
+                - 6;
+
 
             if(index === 0){
 
-                ctx.moveTo(
-                    x,
-                    y
-                );
+                ctx.moveTo(x,y);
 
             }else{
 
-                ctx.lineTo(
-                    x,
-                    y
-                );
+                ctx.lineTo(x,y);
 
             }
 
         }
-
     );
 
+
     ctx.strokeStyle =
-        "#00ff88";
+        "#6d8cff";
 
     ctx.lineWidth =
-        3;
-
-    ctx.shadowColor =
-        "#00ff88";
-
-    ctx.shadowBlur =
-        8;
+        2;
 
     ctx.stroke();
 
-    ctx.shadowBlur =
-        0;
 
-
-    /* LAST DOT */
-
-    const lastIndex =
-        priceHistory.length - 1;
-
-    const lastX =
-        chart.width;
-
-    const lastY =
-        chart.height -
-        (
-            (
-                priceHistory[lastIndex] -
-                min
-            ) /
-            range
-        ) *
-        (
-            chart.height -
-            20
-        ) -
-        10;
-
-    ctx.beginPath();
-
-    ctx.arc(
-        lastX,
-        lastY,
-        5,
-        0,
-        Math.PI * 2
+    ctx.lineTo(
+        width,
+        height
     );
 
+    ctx.lineTo(
+        0,
+        height
+    );
+
+    ctx.closePath();
+
     ctx.fillStyle =
-        "#fff";
-
-    ctx.shadowColor =
-        "#00ff88";
-
-    ctx.shadowBlur =
-        12;
+        "rgba(80,110,255,.06)";
 
     ctx.fill();
-
-    ctx.shadowBlur =
-        0;
 
 }
 
 
-/* =====================================================
-   ASSET CHANGE
-   ===================================================== */
-
-assetSelect.addEventListener(
-
-    "change",
-
-    function(){
-
-        priceHistory = [];
-
-        lastPrice = null;
-
-        lastCandleMinute = null;
-
-        window.activeSignal = null;
-
-        window.signalExpiry = null;
-
-        window.lastSavedSignal = null;
-
-        window.lastSignalPrice = null;
-
-        window.lastSignalTime = null;
-
-
-        currentPrice.textContent =
-            "Loading...";
-
-        marketStatus.textContent =
-            "Connecting...";
-
-        signalBox.textContent =
-            "WAIT";
-
-        signalBox.style.color =
-            "#fff";
-
-        status.textContent =
-            "Collecting Market Data";
-
-        confidence.textContent =
-            "--%";
-
-        document.getElementById(
-            "confidenceFill"
-        ).style.width =
-            "0%";
-
-        document.getElementById(
-            "selectedAssetName"
-        ).textContent =
-            assetSelect.value;
-
-        document.getElementById(
-            "confidenceText"
-        ).textContent =
-            "Waiting for market data";
-
-        document.getElementById(
-            "reasonBox"
-        ).textContent =
-            "Collecting enough price points for 1-minute momentum analysis.";
-
-        document.getElementById(
-            "biasValue"
-        ).textContent =
-            "WAIT";
-
-        document.getElementById(
-            "biasValue"
-        ).className =
-            "metric-value yellow";
-
-        document.getElementById(
-            "trapRisk"
-        ).textContent =
-            "--";
-
-        drawChart();
-
-        updatePrice();
-
-    }
-
-);
-
-
-/* =====================================================
-   GENERATE BUTTON
-   ===================================================== */
+/* ============================= */
+/* GENERATE BUTTON */
+/* ============================= */
 
 generateButton.addEventListener(
-
     "click",
-
     function(){
 
-        analyzeMarket(true);
+        if(priceHistory.length < 12){
 
-        drawChart();
+            status.textContent =
+                "Collecting Market Data";
+
+            return;
+
+        }
+
+        analyzeMarket();
 
     }
-
 );
 
 
-/* =====================================================
-   START
-   ===================================================== */
+/* ============================= */
+/* AUTO PRICE UPDATE */
+/* ============================= */
 
 updatePrice();
 
 setInterval(
     updatePrice,
     5000
+);
+
+
+/* ============================= */
+/* RESIZE CHART */
+/* ============================= */
+
+window.addEventListener(
+    "resize",
+    drawChart
 );
 
 </script>
