@@ -2029,6 +2029,24 @@ function unlockKURO() {
 
 const assetSelect =
     document.getElementById("assetSelect");
+const assetDisplay = document.getElementById("assetDisplay");
+
+assetSelect.addEventListener("change", function () {
+
+    const icons = {
+        "EUR/USD": "🇪🇺",
+        "GBP/USD": "🇬🇧",
+        "USD/JPY": "🇺🇸",
+        "AUD/USD": "🇦🇺",
+        "USD/CAD": "🇺🇸"
+    };
+
+    const selected = this.value;
+
+    assetDisplay.textContent =
+        icons[selected] + "  " + selected;
+});
+    
 
 const currentPrice =
     document.getElementById("currentPrice");
