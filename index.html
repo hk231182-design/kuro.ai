@@ -1,18 +1,9 @@
-<!DOCTYPE html>
-<html lang="en">
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0"><title>KURO AI</title><style>
 
-<head>
-
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<title>KURO AI</title>
-
-<style>
-
-/* ============================= */
-/* KURO AI PREMIUM UI */
-/* ============================= */
+/* =====================================================
+   KURO AI — PREMIUM DARK TRADING UI
+   ===================================================== */
 
 * {
     box-sizing: border-box;
@@ -27,15 +18,25 @@ body {
     min-height: 100vh;
     font-family: Arial, Helvetica, sans-serif;
     background:
-        radial-gradient(circle at 15% 20%, rgba(126, 45, 255, 0.10), transparent 30%),
-        radial-gradient(circle at 85% 10%, rgba(0, 229, 255, 0.06), transparent 25%),
-        #05050b;
-    color: #ffffff;
+        radial-gradient(circle at 15% 10%, rgba(130,55,255,.14), transparent 30%),
+        radial-gradient(circle at 90% 15%, rgba(0,220,255,.06), transparent 25%),
+        linear-gradient(135deg,#04040a,#080611 55%,#04070d);
+    color: #fff;
 }
 
-/* ============================= */
-/* MAIN LAYOUT */
-/* ============================= */
+button,
+select,
+input {
+    font-family: inherit;
+}
+
+button {
+    cursor: pointer;
+}
+
+/* =====================================================
+   APP
+   ===================================================== */
 
 .app {
     width: 100%;
@@ -44,11 +45,16 @@ body {
     padding: 18px;
 }
 
+/* =====================================================
+   TOP BAR
+   ===================================================== */
+
 .topbar {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 10px 4px 20px;
+    gap: 15px;
+    padding: 4px 2px 20px;
 }
 
 .brand {
@@ -58,25 +64,27 @@ body {
 }
 
 .logo-mark {
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
+    width: 42px;
+    height: 42px;
+    flex-shrink: 0;
+
     display: flex;
     align-items: center;
     justify-content: center;
 
-    border: 2px solid #9b4dff;
-    color: #ffffff;
+    border-radius: 50%;
+    border: 2px solid #a855ff;
 
+    background:
+        radial-gradient(circle,#35115f,#090610);
+
+    color: #fff;
     font-size: 20px;
     font-weight: 900;
 
-    background:
-        radial-gradient(circle, #30105d, #090610);
-
     box-shadow:
-        0 0 15px rgba(145, 55, 255, 0.65),
-        inset 0 0 12px rgba(145, 55, 255, 0.25);
+        0 0 18px rgba(150,60,255,.55),
+        inset 0 0 12px rgba(150,60,255,.22);
 }
 
 .brand-text strong {
@@ -85,18 +93,22 @@ body {
     letter-spacing: 1px;
 }
 
+.brand-ai {
+    color: #a855ff;
+}
+
 .brand-text span {
     display: block;
-    margin-top: 3px;
+    margin-top: 4px;
     color: #77758a;
-    font-size: 10px;
-    letter-spacing: 1.5px;
+    font-size: 9px;
+    letter-spacing: 1.6px;
 }
 
 .live-area {
     display: flex;
     align-items: center;
-    gap: 18px;
+    gap: 14px;
 }
 
 .live-badge {
@@ -104,62 +116,65 @@ body {
     align-items: center;
     gap: 7px;
 
-    padding: 9px 14px;
+    padding: 8px 13px;
 
     border-radius: 20px;
+    border: 1px solid rgba(0,255,136,.22);
 
-    background: rgba(0, 255, 136, 0.06);
-    border: 1px solid rgba(0, 255, 136, 0.18);
+    background: rgba(0,255,136,.055);
 
     color: #00ff88;
-    font-size: 12px;
+    font-size: 11px;
     font-weight: bold;
 }
 
 .live-dot {
-    width: 8px;
-    height: 8px;
+    width: 7px;
+    height: 7px;
     border-radius: 50%;
+
     background: #00ff88;
-    box-shadow: 0 0 10px #00ff88;
+
+    box-shadow:
+        0 0 10px #00ff88;
 }
 
 .access-badge {
-    color: #aaa8b7;
-    font-size: 12px;
+    color: #77758a;
+    font-size: 10px;
 }
 
-/* ============================= */
-/* DASHBOARD */
-/* ============================= */
+/* =====================================================
+   DASHBOARD
+   ===================================================== */
 
 .dashboard {
     display: grid;
-    grid-template-columns: 190px 1fr;
+    grid-template-columns: 190px minmax(0,1fr);
     gap: 18px;
 }
 
-/* ============================= */
-/* SIDEBAR */
-/* ============================= */
+/* =====================================================
+   SIDEBAR
+   ===================================================== */
 
 .sidebar {
     min-height: 850px;
 
-    padding: 16px 12px;
+    padding: 14px 11px;
 
-    border: 1px solid rgba(142, 73, 255, 0.20);
     border-radius: 20px;
+    border: 1px solid rgba(145,75,255,.18);
 
     background:
         linear-gradient(
             180deg,
-            rgba(25, 12, 43, 0.75),
-            rgba(6, 7, 15, 0.92)
+            rgba(25,12,43,.76),
+            rgba(6,7,15,.94)
         );
 
     box-shadow:
-        0 0 30px rgba(100, 35, 190, 0.08);
+        0 0 35px rgba(100,35,190,.07);
 }
 
 .side-item {
@@ -168,59 +183,62 @@ body {
     gap: 12px;
 
     padding: 13px 14px;
-    margin-bottom: 8px;
+    margin-bottom: 7px;
 
-    border-radius: 12px;
+    border-radius: 11px;
 
-    color: #aaa7b7;
-    font-size: 14px;
+    color: #9995a8;
+    font-size: 13px;
 
-    transition: 0.2s;
+    transition: .2s ease;
 }
 
 .side-item.active {
-    color: #ffffff;
+    color: #fff;
 
     background:
         linear-gradient(
             90deg,
-            rgba(132, 44, 255, 0.42),
-            rgba(90, 25, 180, 0.08)
+            rgba(132,44,255,.42),
+            rgba(90,25,180,.08)
         );
 
-    border: 1px solid rgba(150, 65, 255, 0.30);
+    border: 1px solid rgba(150,65,255,.28);
 
     box-shadow:
-        0 0 20px rgba(130, 45, 255, 0.18);
+        0 0 20px rgba(130,45,255,.16);
 }
 
 .side-icon {
-    font-size: 17px;
+    width: 20px;
+    text-align: center;
+    font-size: 16px;
 }
 
 .sidebar-bottom {
     margin-top: 330px;
 
-    padding: 16px 12px;
+    padding: 15px 11px;
 
-    border-top: 1px solid rgba(255,255,255,0.06);
+    border-top: 1px solid rgba(255,255,255,.06);
 }
 
 .sidebar-bottom strong {
-    font-size: 14px;
+    font-size: 13px;
 }
 
 .sidebar-bottom span {
     display: block;
     margin-top: 5px;
 
-    color: #77758a;
-    font-size: 11px;
+    color: #6f6c7d;
+    font-size: 10px;
+    line-height: 1.6;
 }
 
-/* ============================= */
-/* ENGINE HEADER */
-/* ============================= */
+/* =====================================================
+   MAIN PANEL
+   ===================================================== */
 
 .main-panel {
     min-width: 0;
@@ -231,127 +249,83 @@ body {
     align-items: center;
     justify-content: space-between;
 
-    padding: 8px 4px 18px;
+    padding: 3px 3px 16px;
 }
 
 .engine-title {
     display: flex;
     align-items: center;
-    gap: 14px;
+    gap: 12px;
 }
 
 .engine-back {
-    width: 42px;
-    height: 42px;
+    width: 40px;
+    height: 40px;
 
     border-radius: 50%;
+    border: 1px solid #302d42;
 
-    border: 1px solid #303044;
-
-    background: #0c0b14;
+    background: #0b0a13;
 
     color: #a66cff;
-
     font-size: 20px;
 }
 
 .engine-title h2 {
     margin: 0;
-    font-size: 25px;
+    font-size: 23px;
 }
 
 .engine-title p {
-    margin: 5px 0 0;
+    margin: 4px 0 0;
 
-    color: #77758a;
-    font-size: 11px;
+    color: #6f6c7d;
+    font-size: 9px;
     letter-spacing: 1.5px;
 }
 
-/* ============================= */
-/* MODE SWITCH */
-/* ============================= */
-
-.mode-switch {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-
-    padding: 4px;
-    margin-bottom: 18px;
-
-    border: 1px solid rgba(139, 70, 255, 0.35);
-    border-radius: 15px;
-
-    background: #0a0712;
-}
-
-.mode {
-    padding: 12px;
-    text-align: center;
-
-    border-radius: 11px;
-
-    color: #77758a;
-    font-weight: bold;
-}
-
-.mode.active {
-    color: #cfaeff;
-
-    background:
-        linear-gradient(
-            90deg,
-            rgba(128, 40, 255, 0.50),
-            rgba(89, 27, 177, 0.32)
-        );
-
-    box-shadow:
-        0 0 18px rgba(126, 47, 255, 0.25);
-}
-
-/* ============================= */
-/* PREMIUM CARD */
-/* ============================= */
+/* =====================================================
+   CARDS
+   ===================================================== */
 
 .card {
+    margin-bottom: 15px;
+    padding: 18px;
+
+    border-radius: 19px;
+    border: 1px solid rgba(115,110,140,.18);
+
     background:
         linear-gradient(
             145deg,
-            rgba(21, 20, 31, 0.96),
-            rgba(7, 9, 17, 0.98)
+            rgba(25,23,37,.96),
+            rgba(7,9,17,.98)
         );
 
-    border: 1px solid rgba(100, 105, 130, 0.20);
-
-    border-radius: 20px;
-
-    padding: 18px;
-
-    margin-bottom: 16px;
-
     box-shadow:
-        0 10px 35px rgba(0,0,0,0.20);
+        0 10px 32px rgba(0,0,0,.22),
+        inset 0 1px 0 rgba(255,255,255,.025);
 }
 
 .card-label {
+    margin-bottom: 9px;
+
     color: #77758a;
 
-    font-size: 10px;
+    font-size: 9px;
     font-weight: bold;
-
-    letter-spacing: 1.5px;
-
-    margin-bottom: 10px;
+    letter-spacing: 1.6px;
 }
 
-/* ============================= */
-/* ASSET */
-/* ============================= */
+/* =====================================================
+   ASSET
+   ===================================================== */
 
 .asset-card {
     display: flex;
     align-items: center;
     justify-content: space-between;
+    gap: 12px;
 }
 
 .asset-left {
@@ -361,99 +335,137 @@ body {
 }
 
 .flag {
-    width: 48px;
-    height: 35px;
-
-    border-radius: 50%;
+    width: 46px;
+    height: 46px;
 
     display: flex;
     align-items: center;
     justify-content: center;
 
-    font-size: 25px;
+    border-radius: 13px;
 
-    background: #11131c;
-    border: 1px solid #303040;
+    background: #0e1019;
+    border: 1px solid #292a3b;
+
+    font-size: 22px;
 }
 
 .asset-name {
-    font-size: 21px;
-    font-weight: bold;
+    font-size: 20px;
+    font-weight: 800;
 }
 
-
-    margin-left: 7px;
-
-    padding: 4px 8px;
-
-    border-radius: 7px;
-
-    color: #b875ff;
-
-    border: 1px solid rgba(170, 90, 255, 0.50);
-
-    background: rgba(150, 60, 255, 0.10);
-
-    font-size: 10px;
+.asset-sub {
+    margin-top: 4px;
+    color: #696779;
+    font-size: 9px;
+    letter-spacing: 1px;
 }
 
 .up-badge {
-    padding: 9px 14px;
+    padding: 8px 12px;
 
     border-radius: 9px;
 
     color: #00ff88;
 
-    border: 1px solid rgba(0,255,136,0.45);
+    border: 1px solid rgba(0,255,136,.35);
+    background: rgba(0,255,136,.045);
 
-    background: rgba(0,255,136,0.05);
-
+    font-size: 10px;
     font-weight: bold;
 }
 
-/* ============================= */
-/* PRICE / STATUS GRID */
-/* ============================= */
+/* =====================================================
+   SELECTOR
+   ===================================================== */
+
+.select-wrap {
+    position: relative;
+    width: 100%;
+}
+
+#assetDisplay {
+    width: 100%;
+    min-height: 48px;
+
+    display: flex;
+    align-items: center;
+
+    padding: 13px;
+
+    border-radius: 11px;
+    border: 1px solid #29263a;
+
+    background: #090b13;
+
+    color: #fff;
+
+    font-size: 13px;
+
+    transition: .2s;
+}
+
+#assetDisplay:hover {
+    border-color: rgba(155,77,255,.55);
+}
+
+#assetSelect {
+    position: absolute;
+    inset: 0;
+
+    width: 100%;
+    height: 100%;
+
+    opacity: 0;
+    cursor: pointer;
+}
+
+/* =====================================================
+   INFO GRID
+   ===================================================== */
 
 .info-grid {
     display: grid;
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: repeat(2,1fr);
     gap: 14px;
 }
 
 .info-card {
-    min-height: 115px;
+    min-height: 110px;
 }
 
 .info-value {
     font-size: 27px;
-    font-weight: 800;
+    font-weight: 900;
 }
 
 .market-live {
     color: #00ff88;
+
+    text-shadow:
+        0 0 12px rgba(0,255,136,.18);
 }
 
-/* ============================= */
-/* SIGNAL */
-/* ============================= */
+/* =====================================================
+   SIGNAL
+   ===================================================== */
 
 .signal-panel {
-    padding: 18px;
+    padding: 17px;
 
-    border-radius: 17px;
+    border-radius: 16px;
 
-    border: 1px solid rgba(0,255,136,0.30);
+    border: 1px solid rgba(100,105,130,.25);
 
     background:
         linear-gradient(
             100deg,
-            rgba(0, 255, 136, 0.09),
-            rgba(0, 50, 30, 0.18)
+            rgba(80,80,100,.05),
+            rgba(10,10,18,.20)
         );
 
-    box-shadow:
-        inset 0 0 25px rgba(0,255,136,0.04);
+    transition: .25s ease;
 }
 
 .signal-top {
@@ -463,8 +475,9 @@ body {
 }
 
 .signal-circle {
-    width: 56px;
-    height: 56px;
+    width: 55px;
+    height: 55px;
+    flex-shrink: 0;
 
     display: flex;
     align-items: center;
@@ -473,66 +486,83 @@ body {
     border-radius: 50%;
 
     background:
-        radial-gradient(circle, #0dff57, #03a83d);
+        radial-gradient(circle,#555,#222);
 
-    color: white;
+    color: #fff;
 
-    font-size: 25px;
-    font-weight: bold;
+    font-size: 24px;
+    font-weight: 900;
 
-    box-shadow:
-        0 0 22px rgba(0,255,80,0.45);
+    transition: .25s ease;
 }
 
 .signal-small {
-    color: #a7a4b0;
+    margin-bottom: 2px;
 
-    font-size: 10px;
+    color: #77758a;
+
+    font-size: 9px;
     letter-spacing: 2px;
-
-    margin-bottom: 3px;
 }
 
 .signal-box {
-    font-size: 40px;
+    padding: 0;
+
+    background: transparent;
+
+    border: none;
+
+    font-size: 38px;
     font-weight: 900;
     letter-spacing: 2px;
-    color: #00ff45;
+
+    color: #fff;
 }
 
-/* ============================= */
-/* CONFIDENCE */
-/* ============================= */
+.status {
+    margin-top: 9px;
+
+    color: #9995a8;
+    font-size: 10px;
+}
+
+/* =====================================================
+   CONFIDENCE
+   ===================================================== */
 
 .confidence-head {
     display: flex;
-    justify-content: space-between;
     align-items: end;
+    justify-content: space-between;
 }
 
 .confidence-text {
     color: #00ff45;
-    font-size: 13px;
+
+    font-size: 11px;
     font-weight: bold;
 }
 
 .confidence-number {
-    font-size: 38px;
+    color: #9c65ff;
+
+    font-size: 35px;
     font-weight: 900;
-    color: #00aaff;
 }
 
 .confidence-bar {
     width: 100%;
-    height: 9px;
+    height: 8px;
 
-    margin-top: 12px;
-
-    border-radius: 10px;
+    margin-top: 11px;
 
     overflow: hidden;
 
-    background: #111827;
+    border-radius: 10px;
+
+    background: #121522;
+
+    border: 1px solid rgba(255,255,255,.035);
 }
 
 .confidence-fill {
@@ -544,82 +574,85 @@ body {
     background:
         linear-gradient(
             90deg,
-            #00ff45,
-            #8dff72
+            #7136e8,
+            #a855ff,
+            #38ff9b
         );
 
     box-shadow:
-        0 0 12px rgba(0,255,70,0.5);
+        0 0 12px rgba(120,70,255,.42);
 
-    transition: width 0.4s ease;
+    transition: width .4s ease;
 }
 
-/* ============================= */
-/* REASONING */
-/* ============================= */
+/* =====================================================
+   REASONING
+   ===================================================== */
 
 .reason-title {
-    margin-top: 20px;
-    margin-bottom: 10px;
+    margin: 19px 0 9px;
 
-    color: #ffffff;
+    color: #fff;
 
-    font-size: 13px;
+    font-size: 11px;
     font-weight: bold;
-
-    letter-spacing: 1.5px;
+    letter-spacing: 1.4px;
 }
 
 .reason-box {
-    padding: 14px;
+    padding: 13px;
 
-    border-radius: 14px;
+    border-radius: 12px;
 
-    border: 1px solid rgba(150,70,255,0.20);
+    border: 1px solid rgba(150,70,255,.17);
 
-    background: rgba(25,20,38,0.65);
+    background: rgba(25,20,38,.58);
 
-    color: #d5d2dc;
+    color: #bdb8c9;
 
-    font-size: 13px;
+    font-size: 11px;
     line-height: 1.6;
 }
 
-/* ============================= */
-/* METRIC GRID */
-/* ============================= */
+/* =====================================================
+   METRICS
+   ===================================================== */
 
 .metric-grid {
     display: grid;
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: repeat(4,1fr);
+    gap: 10px;
 
-    gap: 12px;
-
-    margin-top: 14px;
+    margin-top: 12px;
 }
 
 .metric {
-    padding: 15px;
+    padding: 13px;
 
-    border-radius: 14px;
+    border-radius: 12px;
 
-    border: 1px solid rgba(70,100,150,0.30);
+    border: 1px solid rgba(70,100,150,.23);
 
-    background: rgba(6,12,25,0.70);
+    background:
+        linear-gradient(
+            145deg,
+            rgba(8,14,27,.9),
+            rgba(6,9,18,.8)
+        );
 }
 
 .metric-title {
-    color: #77758a;
+    margin-bottom: 7px;
 
-    font-size: 10px;
-    letter-spacing: 1.3px;
+    color: #686677;
 
-    margin-bottom: 8px;
+    font-size: 8px;
+    letter-spacing: 1.2px;
 }
 
 .metric-value {
-    font-size: 18px;
-    font-weight: bold;
+    font-size: 15px;
+    font-weight: 900;
 }
 
 .green {
@@ -634,34 +667,39 @@ body {
     color: #ffd21c;
 }
 
-/* ============================= */
-/* CHART */
-/* ============================= */
+/* =====================================================
+   CHART
+   ===================================================== */
 
 .chart-card {
     padding: 15px;
 }
 
 .chart-title {
+    margin-bottom: 9px;
+
     color: #77758a;
 
-    font-size: 10px;
+    font-size: 9px;
     letter-spacing: 1.5px;
-
-    margin-bottom: 10px;
 }
 
 .chart-wrap {
     width: 100%;
-    height: 280px;
+    height: 270px;
 
-    padding: 8px;
+    padding: 7px;
 
     border-radius: 13px;
 
-    background: #060b12;
+    background:
+        linear-gradient(
+            145deg,
+            #080a13,
+            #05070d
+        );
 
-    border: 1px solid rgba(50,60,80,0.35);
+    border: 1px solid rgba(50,60,80,.32);
 }
 
 canvas {
@@ -670,216 +708,211 @@ canvas {
     width: 100%;
     height: 100%;
 
-    border-radius: 10px;
+    border-radius: 9px;
 }
 
-/* ============================= */
-/* GENERATE BUTTON */
-/* ============================= */
+/* =====================================================
+   GENERATE
+   ===================================================== */
 
 .generate-card {
     padding: 5px;
 }
 
-button {
-    font-family: inherit;
-}
-
 #generateButton {
     width: 100%;
 
-    padding: 17px;
+    padding: 16px;
 
-    border: none;
-    border-radius: 13px;
+    border: 1px solid rgba(255,255,255,.10);
+    border-radius: 12px;
 
     background:
         linear-gradient(
             90deg,
-            #7424d8,
-            #a63cff,
-            #7424d8
+            #7226d8,
+            #a547ff,
+            #7226d8
         );
 
     background-size: 200% auto;
 
-    color: white;
+    color: #fff;
 
-    font-size: 16px;
+    font-size: 14px;
     font-weight: 900;
-
     letter-spacing: 1px;
 
-    cursor: pointer;
-
     box-shadow:
-        0 0 25px rgba(145, 50, 255, 0.25);
+        0 8px 25px rgba(125,50,232,.24);
 
-    transition: 0.3s;
+    transition: .25s;
 }
 
 #generateButton:hover {
     transform: translateY(-1px);
 
     box-shadow:
-        0 0 35px rgba(145, 50, 255, 0.45);
+        0 10px 32px rgba(145,50,255,.38);
 }
 
 .note {
+    margin: 8px 0 3px;
+
     text-align: center;
 
-    margin: 8px 0 4px;
-
-    color: #77758a;
-
-    font-size: 10px;
+    color: #696779;
+    font-size: 9px;
 }
 
-/* ============================= */
-/* RECENT SIGNALS */
-/* ============================= */
+/* =====================================================
+   HISTORY
+   ===================================================== */
 
 .history-title {
     display: flex;
-    justify-content: space-between;
     align-items: center;
+    justify-content: space-between;
 
-    margin-bottom: 12px;
+    margin-bottom: 11px;
 }
 
 .history-title h3 {
     margin: 0;
 
-    font-size: 14px;
+    font-size: 13px;
     letter-spacing: 1px;
 }
 
 .view-all {
     color: #a967ff;
-    font-size: 11px;
+    font-size: 9px;
 }
 
 .history-list {
     display: flex;
     flex-direction: column;
-    gap: 8px;
+    gap: 7px;
 
     max-height: 260px;
     overflow-y: auto;
 }
 
 .history-item {
-    padding: 11px 12px;
+    padding: 10px 11px;
 
-    border-radius: 10px;
+    border-radius: 9px;
 
-    background: rgba(10,13,22,0.9);
+    background: rgba(10,13,22,.9);
 
-    border: 1px solid rgba(50,55,75,0.35);
+    border: 1px solid rgba(50,55,75,.35);
 
     color: #bcb8c8;
 
-    font-size: 11px;
+    font-size: 10px;
 }
 
 #signalHistory {
     color: #77758a;
-    font-size: 11px;
+    font-size: 10px;
 }
 
-/* ============================= */
-/* ACCURACY */
-/* ============================= */
+/* =====================================================
+   ACCURACY
+   ===================================================== */
 
 #accuracyTracker {
     display: grid;
+    grid-template-columns: repeat(5,1fr);
+    gap: 9px;
 
-    grid-template-columns: repeat(4, 1fr);
-
-    gap: 10px;
-
-    margin-top: 15px;
+    margin-top: 14px;
 }
 
 .stat-box {
-    padding: 14px 8px;
+    padding: 12px 7px;
 
     text-align: center;
 
-    border-radius: 12px;
+    border-radius: 11px;
 
-    background: #080c14;
+    background:
+        linear-gradient(
+            145deg,
+            #0c0d16,
+            #080911
+        );
 
-    border: 1px solid rgba(70,75,100,0.30);
+    border: 1px solid rgba(70,75,100,.25);
 }
 
 .stat-label {
-    color: #77758a;
+    color: #686677;
 
-    font-size: 9px;
-    letter-spacing: 1px;
+    font-size: 8px;
+    letter-spacing: .8px;
 }
 
 .stat-value {
     display: block;
 
-    margin-top: 6px;
+    margin-top: 5px;
 
-    font-size: 20px;
+    font-size: 18px;
     font-weight: 900;
 }
 
-/* ============================= */
-/* ACCESS KEY */
-/* ============================= */
+/* =====================================================
+   ACCESS KEY SCREEN
+   ===================================================== */
 
 #keyScreen {
     position: fixed;
-
     inset: 0;
 
-    display: flex;
+    z-index: 99999;
 
+    display: flex;
     align-items: center;
     justify-content: center;
 
-    z-index: 99999;
+    padding: 20px;
 
     background:
         radial-gradient(
             circle at center,
-            rgba(100,30,180,0.18),
-            transparent 40%
+            rgba(100,30,180,.18),
+            transparent 42%
         ),
         #05050b;
 }
 
 .keyBox {
-    width: 90%;
+    width: 100%;
     max-width: 390px;
 
-    padding: 35px 28px;
+    padding: 34px 27px;
 
     text-align: center;
 
     border-radius: 22px;
 
-    border: 1px solid rgba(150,70,255,0.35);
+    border: 1px solid rgba(150,70,255,.32);
 
     background:
         linear-gradient(
             145deg,
-            rgba(24,16,38,0.98),
-            rgba(7,7,13,0.98)
+            rgba(24,16,38,.98),
+            rgba(7,7,13,.98)
         );
 
     box-shadow:
-        0 0 50px rgba(120,40,255,0.18);
+        0 0 55px rgba(120,40,255,.17);
 }
 
 .key-logo {
-    width: 65px;
-    height: 65px;
+    width: 64px;
+    height: 64px;
 
     margin: 0 auto 15px;
 
@@ -891,64 +924,64 @@ button {
 
     border: 2px solid #9d4cff;
 
-    color: #ffffff;
+    color: #fff;
 
-    font-size: 30px;
+    font-size: 29px;
     font-weight: 900;
 
     box-shadow:
-        0 0 25px rgba(145,50,255,0.55);
+        0 0 25px rgba(145,50,255,.5);
 }
 
 .keyBox h1 {
     margin: 0;
 
     font-size: 27px;
+    letter-spacing: 1px;
 }
 
 .keyBox p {
+    margin: 8px 0 15px;
+
     color: #77758a;
 
-    font-size: 11px;
-
+    font-size: 9px;
     letter-spacing: 2px;
 }
 
 #accessKey {
     width: 100%;
 
-    padding: 15px;
+    padding: 14px;
 
-    margin: 15px 0;
+    margin: 0 0 12px;
 
-    border-radius: 11px;
+    border-radius: 10px;
 
     border: 1px solid #302544;
-
     outline: none;
 
     background: #08070e;
 
-    color: white;
+    color: #fff;
 
-    font-size: 14px;
+    font-size: 13px;
 }
 
 #accessKey:focus {
     border-color: #934cff;
 
     box-shadow:
-        0 0 15px rgba(145,50,255,0.18);
+        0 0 15px rgba(145,50,255,.18);
 }
 
 .keyBox button {
     width: 100%;
 
-    padding: 15px;
+    padding: 14px;
 
     border: none;
-
-    border-radius: 11px;
+    border-radius: 10px;
 
     background:
         linear-gradient(
@@ -957,55 +990,27 @@ button {
             #a63cff
         );
 
-    color: white;
+    color: #fff;
 
+    font-size: 13px;
     font-weight: bold;
-
-    cursor: pointer;
 }
 
 #keyError {
-    margin-top: 12px;
+    min-height: 15px;
+
+    margin-top: 11px;
 
     color: #ff4d4d;
 
-    font-size: 12px;
+    font-size: 11px;
 }
 
-/* ============================= */
-/* MOBILE */
-/* ============================= */
+/* =====================================================
+   MOBILE
+   ===================================================== */
 
-@media (max-width: 800px) {
-
-    .app {
-        padding: 10px;
-    }
-
-    .topbar {
-        padding-bottom: 14px;
-    }
-
-    .brand-text strong {
-        font-size: 16px;
-    }
-
-    .brand-text span {
-        font-size: 8px;
-    }
-
-    .live-area {
-        gap: 7px;
-    }
-
-    .access-badge {
-        display: none;
-    }
-
-    .live-badge {
-        padding: 7px 9px;
-        font-size: 9px;
-    }
+@media (max-width: 900px) {
 
     .dashboard {
         grid-template-columns: 1fr;
@@ -1015,20 +1020,76 @@ button {
         display: none;
     }
 
+}
+
+@media (max-width: 600px) {
+
+    body {
+        padding: 0;
+    }
+
+    .app {
+        padding: 10px;
+    }
+
+    .topbar {
+        padding: 5px 2px 14px;
+    }
+
+    .logo-mark {
+        width: 35px;
+        height: 35px;
+        font-size: 17px;
+    }
+
+    .brand-text strong {
+        font-size: 16px;
+    }
+
+    .brand-text span {
+        font-size: 7px;
+        letter-spacing: 1px;
+    }
+
+    .access-badge {
+        display: none;
+    }
+
+    .live-area {
+        gap: 5px;
+    }
+
+    .live-badge {
+        padding: 7px 9px;
+        font-size: 8px;
+    }
+
+    .live-dot {
+        width: 6px;
+        height: 6px;
+    }
+
     .engine-head {
-        padding: 3px 2px 13px;
+        padding: 2px 1px 12px;
     }
 
     .engine-title h2 {
-        font-size: 20px;
+        font-size: 19px;
     }
 
-    .info-grid {
-        gap: 10px;
+    .engine-title p {
+        font-size: 8px;
+    }
+
+    .engine-back {
+        width: 36px;
+        height: 36px;
+        font-size: 18px;
     }
 
     .card {
         padding: 14px;
+        margin-bottom: 11px;
         border-radius: 16px;
     }
 
@@ -1036,965 +1097,655 @@ button {
         font-size: 17px;
     }
 
+    .flag {
+        width: 42px;
+        height: 42px;
+        font-size: 20px;
+    }
+
     .up-badge {
-        padding: 7px 10px;
-        font-size: 10px;
-    }
-
-    .signal-box {
-        font-size: 34px;
-    }
-
-    .confidence-number {
-        font-size: 30px;
-    }
-
-    .chart-wrap {
-        height: 230px;
-    }
-
-    #accuracyTracker {
-        grid-template-columns: repeat(2, 1fr);
-    }
-
-    .sidebar-bottom {
-        margin-top: 0;
-    }
-
-}
-
-@media (max-width: 480px) {
-
-    .topbar {
-        align-items: flex-start;
-    }
-
-    .logo-mark {
-        width: 34px;
-        height: 34px;
-        font-size: 17px;
+        padding: 7px 9px;
+        font-size: 9px;
     }
 
     .info-grid {
-        grid-template-columns: 1fr 1fr;
+        gap: 9px;
     }
 
-    .metric-grid {
-        grid-template-columns: 1fr 1fr;
+    .info-card {
+        min-height: 95px;
     }
 
     .info-value {
-        font-size: 22px;
-    }
-
-    .chart-wrap {
-        height: 210px;
-    }
-
-}
-
-/* =========================================
-   KURO AI PREMIUM UI - STEP 1
-   ========================================= */
-
-body {
-    background:
-        radial-gradient(circle at 10% 10%, rgba(126, 58, 255, 0.16), transparent 30%),
-        radial-gradient(circle at 90% 20%, rgba(0, 229, 255, 0.08), transparent 28%),
-        linear-gradient(135deg, #05030b 0%, #090612 50%, #05070d 100%);
-    color: #ffffff;
-    padding: 18px;
-}
-
-.container {
-    max-width: 1100px;
-}
-
-/* Main title */
-
-h1 {
-    font-size: 34px;
-    font-weight: 800;
-    letter-spacing: 2px;
-    margin: 12px 0 8px;
-}
-
-/* Hide old subtitle */
-
-.subtitle {
-    display: none;
-}
-
-/* Premium cards */
-
-.card {
-    background:
-        linear-gradient(
-            145deg,
-            rgba(31, 24, 48, 0.94),
-            rgba(10, 12, 22, 0.97)
-        );
-
-    border: 1px solid rgba(154, 92, 255, 0.25);
-    border-radius: 20px;
-    padding: 22px;
-    margin-bottom: 18px;
-
-    box-shadow:
-        0 10px 35px rgba(0, 0, 0, 0.35),
-        inset 0 1px 0 rgba(255,255,255,0.04);
-}
-
-/* Card headings */
-
-.card h3 {
-    color: #a8a0b8;
-    font-size: 12px;
-    letter-spacing: 1.6px;
-    font-weight: 700;
-}
-
-/* Asset selector */
-
-select {
-    background: #0b0b15;
-    border: 1px solid rgba(160, 91, 255, 0.35);
-    border-radius: 13px;
-    color: #ffffff;
-    padding: 16px;
-}
-
-select:focus {
-    border-color: #9b4dff;
-    box-shadow: 0 0 15px rgba(155, 77, 255, 0.2);
-}
-
-/* Values */
-
-.value {
-    font-size: 32px;
-    font-weight: 800;
-    letter-spacing: 0.5px;
-}
-
-/* Signal box */
-
-.signal-box {
-    background:
-        linear-gradient(
-            135deg,
-            rgba(18, 16, 29, 0.98),
-            rgba(8, 9, 16, 0.98)
-        );
-
-    border: 1px solid rgba(155, 77, 255, 0.28);
-    border-radius: 16px;
-    padding: 18px 10px;
-    font-size: 38px;
-    font-weight: 900;
-
-    box-shadow:
-        inset 0 0 25px rgba(122, 54, 255, 0.05);
-}
-
-/* Status */
-
-.status {
-    color: #91899f;
-    font-size: 13px;
-}
-
-/* Market LIVE */
-
-.market-status {
-    color: #37ff9b;
-    font-size: 28px;
-    font-weight: 800;
-    text-shadow: 0 0 12px rgba(55,255,155,0.25);
-}
-
-/* Confidence */
-
-.confidence-bar {
-    height: 9px;
-    background: #181425;
-    border: 1px solid rgba(255,255,255,0.04);
-}
-
-.confidence-fill {
-    background: linear-gradient(
-        90deg,
-        #7c3cff,
-        #b85cff,
-        #42ff9b
-    );
-
-    box-shadow: 0 0 12px rgba(120, 70, 255, 0.45);
-}
-
-/* Chart */
-
-canvas {
-    background:
-        linear-gradient(
-            145deg,
-            #080812,
-            #05070d
-        );
-
-    border: 1px solid rgba(155, 77, 255, 0.16);
-    border-radius: 15px;
-}
-
-/* Generate button */
-
-button {
-    background:
-        linear-gradient(
-            90deg,
-            #7b32e8,
-            #a94dff
-        );
-
-    border: 1px solid rgba(255,255,255,0.12);
-    border-radius: 13px;
-    padding: 16px;
-
-    font-weight: 800;
-    letter-spacing: 0.7px;
-
-    box-shadow:
-        0 8px 25px rgba(125, 50, 232, 0.28);
-}
-
-button:hover {
-    opacity: 1;
-    transform: translateY(-1px);
-}
-
-/* Statistics */
-
-#accuracyTracker > div {
-    background:
-        linear-gradient(
-            145deg,
-            #0d0b16,
-            #080911
-        );
-
-    border: 1px solid rgba(155, 77, 255, 0.18);
-    border-radius: 13px;
-}
-
-/* Recent signals */
-
-#signalHistory {
-    margin-top: 15px;
-    color: #c9c3d2;
-    font-size: 13px;
-}
-
-/* Logo */
-
-.top-logo {
-    margin-bottom: 22px;
-}
-
-.logo-mark {
-    border-color: #a855ff;
-    color: #b65cff;
-
-    box-shadow:
-        0 0 10px rgba(168,85,255,0.65),
-        inset 0 0 8px rgba(168,85,255,0.18);
-}
-
-/* Mobile premium look */
-
-@media (max-width: 600px) {
-
-    body {
-        padding: 10px;
-    }
-
-    h1 {
-        font-size: 27px;
-        letter-spacing: 1.5px;
-    }
-
-    .card {
-        padding: 17px;
-        border-radius: 17px;
-    }
-
-    .value {
-        font-size: 27px;
+        font-size: 21px;
     }
 
     .signal-box {
-        font-size: 34px;
+        font-size: 32px;
     }
 
-    .market-status {
-        font-size: 24px;
+    .signal-circle {
+        width: 51px;
+        height: 51px;
     }
+
+    .confidence-number {
+        font-size: 29px;
+    }
+
+    .metric-grid {
+        grid-template-columns: repeat(2,1fr);
+    }
+
+    .chart-wrap {
+        height: 215px;
+    }
+
+    #accuracyTracker {
+        grid-template-columns: repeat(2,1fr);
+    }
+
 }
-    
-</style>
 
-</head>
+@media (max-width: 390px) {
 
-<body>
+    .brand-text span {
+        display: none;
+    }
 
-<div class="app">
+    .live-badge {
+        padding: 6px 8px;
+    }
 
-<!-- ============================= -->
-<!-- TOP BAR -->
-<!-- ============================= -->
+    .signal-box {
+        font-size: 29px;
+    }
 
-<div class="topbar">
+    .confidence-number {
+        font-size: 27px;
+    }
 
-    <div class="brand">
+    .chart-wrap {
+        height: 200px;
+    }
 
-        <div class="logo-mark">
-            K
-        </div>
+}
 
-        <div class="brand-text">
 
-            <strong>
-                KURO <span style="color:#a64cff;">AI</span>
-            </strong>
+/* =====================================================
+   SMALL ANIMATION
+   ===================================================== */
 
-            <span>
-                AI TRADING SIGNAL DASHBOARD
-            </span>
+@keyframes kuroPulse {
 
-        </div>
+    0% {
+        opacity: .65;
+    }
 
+    50% {
+        opacity: 1;
+    }
+
+    100% {
+        opacity: .65;
+    }
+
+}
+
+.live-dot {
+    animation: kuroPulse 1.5s infinite;
+}
+
+</style></head><body><div class="app"><!-- =====================================================
+     TOP BAR
+     ===================================================== --><div class="topbar"><div class="brand">
+
+    <div class="logo-mark">
+        K
     </div>
 
-    <div class="live-area">
+    <div class="brand-text">
 
-        <div class="live-badge">
-            <span class="live-dot"></span>
-            LIVE MARKET
-        </div>
-
-        <div class="access-badge">
-            🔗 Access Key: KURO-2026
-        </div>
-
-    </div>
-
-</div>
-
-
-<!-- ============================= -->
-<!-- DASHBOARD -->
-<!-- ============================= -->
-
-<div class="dashboard">
-
-
-<!-- ============================= -->
-<!-- SIDEBAR -->
-<!-- ============================= -->
-
-<div class="sidebar">
-
-    <div class="side-item active">
-        <span class="side-icon">⌂</span>
-        Dashboard
-    </div>
-
-    <div class="side-item">
-        <span class="side-icon">ϟ</span>
-        Signals
-    </div>
-
-    <div class="side-item">
-        <span class="side-icon">▥</span>
-        Analytics
-    </div>
-
-    <div class="side-item">
-        <span class="side-icon">◴</span>
-        History
-    </div>
-
-    <div class="side-item">
-        <span class="side-icon">⚙</span>
-        Settings
-    </div>
-
-    <div class="side-item">
-        <span class="side-icon">ⓘ</span>
-        About
-    </div>
-
-    <div class="sidebar-bottom">
-
-        <strong>KURO AI</strong>
+        <strong>
+            KURO <span class="brand-ai">AI</span>
+        </strong>
 
         <span>
-            Precision. Logic.<br>
-            Profit.
+            AI TRADING SIGNAL DASHBOARD
         </span>
 
     </div>
 
 </div>
 
+<div class="live-area">
 
-<!-- ============================= -->
-<!-- MAIN PANEL -->
-<!-- ============================= -->
+    <div class="live-badge">
+        <span class="live-dot"></span>
+        LIVE MARKET
+    </div>
 
-<div class="main-panel">
+    <div class="access-badge">
+        🔗 Access Key: KURO-2026
+    </div>
 
+</div>
 
-<!-- ENGINE HEADER -->
+</div><!-- =====================================================
+     DASHBOARD
+     ===================================================== --><div class="dashboard"><!-- =====================================================
+     SIDEBAR
+     ===================================================== --><div class="sidebar"><div class="side-item active">
+    <span class="side-icon">⌂</span>
+    Dashboard
+</div>
 
-<div class="engine-head">
+<div class="side-item">
+    <span class="side-icon">ϟ</span>
+    Signals
+</div>
 
-    <div class="engine-title">
+<div class="side-item">
+    <span class="side-icon">▥</span>
+    Analytics
+</div>
 
-        <button class="engine-back">
-            ‹
-        </button>
+<div class="side-item">
+    <span class="side-icon">◴</span>
+    History
+</div>
 
-        <div>
+<div class="side-item">
+    <span class="side-icon">⚙</span>
+    Settings
+</div>
 
-            <h2>
-                AI Engine ⚡
-            </h2>
+<div class="side-item">
+    <span class="side-icon">ⓘ</span>
+    About
+</div>
 
-            <p>
-                BROKER: QUOTEX
-            </p>
+<div class="sidebar-bottom">
 
+    <strong>KURO AI</strong>
+
+    <span>
+        Precision. Logic.<br>
+        Profit.
+    </span>
+
+</div>
+
+</div><!-- =====================================================
+     MAIN PANEL
+     ===================================================== --><div class="main-panel"><!-- ENGINE HEADER --><div class="engine-head"><div class="engine-title">
+
+    <button class="engine-back" type="button">
+        ‹
+    </button>
+
+    <div>
+
+        <h2>
+            AI Engine ⚡
+        </h2>
+
+        <p>
+            BROKER: QUOTEX
+        </p>
+
+    </div>
+
+</div>
+
+</div><!-- =====================================================
+     ASSET
+     ===================================================== --><div class="card asset-card"><div class="asset-left">
+
+    <div class="flag">
+        🌐
+    </div>
+
+    <div>
+
+        <div class="asset-name">
+
+            <span id="selectedAssetName">
+                EUR/USD
+            </span>
+
+        </div>
+
+        <div class="asset-sub">
+            SELECT MARKET
         </div>
 
     </div>
 
 </div>
 
-
-
-
-
-<!-- ASSET -->
-
-<div class="card asset-card">
-
-    <div class="asset-left">
-
-        <div class="flag">
-            🌐
-        </div>
-
-        <div>
-
-            <div class="asset-name">
-
-                <span id="selectedAssetName">
-                    EUR/USD
-                </span>
-                
-                </span>
-
-            </div>
-
-            <div style="
-                color:#77758a;
-                font-size:10px;
-                margin-top:4px;
-            ">
-                SELECT MARKET
-            </div>
-
-        </div>
-
-    </div>
-
-    <div class="up-badge">
-        ↗ LIVE
-    </div>
-
+<div class="up-badge">
+    ↗ LIVE
 </div>
 
+</div><!-- =====================================================
+     ASSET SELECT
+     ===================================================== --><div class="card"><div class="card-label">
+    SELECT ASSET
+</div>
 
-<!-- ASSET SELECT -->
+<div class="select-wrap">
 
-<div class="card">
-
-    <div class="card-label">
-        SELECT ASSET
-    </div>
-
-   <div style="position:relative; width:100%;">
-
-    <div
-        id="assetDisplay"
-        style="
-            width:100%;
-            padding:14px;
-            border-radius:11px;
-            background:#0b0d15;
-            color:white;
-            border:1px solid #29263a;
-            outline:none;
-            font-size:14px;
-            box-sizing:border-box;
-            cursor:pointer;
-        "
-    >
+    <div id="assetDisplay">
         🇪🇺 &nbsp; EUR/USD
     </div>
 
-    <select
-        id="assetSelect"
-        style="
-            position:absolute;
-            inset:0;
-            width:100%;
-            height:100%;
-            opacity:0;
-            cursor:pointer;
-        "
-    >
-        <option value="EUR/USD">🇪🇺 EUR/USD</option>
-        <option value="GBP/USD">🇬🇧 GBP/USD</option>
-        <option value="USD/JPY">🇺🇸 USD/JPY</option>
-        <option value="AUD/USD">🇦🇺 AUD/USD</option>
-        <option value="USD/CAD">🇺🇸 USD/CAD</option>
+    <select id="assetSelect">
+
+        <option value="EUR/USD">
+            🇪🇺 EUR/USD
+        </option>
+
+        <option value="GBP/USD">
+            🇬🇧 GBP/USD
+        </option>
+
+        <option value="USD/JPY">
+            🇯🇵 USD/JPY
+        </option>
+
+        <option value="AUD/USD">
+            🇦🇺 AUD/USD
+        </option>
+
+        <option value="USD/CAD">
+            🇨🇦 USD/CAD
+        </option>
+
     </select>
 
 </div>
 
-</div>
-
-
-<!-- PRICE / MARKET -->
-
-<div class="info-grid">
-
-    <div class="card info-card">
-
-        <div class="card-label">
-            CURRENT PRICE
-        </div>
-
-        <div
-            class="info-value"
-            id="currentPrice"
-        >
-            Loading...
-        </div>
-
-    </div>
-
-
-    <div class="card info-card">
-
-        <div class="card-label">
-            MARKET STATUS
-        </div>
-
-        <div
-            class="info-value market-live"
-            id="marketStatus"
-        >
-            Connecting...
-        </div>
-
-    </div>
-
-</div>
-
-
-<!-- SIGNAL CARD -->
-
-<div class="card">
+</div><!-- =====================================================
+     PRICE / MARKET
+     ===================================================== --><div class="info-grid"><div class="card info-card">
 
     <div class="card-label">
-        KURO AI SIGNAL
+        CURRENT PRICE
     </div>
 
     <div
-        class="signal-panel"
-        id="signalPanel"
+        class="info-value"
+        id="currentPrice"
     >
+        Loading...
+    </div>
 
-        <div class="signal-top">
+</div>
 
-            <div
-                class="signal-circle"
-                id="signalCircle"
-            >
-                ↑
-            </div>
 
-            <div>
+<div class="card info-card">
 
-                <div class="signal-small">
-                    PLACE OPTION
-                </div>
+    <div class="card-label">
+        MARKET STATUS
+    </div>
 
-                <div
-                    class="signal-box"
-                    id="signalBox"
-                >
-                    WAIT
-                </div>
+    <div
+        class="info-value market-live"
+        id="marketStatus"
+    >
+        Connecting...
+    </div>
 
-            </div>
+</div>
 
-        </div>
+</div><!-- =====================================================
+     SIGNAL CARD
+     ===================================================== --><div class="card"><div class="card-label">
+    KURO AI SIGNAL
+</div>
+
+<div
+    class="signal-panel"
+    id="signalPanel"
+>
+
+    <div class="signal-top">
 
         <div
-            class="status"
-            id="status"
-            style="
-                margin-top:10px;
-                text-align:left;
-                color:#aaa7b7;
-                font-size:11px;
-            "
+            class="signal-circle"
+            id="signalCircle"
         >
-            Collecting 1-Min Data
+            •
         </div>
 
-    </div>
+        <div>
 
-
-    <!-- CONFIDENCE -->
-
-    <div style="margin-top:20px;">
-
-        <div class="confidence-head">
-
-            <div>
-
-                <div class="card-label">
-                    CONFIDENCE
-                </div>
-
-                <div
-                    class="confidence-text"
-                    id="confidenceText"
-                >
-                    Waiting for market data
-                </div>
-
+            <div class="signal-small">
+                PLACE OPTION
             </div>
 
             <div
-                class="confidence-number"
-                id="confidence"
-            >
-                --%
-            </div>
-
-        </div>
-
-        <div class="confidence-bar">
-
-            <div
-                class="confidence-fill"
-                id="confidenceFill"
-            ></div>
-
-        </div>
-
-    </div>
-
-
-    <!-- REASONING -->
-
-    <div class="reason-title">
-        ⚡ &nbsp; MARKET ANALYSIS
-    </div>
-
-    <div
-        class="reason-box"
-        id="reasonBox"
-    >
-        Waiting for enough 1-minute market data to analyze momentum.
-    </div>
-
-
-    <!-- METRICS -->
-
-    <div class="metric-grid">
-
-        <div class="metric">
-
-            <div class="metric-title">
-                TIMEFRAME
-            </div>
-
-            <div class="metric-value">
-                1 MIN
-            </div>
-
-        </div>
-
-
-        <div class="metric">
-
-            <div class="metric-title">
-                BIAS
-            </div>
-
-            <div
-                class="metric-value"
-                id="biasValue"
+                class="signal-box"
+                id="signalBox"
             >
                 WAIT
             </div>
 
         </div>
 
+    </div>
 
-        <div class="metric">
+    <div
+        class="status"
+        id="status"
+    >
+        Collecting 1-Min Data
+    </div>
 
-            <div class="metric-title">
-                SIGNAL MODE
-            </div>
-
-            <div class="metric-value">
-                MOMENTUM
-            </div>
-
-        </div>
+</div>
 
 
-        <div class="metric">
+<!-- CONFIDENCE -->
 
-            <div class="metric-title">
-                TRAP RISK
+<div style="margin-top:19px;">
+
+    <div class="confidence-head">
+
+        <div>
+
+            <div class="card-label">
+                CONFIDENCE
             </div>
 
             <div
-                class="metric-value yellow"
-                id="trapRisk"
+                class="confidence-text"
+                id="confidenceText"
             >
-                --
+                Waiting for market data
             </div>
 
+        </div>
+
+        <div
+            class="confidence-number"
+            id="confidence"
+        >
+            --%
+        </div>
+
+    </div>
+
+    <div class="confidence-bar">
+
+        <div
+            class="confidence-fill"
+            id="confidenceFill"
+        ></div>
+
+    </div>
+
+</div>
+
+
+<!-- MARKET ANALYSIS -->
+
+<div class="reason-title">
+    ⚡ &nbsp; MARKET ANALYSIS
+</div>
+
+<div
+    class="reason-box"
+    id="reasonBox"
+>
+    Waiting for enough 1-minute market data to analyze momentum.
+</div>
+
+
+<!-- METRICS -->
+
+<div class="metric-grid">
+
+    <div class="metric">
+
+        <div class="metric-title">
+            TIMEFRAME
+        </div>
+
+        <div class="metric-value">
+            1 MIN
+        </div>
+
+    </div>
+
+
+    <div class="metric">
+
+        <div class="metric-title">
+            BIAS
+        </div>
+
+        <div
+            class="metric-value yellow"
+            id="biasValue"
+        >
+            WAIT
+        </div>
+
+    </div>
+
+
+    <div class="metric">
+
+        <div class="metric-title">
+            SIGNAL MODE
+        </div>
+
+        <div class="metric-value">
+            MOMENTUM
+        </div>
+
+    </div>
+
+
+    <div class="metric">
+
+        <div class="metric-title">
+            TRAP RISK
+        </div>
+
+        <div
+            class="metric-value yellow"
+            id="trapRisk"
+        >
+            --
         </div>
 
     </div>
 
 </div>
 
+</div><!-- =====================================================
+     CHART
+     ===================================================== --><div class="card chart-card"><div class="chart-title">
+    PRICE CHART
+</div>
 
-<!-- CHART -->
+<div class="chart-wrap">
 
-<div class="card chart-card">
+    <canvas
+        id="priceChart"
+        width="900"
+        height="280"
+    ></canvas>
 
-    <div class="chart-title">
-        PRICE CHART
-    </div>
+</div>
 
-    <div class="chart-wrap">
+</div><!-- =====================================================
+     GENERATE BUTTON
+     ===================================================== --><div class="card generate-card"><button id="generateButton" type="button">
+    ⚡ &nbsp; GENERATE SIGNAL
+</button>
 
-        <canvas
-            id="priceChart"
-            width="900"
-            height="280"
-        ></canvas>
+<div class="note">
+    Advanced Market Analysis
+</div>
 
-    </div>
+</div><!-- =====================================================
+     RECENT SIGNALS
+     ===================================================== --><div class="card"><div class="history-title">
+
+    <h3>
+        RECENT SIGNALS
+    </h3>
+
+    <span class="view-all">
+        LIVE
+    </span>
 
 </div>
 
 
-<!-- GENERATE -->
-
-<div class="card generate-card">
-
-    <button id="generateButton">
-        ⚡ &nbsp; GENERATE SIGNAL
-    </button>
-
-    <div class="note">
-        Advanced Market Analysis
-    </div>
-
+<div
+    class="history-list"
+    id="signalHistory"
+>
+    No signals yet
 </div>
 
 
-<!-- RECENT SIGNALS -->
+<!-- STATISTICS -->
 
-<div class="card">
+<div id="accuracyTracker">
 
-    <div class="history-title">
+    <div class="stat-box">
 
-        <h3>
-            RECENT SIGNALS
-        </h3>
+        <div class="stat-label">
+            TIME LEFT
+        </div>
 
-        <span class="view-all">
-            LIVE
+        <span
+            class="stat-value"
+            id="countdownTimer"
+        >
+            --
         </span>
 
     </div>
 
 
-    <div
-        class="history-list"
-        id="signalHistory"
-    >
-        No signals yet
-    </div>
+    <div class="stat-box">
 
-
-    <!-- STATISTICS -->
-
-    <div id="accuracyTracker">
-
-
-        <div class="stat-box">
-
-            <div class="stat-label">
-                TIME LEFT
-            </div>
-
-            <span
-                class="stat-value"
-                id="countdownTimer"
-            >
-                --
-            </span>
-
+        <div class="stat-label">
+            WINS
         </div>
 
-
-        <div class="stat-box">
-
-            <div class="stat-label">
-                WINS
-            </div>
-
-            <span
-                class="stat-value green"
-                id="winsCount"
-            >
-                0
-            </span>
-
-        </div>
-
-
-        <div class="stat-box">
-
-            <div class="stat-label">
-                LOSSES
-            </div>
-
-            <span
-                class="stat-value red"
-                id="lossesCount"
-            >
-                0
-            </span>
-
-        </div>
-
-
-        <div class="stat-box">
-
-            <div class="stat-label">
-                DRAWS
-            </div>
-
-            <span
-                class="stat-value yellow"
-                id="drawsCount"
-            >
-                0
-            </span>
-
-        </div>
-
-
-        <div class="stat-box">
-
-            <div class="stat-label">
-                ACCURACY
-            </div>
-
-            <span
-                class="stat-value"
-                id="accuracyValue"
-            >
-                0%
-            </span>
-
-        </div>
-
-    </div>
-
-</div>
-
-
-</div>
-</div>
-</div>
-
-
-<!-- ============================= -->
-<!-- ACCESS KEY -->
-<!-- ============================= -->
-
-<div id="keyScreen">
-
-    <div class="keyBox">
-
-        <div class="key-logo">
-            K
-        </div>
-
-        <h1>
-            KURO <span style="color:#a64cff;">AI</span>
-        </h1>
-
-        <p>
-            ENTER ACCESS KEY
-        </p>
-
-        <input
-            type="password"
-            id="accessKey"
-            placeholder="Enter your access key"
+        <span
+            class="stat-value green"
+            id="winsCount"
         >
+            0
+        </span>
 
-        <button onclick="unlockKURO()">
-            UNLOCK KURO AI
-        </button>
+    </div>
 
-        <div id="keyError"></div>
+
+    <div class="stat-box">
+
+        <div class="stat-label">
+            LOSSES
+        </div>
+
+        <span
+            class="stat-value red"
+            id="lossesCount"
+        >
+            0
+        </span>
+
+    </div>
+
+
+    <div class="stat-box">
+
+        <div class="stat-label">
+            DRAWS
+        </div>
+
+        <span
+            class="stat-value yellow"
+            id="drawsCount"
+        >
+            0
+        </span>
+
+    </div>
+
+
+    <div class="stat-box">
+
+        <div class="stat-label">
+            ACCURACY
+        </div>
+
+        <span
+            class="stat-value"
+            id="accuracyValue"
+        >
+            0%
+        </span>
 
     </div>
 
 </div>
 
+</div></div>
+</div>
+</div><!-- =====================================================
+     ACCESS KEY
+     ===================================================== --><div id="keyScreen"><div class="keyBox">
 
-<script>
+    <div class="key-logo">
+        K
+    </div>
 
-/* ============================= */
-/* ACCESS KEY */
-/* ============================= */
+    <h1>
+        KURO <span class="brand-ai">AI</span>
+    </h1>
+
+    <p>
+        ENTER ACCESS KEY
+    </p>
+
+    <input
+        type="password"
+        id="accessKey"
+        placeholder="Enter your access key"
+    >
+
+    <button
+        type="button"
+        onclick="unlockKURO()"
+    >
+        UNLOCK KURO AI
+    </button>
+
+    <div id="keyError"></div>
+
+</div>
+
+</div><script>
+
+/* =====================================================
+   ACCESS KEY
+   ===================================================== */
 
 const KURO_ACCESS_KEY = "KURO-2026";
 
 function unlockKURO() {
 
     const enteredKey =
-        document.getElementById("accessKey").value;
+        document.getElementById("accessKey").value.trim();
 
     const error =
         document.getElementById("keyError");
@@ -2009,6 +1760,8 @@ function unlockKURO() {
             "true"
         );
 
+        error.textContent = "";
+
     } else {
 
         error.textContent =
@@ -2019,30 +1772,29 @@ function unlockKURO() {
 }
 
 
-/* ============================= */
-/* ELEMENTS */
-/* ============================= */
+/* =====================================================
+   AUTO UNLOCK
+   ===================================================== */
+
+if (
+    localStorage.getItem("kuroUnlocked") === "true"
+) {
+
+    document.getElementById("keyScreen").style.display =
+        "none";
+
+}
+
+
+/* =====================================================
+   ELEMENTS
+   ===================================================== */
 
 const assetSelect =
     document.getElementById("assetSelect");
-const assetDisplay = document.getElementById("assetDisplay");
 
-assetSelect.addEventListener("change", function () {
-
-    const icons = {
-        "EUR/USD": "🌍",
-        "GBP/USD": "🇬🇧",
-        "USD/JPY": "🇯🇵",
-        "AUD/USD": "🇦🇺",
-        "USD/CAD": "🇨🇦"
-    };
-
-    const selected = this.value;
-
-    assetDisplay.textContent =
-        icons[selected] + "  " + selected;
-});
-    
+const assetDisplay =
+    document.getElementById("assetDisplay");
 
 const currentPrice =
     document.getElementById("currentPrice");
@@ -2069,9 +1821,39 @@ const ctx =
     chart.getContext("2d");
 
 
-/* ============================= */
-/* SYMBOLS */
-/* ============================= */
+/* =====================================================
+   ASSET DISPLAY
+   ===================================================== */
+
+assetSelect.addEventListener(
+    "change",
+    function () {
+
+        const icons = {
+
+            "EUR/USD": "🇪🇺",
+            "GBP/USD": "🇬🇧",
+            "USD/JPY": "🇯🇵",
+            "AUD/USD": "🇦🇺",
+            "USD/CAD": "🇨🇦"
+
+        };
+
+        const selected =
+            this.value;
+
+        assetDisplay.textContent =
+            icons[selected] +
+            "  " +
+            selected;
+
+    }
+);
+
+
+/* =====================================================
+   SYMBOLS
+   ===================================================== */
 
 const symbols = {
 
@@ -2084,9 +1866,9 @@ const symbols = {
 };
 
 
-/* ============================= */
-/* VARIABLES */
-/* ============================= */
+/* =====================================================
+   VARIABLES
+   ===================================================== */
 
 let priceHistory = [];
 
@@ -2103,9 +1885,9 @@ let totalLosses = 0;
 let totalDraws = 0;
 
 
-/* ============================= */
-/* PRICE FORMAT */
-/* ============================= */
+/* =====================================================
+   PRICE FORMAT
+   ===================================================== */
 
 function formatPrice(price) {
 
@@ -2120,16 +1902,14 @@ function formatPrice(price) {
 }
 
 
-/* ============================= */
-/* UPDATE PRICE */
-/* ============================= */
+/* =====================================================
+   UPDATE PRICE
+   ===================================================== */
 
 async function updatePrice() {
 
     if (loading) {
-
         return;
-
     }
 
     loading = true;
@@ -2152,7 +1932,9 @@ async function updatePrice() {
 
         if (!response.ok) {
 
-            throw new Error("API Error");
+            throw new Error(
+                "API Error"
+            );
 
         }
 
@@ -2211,9 +1993,9 @@ async function updatePrice() {
         drawChart();
 
 
-        /* ============================= */
-        /* CHECK PREVIOUS SIGNAL */
-        /* ============================= */
+        /* =================================================
+           CHECK PREVIOUS SIGNAL
+           ================================================= */
 
         if (
 
@@ -2378,7 +2160,6 @@ async function updatePrice() {
 
         analyzeMarket(false);
 
-
     }
 
     catch (error) {
@@ -2431,9 +2212,9 @@ async function updatePrice() {
 }
 
 
-/* ============================= */
-/* COUNTDOWN */
-/* ============================= */
+/* =====================================================
+   COUNTDOWN
+   ===================================================== */
 
 setInterval(
 
@@ -2487,10 +2268,10 @@ setInterval(
 
             timer.textContent =
                 String(minutes)
-                    .padStart(2, "0") +
+                    .padStart(2,"0") +
                 ":" +
                 String(secs)
-                    .padStart(2, "0");
+                    .padStart(2,"0");
 
         }
 
@@ -2508,18 +2289,18 @@ setInterval(
 );
 
 
-/* ============================= */
-/* MARKET ANALYSIS */
-/* ============================= */
-
+/* =====================================================
+   MARKET ANALYSIS
+   ===================================================== */
 
 function analyzeMarket(
     manual = false
 ) {
 
-    /* ============================= */
-    /* COLLECTING DATA */
-    /* ============================= */
+
+    /* =================================================
+       COLLECTING DATA
+       ================================================= */
 
     if (
         priceHistory.length < 12
@@ -2545,12 +2326,13 @@ function analyzeMarket(
             "Collecting enough price points for 1-minute momentum analysis.";
 
         return;
+
     }
 
 
-    /* ============================= */
-    /* SIGNAL LOCK / EXPIRY SYSTEM */
-    /* ============================= */
+    /* =================================================
+       SIGNAL LOCK
+       ================================================= */
 
     const now =
         Date.now();
@@ -2561,8 +2343,6 @@ function analyzeMarket(
         window.signalExpiry &&
         now < window.signalExpiry
     ) {
-
-        /* KEEP EXISTING SIGNAL */
 
         signalBox.textContent =
             window.activeSignal;
@@ -2580,7 +2360,6 @@ function analyzeMarket(
 
         }
 
-
         else if (
             window.activeSignal === "PUT"
         ) {
@@ -2595,12 +2374,13 @@ function analyzeMarket(
 
 
         return;
+
     }
 
 
-    /* ============================= */
-    /* SIGNAL EXPIRED */
-    /* ============================= */
+    /* =================================================
+       SIGNAL EXPIRED
+       ================================================= */
 
     if (
         window.activeSignal &&
@@ -2668,9 +2448,9 @@ function analyzeMarket(
         0;
 
 
-    /* ============================= */
-    /* 1 MINUTE DIRECTION */
-    /* ============================= */
+    /* =================================================
+       1 MINUTE DIRECTION
+       ================================================= */
 
     if (
         candleMove > 0.005
@@ -2690,9 +2470,9 @@ function analyzeMarket(
     }
 
 
-    /* ============================= */
-    /* CANDLE STRENGTH */
-    /* ============================= */
+    /* =================================================
+       CANDLE STRENGTH
+       ================================================= */
 
     if (
         range > 0.01
@@ -2718,9 +2498,9 @@ function analyzeMarket(
     }
 
 
-    /* ============================= */
-    /* RECENT MOMENTUM */
-    /* ============================= */
+    /* =================================================
+       RECENT MOMENTUM
+       ================================================= */
 
     const previous =
         prices[
@@ -2753,9 +2533,9 @@ function analyzeMarket(
     }
 
 
-    /* ============================= */
-    /* SIGNAL */
-    /* ============================= */
+    /* =================================================
+       SIGNAL
+       ================================================= */
 
     let newSignal =
         "WAIT";
@@ -2781,11 +2561,6 @@ function analyzeMarket(
     }
 
 
-    /*
-       NEW SIGNAL ONLY WHEN
-       PREVIOUS SIGNAL HAS EXPIRED
-    */
-
     if (
         manual ||
         currentMinute !==
@@ -2803,12 +2578,10 @@ function analyzeMarket(
             newSignal =
                 "CALL";
 
-
             newStatus =
                 "1-Min Bullish";
 
         }
-
 
         else if (
             score <= -3
@@ -2816,7 +2589,6 @@ function analyzeMarket(
 
             newSignal =
                 "PUT";
-
 
             newStatus =
                 "1-Min Bearish";
@@ -2826,9 +2598,9 @@ function analyzeMarket(
     }
 
 
-    /* ============================= */
-    /* ACTIVATE 1-MINUTE SIGNAL */
-    /* ============================= */
+    /* =================================================
+       ACTIVATE 1-MINUTE SIGNAL
+       ================================================= */
 
     if (
         newSignal === "CALL" ||
@@ -2838,19 +2610,11 @@ function analyzeMarket(
         window.activeSignal =
             newSignal;
 
-
-        /*
-           SIGNAL WILL STAY FOR
-           FULL 60 SECONDS
-        */
-
         window.signalExpiry =
             Date.now() + 60000;
 
-
         window.lastSignalPrice =
             close;
-
 
         window.lastSignalTime =
             Date.now();
@@ -2861,14 +2625,13 @@ function analyzeMarket(
     signalBox.textContent =
         newSignal;
 
-
     status.textContent =
         newStatus;
 
 
-    /* ============================= */
-    /* PREMIUM SIGNAL COLORS */
-    /* ============================= */
+    /* =================================================
+       SIGNAL COLORS
+       ================================================= */
 
     const signalPanel =
         document.getElementById(
@@ -2895,30 +2658,23 @@ function analyzeMarket(
         signalBox.style.color =
             "#00ff45";
 
-
         signalPanel.style.borderColor =
-            "rgba(0,255,136,0.35)";
-
+            "rgba(0,255,136,.35)";
 
         signalPanel.style.background =
-            "linear-gradient(100deg,rgba(0,255,136,0.10),rgba(0,50,30,0.20))";
-
+            "linear-gradient(100deg,rgba(0,255,136,.10),rgba(0,50,30,.20))";
 
         signalCircle.textContent =
             "↑";
 
-
         signalCircle.style.background =
             "radial-gradient(circle,#00ff55,#00882c)";
 
-
         signalCircle.style.boxShadow =
-            "0 0 22px rgba(0,255,100,0.40)";
-
+            "0 0 22px rgba(0,255,100,.40)";
 
         biasValue.textContent =
             "BULLISH";
-
 
         biasValue.className =
             "metric-value green";
@@ -2933,30 +2689,23 @@ function analyzeMarket(
         signalBox.style.color =
             "#ff3f4f";
 
-
         signalPanel.style.borderColor =
-            "rgba(255,50,70,0.35)";
-
+            "rgba(255,50,70,.35)";
 
         signalPanel.style.background =
-            "linear-gradient(100deg,rgba(255,50,70,0.09),rgba(50,0,10,0.20))";
-
+            "linear-gradient(100deg,rgba(255,50,70,.09),rgba(50,0,10,.20))";
 
         signalCircle.textContent =
             "↓";
 
-
         signalCircle.style.background =
             "radial-gradient(circle,#ff3048,#a60020)";
 
-
         signalCircle.style.boxShadow =
-            "0 0 22px rgba(255,30,50,0.40)";
-
+            "0 0 22px rgba(255,30,50,.40)";
 
         biasValue.textContent =
             "BEARISH";
-
 
         biasValue.className =
             "metric-value red";
@@ -2967,32 +2716,25 @@ function analyzeMarket(
     else {
 
         signalBox.style.color =
-            "#ffffff";
-
+            "#fff";
 
         signalPanel.style.borderColor =
-            "rgba(100,105,130,0.25)";
-
+            "rgba(100,105,130,.25)";
 
         signalPanel.style.background =
-            "linear-gradient(100deg,rgba(80,80,100,0.05),rgba(10,10,18,0.20))";
-
+            "linear-gradient(100deg,rgba(80,80,100,.05),rgba(10,10,18,.20))";
 
         signalCircle.textContent =
             "•";
 
-
         signalCircle.style.background =
             "radial-gradient(circle,#555,#222)";
-
 
         signalCircle.style.boxShadow =
             "none";
 
-
         biasValue.textContent =
             "WAIT";
-
 
         biasValue.className =
             "metric-value yellow";
@@ -3000,9 +2742,9 @@ function analyzeMarket(
     }
 
 
-    /* ============================= */
-    /* CONFIDENCE */
-    /* ============================= */
+    /* =================================================
+       CONFIDENCE
+       ================================================= */
 
     let confidenceValue =
         50 +
@@ -3063,9 +2805,9 @@ function analyzeMarket(
     }
 
 
-    /* ============================= */
-    /* MARKET ANALYSIS */
-    /* ============================= */
+    /* =================================================
+       MARKET ANALYSIS
+       ================================================= */
 
     let analysisText =
         "1-minute price data is being monitored for momentum.";
@@ -3079,7 +2821,6 @@ function analyzeMarket(
             "Recent 1-minute price movement is showing bullish momentum according to the current signal logic.";
 
     }
-
 
     else if (
         newSignal === "PUT"
@@ -3097,9 +2838,9 @@ function analyzeMarket(
         analysisText;
 
 
-    /* ============================= */
-    /* TRAP RISK */
-    /* ============================= */
+    /* =================================================
+       TRAP RISK
+       ================================================= */
 
     let risk =
         "LOW";
@@ -3121,11 +2862,12 @@ function analyzeMarket(
         risk;
 
 
-    /* ============================= */
-    /* SAVE SIGNAL */
-    /* ============================= */
+    /* =================================================
+       SAVE SIGNAL
+       ================================================= */
 
     if (
+
         (
             newSignal === "CALL" ||
             newSignal === "PUT"
@@ -3206,11 +2948,10 @@ function analyzeMarket(
 }
 
 
-/* ============================= */
-/* CHART */
-/* ============================= */
-    
-    
+/* =====================================================
+   CHART
+   ===================================================== */
+
 function drawChart() {
 
     ctx.clearRect(
@@ -3249,8 +2990,7 @@ function drawChart() {
     /* GRID */
 
     ctx.strokeStyle =
-        "rgba(120,120,160,0.10)";
-
+        "rgba(120,120,160,.10)";
 
     ctx.lineWidth =
         1;
@@ -3291,7 +3031,7 @@ function drawChart() {
 
     priceHistory.forEach(
 
-        (price, index) => {
+        (price,index) => {
 
             const x =
                 (
@@ -3316,8 +3056,7 @@ function drawChart() {
                     chart.height -
                     20
                 ) -
-                10
-                ;
+                10;
 
 
             if (
@@ -3348,21 +3087,16 @@ function drawChart() {
     ctx.strokeStyle =
         "#00ff88";
 
-
     ctx.lineWidth =
         3;
-
 
     ctx.shadowColor =
         "#00ff88";
 
-
     ctx.shadowBlur =
         8;
 
-
     ctx.stroke();
-
 
     ctx.shadowBlur =
         0;
@@ -3391,8 +3125,7 @@ function drawChart() {
             chart.height -
             20
         ) -
-        10
-        ;
+        10;
 
 
     ctx.beginPath();
@@ -3408,19 +3141,15 @@ function drawChart() {
 
 
     ctx.fillStyle =
-        "#ffffff";
-
+        "#fff";
 
     ctx.shadowColor =
         "#00ff88";
 
-
     ctx.shadowBlur =
         12;
 
-
     ctx.fill();
-
 
     ctx.shadowBlur =
         0;
@@ -3428,9 +3157,9 @@ function drawChart() {
 }
 
 
-/* ============================= */
-/* ASSET CHANGE */
-/* ============================= */
+/* =====================================================
+   ASSET CHANGE
+   ===================================================== */
 
 assetSelect.addEventListener(
 
@@ -3438,12 +3167,28 @@ assetSelect.addEventListener(
 
     function () {
 
-
         priceHistory =
             [];
 
-
         lastPrice =
+            null;
+
+        lastCandleMinute =
+            null;
+
+        window.activeSignal =
+            null;
+
+        window.signalExpiry =
+            null;
+
+        window.lastSavedSignal =
+            null;
+
+        window.lastSignalPrice =
+            null;
+
+        window.lastSignalTime =
             null;
 
 
@@ -3459,12 +3204,22 @@ assetSelect.addEventListener(
             "WAIT";
 
 
+        signalBox.style.color =
+            "#fff";
+
+
         status.textContent =
             "Collecting Market Data";
 
 
         confidence.textContent =
             "--%";
+
+
+        document.getElementById(
+            "confidenceFill"
+        ).style.width =
+            "0%";
 
 
         document.getElementById(
@@ -3491,6 +3246,18 @@ assetSelect.addEventListener(
             "WAIT";
 
 
+        document.getElementById(
+            "biasValue"
+        ).className =
+            "metric-value yellow";
+
+
+        document.getElementById(
+            "trapRisk"
+        ).textContent =
+            "--";
+
+
         drawChart();
 
 
@@ -3501,9 +3268,9 @@ assetSelect.addEventListener(
 );
 
 
-/* ============================= */
-/* GENERATE BUTTON */
-/* ============================= */
+/* =====================================================
+   GENERATE BUTTON
+   ===================================================== */
 
 generateButton.addEventListener(
 
@@ -3520,9 +3287,9 @@ generateButton.addEventListener(
 );
 
 
-/* ============================= */
-/* START */
-/* ============================= */
+/* =====================================================
+   START
+   ===================================================== */
 
 updatePrice();
 
@@ -3532,8 +3299,4 @@ setInterval(
     5000
 );
 
-</script>
-
-</body>
-
-</html>
+</script></body></html>
