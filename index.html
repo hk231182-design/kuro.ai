@@ -1,3 +1,4 @@
+```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -5,7 +6,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>KURO AI</title>
 
-  
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 html{scroll-behavior:smooth}
@@ -30,7 +30,7 @@ button{cursor:pointer}
   padding:18px 14px 28px;
 }
 
-/* HEADER */
+/* ================= HEADER ================= */
 
 .header{
   height:78px;
@@ -44,7 +44,7 @@ button{cursor:pointer}
   box-shadow:
     0 15px 45px rgba(0,0,0,.25),
     inset 0 1px rgba(255,255,255,.04);
-  margin-bottom:22px;
+  margin-bottom:14px;
 }
 
 .menu{
@@ -102,7 +102,50 @@ button{cursor:pointer}
   display:block;
 }
 
-/* MARKET */
+/* ================= MARKET TYPE ================= */
+
+.market-type{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:8px;
+  padding:5px;
+  margin-bottom:10px;
+  border:1px solid #173c55;
+  border-radius:16px;
+  background:#06111d;
+}
+
+.market-type button{
+  height:38px;
+  border:1px solid transparent;
+  border-radius:11px;
+  background:transparent;
+  color:#6f8598;
+  font-size:11px;
+  font-weight:900;
+  letter-spacing:.4px;
+  transition:.2s;
+}
+
+.market-type button.active{
+  color:#fff;
+  border-color:#167cc0;
+  background:
+    linear-gradient(
+      135deg,
+      rgba(13,151,229,.25),
+      rgba(30,83,178,.18)
+    );
+  box-shadow:0 0 18px rgba(15,146,230,.12);
+}
+
+.market-type button.otc-active{
+  border-color:#7b5c18;
+  background:rgba(170,130,30,.12);
+  color:#ffd85b;
+}
+
+/* ================= MARKET ================= */
 
 .market{
   border:1px solid #1d6485;
@@ -174,6 +217,12 @@ button{cursor:pointer}
   white-space:nowrap;
 }
 
+.live-pill.otc{
+  color:#ffd84d;
+  border-color:rgba(255,202,60,.25);
+  background:rgba(255,190,40,.08);
+}
+
 .select-area{
   margin-top:14px;
   position:relative;
@@ -202,7 +251,7 @@ button{cursor:pointer}
   cursor:pointer;
 }
 
-/* SIGNAL */
+/* ================= SIGNAL ================= */
 
 .signal{
   border:1px solid rgba(0,255,120,.32);
@@ -270,7 +319,7 @@ button{cursor:pointer}
   font-weight:700;
 }
 
-/* CARDS */
+/* ================= CARDS ================= */
 
 .card{
   border:1px solid #183149;
@@ -293,7 +342,7 @@ button{cursor:pointer}
   letter-spacing:1.2px;
 }
 
-/* CONFIDENCE */
+/* ================= CONFIDENCE ================= */
 
 .conf-head{
   display:flex;
@@ -331,7 +380,7 @@ button{cursor:pointer}
   transition:.35s;
 }
 
-/* SUPPORT / RESISTANCE */
+/* ================= SUPPORT / RESISTANCE ================= */
 
 .levels{
   display:flex;
@@ -371,7 +420,6 @@ button{cursor:pointer}
       #5ce94d 100%
     );
   position:relative;
-  box-shadow:0 0 12px rgba(20,170,230,.15);
 }
 
 .level-dot{
@@ -387,7 +435,7 @@ button{cursor:pointer}
   box-shadow:0 0 18px #0ca9ef;
 }
 
-/* SMALL CARDS */
+/* ================= SMALL CARDS ================= */
 
 .two{
   display:grid;
@@ -436,7 +484,7 @@ button{cursor:pointer}
   text-overflow:ellipsis;
 }
 
-/* ANALYSIS */
+/* ================= ANALYSIS ================= */
 
 .analysis{
   border-color:#12548b;
@@ -494,7 +542,7 @@ button{cursor:pointer}
   font-weight:900;
 }
 
-/* BUTTON */
+/* ================= BUTTON ================= */
 
 .main-btn{
   width:100%;
@@ -521,7 +569,7 @@ button{cursor:pointer}
   margin-top:8px;
 }
 
-/* HISTORY */
+/* ================= HISTORY ================= */
 
 .history-title{
   display:flex;
@@ -580,7 +628,7 @@ button{cursor:pointer}
 .green{color:#63f45b}
 .yellow{color:#ffd54d}
 
-/* KEY SCREEN */
+/* ================= KEY SCREEN ================= */
 
 #keyScreen{
   position:fixed;
@@ -682,10 +730,25 @@ button{cursor:pointer}
   font-size:10px;
 }
 
+/* ================= LOADING ================= */
 
-/* ================================================= */
-/* ================= MOBILE ======================== */
-/* ================================================= */
+.generate-loading{
+  animation:generatePulse .8s infinite alternate;
+  opacity:.85;
+}
+
+@keyframes generatePulse{
+  from{
+    transform:scale(1);
+    box-shadow:0 0 0 rgba(20,180,255,0);
+  }
+  to{
+    transform:scale(.98);
+    box-shadow:0 0 25px rgba(20,180,255,.55);
+  }
+}
+
+/* ================= MOBILE ================= */
 
 @media(max-width:520px){
 
@@ -698,8 +761,6 @@ button{cursor:pointer}
     max-width:100%;
     padding:8px 8px 16px;
   }
-
-  /* HEADER */
 
   .header{
     height:62px;
@@ -731,7 +792,18 @@ button{cursor:pointer}
     width:23px;
   }
 
-  /* MARKET */
+  .market-type{
+    margin-bottom:7px;
+    padding:4px;
+    border-radius:13px;
+    gap:5px;
+  }
+
+  .market-type button{
+    height:32px;
+    font-size:9px;
+    border-radius:9px;
+  }
 
   .market{
     border-radius:19px;
@@ -782,15 +854,11 @@ button{cursor:pointer}
     font-size:11px;
   }
 
-  /* CARDS */
-
   .card{
     border-radius:17px;
     padding:10px;
     margin-bottom:8px;
   }
-
-  /* SIGNAL */
 
   .signal{
     border-radius:16px;
@@ -826,8 +894,6 @@ button{cursor:pointer}
     margin-top:9px !important;
   }
 
-  /* CONFIDENCE */
-
   .conf-head{
     margin-bottom:6px;
   }
@@ -849,8 +915,6 @@ button{cursor:pointer}
   .bar{
     height:8px;
   }
-
-  /* SUPPORT / RESISTANCE */
 
   .levels{
     margin-bottom:7px;
@@ -874,8 +938,6 @@ button{cursor:pointer}
     height:15px;
     border-width:3px;
   }
-
-  /* TREND / PATTERN */
 
   .two{
     display:grid;
@@ -904,8 +966,6 @@ button{cursor:pointer}
     font-size:14px;
     margin-top:5px;
   }
-
-  /* ANALYSIS */
 
   .analysis{
     padding:11px;
@@ -941,8 +1001,6 @@ button{cursor:pointer}
     font-size:9px;
   }
 
-  /* ANALYSIS DETAILS */
-
   #analysisDetails{
     padding:11px;
   }
@@ -969,8 +1027,6 @@ button{cursor:pointer}
     border-radius:10px !important;
   }
 
-  /* GENERATE */
-
   .main-btn{
     height:50px;
     min-height:50px;
@@ -982,8 +1038,6 @@ button{cursor:pointer}
     font-size:8px;
     margin-top:5px;
   }
-
-  /* HISTORY */
 
   .history-title{
     margin-bottom:8px;
@@ -1022,9 +1076,7 @@ button{cursor:pointer}
     font-size:10px;
     margin-top:3px;
   }
-
 }
-
 
 /* VERY SMALL PHONES */
 
@@ -1069,24 +1121,7 @@ button{cursor:pointer}
     min-height:47px;
     font-size:13px;
   }
-
 }
-
- .generate-loading{
-  animation:generatePulse .8s infinite alternate;
-  opacity:.85;
-}
-
-@keyframes generatePulse{
-  from{
-    transform:scale(1);
-    box-shadow:0 0 0 rgba(20,180,255,0);
-  }
-  to{
-    transform:scale(.98);
-    box-shadow:0 0 25px rgba(20,180,255,.55);
-  }
-} 
 </style>
 </head>
 
@@ -1114,6 +1149,28 @@ alt="KURO AI Logo"
 </header>
 
 
+<!-- ================= MARKET TYPE ================= -->
+
+<div class="market-type">
+
+<button
+id="realMarketBtn"
+class="active"
+type="button"
+>
+REAL MARKET
+</button>
+
+<button
+id="otcMarketBtn"
+type="button"
+>
+OTC MARKET
+</button>
+
+</div>
+
+
 <section class="market">
 
 <div class="market-top">
@@ -1130,15 +1187,15 @@ alt="KURO AI Logo"
 EUR/USD
 </div>
 
-<div class="asset-sub">
-● 1 MIN • LIVE SIGNAL
+<div class="asset-sub" id="marketSub">
+● REAL MARKET • 1 MIN
 </div>
 
 </div>
 
 </div>
 
-<div class="live-pill">
+<div class="live-pill" id="livePill">
 ↗ LIVE
 </div>
 
@@ -1552,6 +1609,8 @@ ACCURACY
 </div>
 
 
+<!-- ================= ACCESS KEY ================= -->
+
 <div id="keyScreen">
 
 <div class="keybox">
@@ -1593,6 +1652,8 @@ UNLOCK KURO AI
 const KURO_ACCESS_KEY="KURO-2026";
 
 
+/* ================= ACCESS KEY ================= */
+
 function unlockKURO(){
 
 const entered=
@@ -1628,6 +1689,8 @@ document.getElementById("keyScreen").style.display="none";
 }
 
 
+/* ================= ELEMENTS ================= */
+
 const assetSelect=
 document.getElementById("assetSelect");
 
@@ -1652,6 +1715,20 @@ document.getElementById("marketStatus");
 const generateButton=
 document.getElementById("generateButton");
 
+const realMarketBtn=
+document.getElementById("realMarketBtn");
+
+const otcMarketBtn=
+document.getElementById("otcMarketBtn");
+
+const livePill=
+document.getElementById("livePill");
+
+const marketSub=
+document.getElementById("marketSub");
+
+
+/* ================= MARKET DATA ================= */
 
 const symbols={
 
@@ -1675,14 +1752,19 @@ const flags={
 };
 
 
+let marketType="REAL";
+
 let priceHistory=[];
 let lastPrice=null;
 let loading=false;
 let lastCandleMinute=null;
+
 let totalWins=0;
 let totalLosses=0;
 let totalDraws=0;
 
+
+/* ================= FORMAT ================= */
 
 function formatPrice(p){
 
@@ -1692,6 +1774,103 @@ return p>=100
 
 }
 
+
+/* ================= MARKET TYPE ================= */
+
+function setMarketType(type){
+
+marketType=type;
+
+priceHistory=[];
+lastPrice=null;
+lastCandleMinute=null;
+
+window.activeSignal=null;
+window.signalExpiry=null;
+window.lastSavedSignal=null;
+window.lastSignalPrice=null;
+window.lastSignalTime=null;
+
+
+/* REAL MARKET */
+
+if(type==="REAL"){
+
+realMarketBtn.classList.add("active");
+realMarketBtn.classList.remove("otc-active");
+
+otcMarketBtn.classList.remove("active");
+otcMarketBtn.classList.remove("otc-active");
+
+livePill.classList.remove("otc");
+
+livePill.textContent="↗ LIVE";
+
+marketSub.textContent=
+"● REAL MARKET • 1 MIN";
+
+resetUI();
+
+updatePrice();
+
+}
+
+
+/* OTC MARKET */
+
+else{
+
+otcMarketBtn.classList.add("active");
+otcMarketBtn.classList.add("otc-active");
+
+realMarketBtn.classList.remove("active");
+
+livePill.classList.add("otc");
+
+livePill.textContent="OTC MODE";
+
+marketSub.textContent=
+"● OTC MARKET • 1 MIN";
+
+resetUI();
+
+currentPrice.textContent="OTC DATA";
+
+marketStatus.textContent="NOT CONNECTED";
+
+signalBox.textContent="WAIT";
+
+status.textContent=
+"OTC data source required";
+
+document.getElementById("confidenceText").textContent=
+"Connect an OTC market feed";
+
+document.getElementById("reasonBox").textContent=
+"OTC MARKET mode is ready, but this version does not use fake prices. A genuine OTC data source/API is required for live OTC signals.";
+
+}
+
+}
+
+
+realMarketBtn.addEventListener(
+"click",
+()=>{
+setMarketType("REAL");
+}
+);
+
+
+otcMarketBtn.addEventListener(
+"click",
+()=>{
+setMarketType("OTC");
+}
+);
+
+
+/* ================= RESET ================= */
 
 function resetUI(){
 
@@ -1727,11 +1906,15 @@ document.getElementById("biasValue").textContent="WAIT";
 document.getElementById("biasValue").className="yellow";
 
 document.getElementById("trapRisk").textContent="--";
+
 document.getElementById("trendValue").textContent="Neutral";
+
 document.getElementById("patternValue").textContent="Monitoring";
 
 }
 
+
+/* ================= ASSET CHANGE ================= */
 
 assetSelect.addEventListener("change",()=>{
 
@@ -1746,14 +1929,34 @@ flags[a];
 document.getElementById("selectedAssetName").textContent=
 a;
 
+if(marketType==="REAL"){
+
 resetUI();
 
 updatePrice();
 
+}else{
+
+resetUI();
+
+currentPrice.textContent="OTC DATA";
+
+marketStatus.textContent="NOT CONNECTED";
+
+signalBox.textContent="WAIT";
+
+status.textContent="OTC data source required";
+
+}
+
 });
 
 
+/* ================= REAL MARKET PRICE ================= */
+
 async function updatePrice(){
+
+if(marketType!=="REAL")return;
 
 if(loading)return;
 
@@ -1796,6 +1999,8 @@ priceHistory.shift();
 marketStatus.textContent="LIVE";
 
 
+/* ACCURACY */
+
 if(
 window.lastSavedSignal &&
 window.lastSignalPrice &&
@@ -1804,6 +2009,7 @@ Date.now()-window.lastSignalTime>=60000
 ){
 
 const sig=window.lastSavedSignal;
+
 const entry=window.lastSignalPrice;
 
 let result="DRAW";
@@ -1831,7 +2037,9 @@ newPrice<entry
 }
 
 if(result==="WIN")totalWins++;
+
 if(result==="LOSS")totalLosses++;
+
 if(result==="DRAW")totalDraws++;
 
 const total=
@@ -1882,7 +2090,9 @@ marketStatus.textContent=
 }
 
 signalBox.textContent="WAIT";
+
 status.textContent="Price Data Unavailable";
+
 confidence.textContent="--%";
 
 }
@@ -1891,6 +2101,8 @@ loading=false;
 
 }
 
+
+/* ================= SIGNAL STYLE ================= */
 
 function applySignalStyle(sig){
 
@@ -1962,12 +2174,18 @@ bias.className="yellow";
 }
 
 
+/* ================= ANALYSIS ================= */
+
 function analyzeMarket(manual=false){
+
+if(marketType!=="REAL")return;
 
 if(priceHistory.length<12){
 
 signalBox.textContent="WAIT";
+
 status.textContent="Collecting 1-Min Data";
+
 confidence.textContent="--%";
 
 document.getElementById("confidenceText").textContent=
@@ -2014,12 +2232,15 @@ window.signalExpiry=null;
 
 
 const p=priceHistory;
+
 const c=p.slice(-12);
 
 const open=c[0];
+
 const close=c[c.length-1];
 
 const high=Math.max(...c);
+
 const low=Math.min(...c);
 
 const candleMove=
@@ -2038,24 +2259,30 @@ const lastMove=
 let score=0;
 
 if(candleMove>0.005)score+=2;
+
 if(candleMove<-0.005)score-=2;
 
 if(range>0.01){
 
 if(close>open)score+=1;
+
 if(close<open)score-=1;
 
 }
 
 if(lastMove>0)score+=1;
+
 if(lastMove<0)score-=1;
 
 
 let sig="WAIT";
+
 let newStatus="Market Unclear";
+
 
 const minute=
 Math.floor(Date.now()/60000);
+
 
 if(lastCandleMinute===null)
 lastCandleMinute=minute;
@@ -2068,11 +2295,13 @@ lastCandleMinute=minute;
 if(score>=3){
 
 sig="CALL";
+
 newStatus="1-Min Bullish";
 
 }else if(score<=-3){
 
 sig="PUT";
+
 newStatus="1-Min Bearish";
 
 }
@@ -2081,6 +2310,7 @@ newStatus="1-Min Bearish";
 
 
 signalBox.textContent=sig;
+
 status.textContent=newStatus;
 
 applySignalStyle(sig);
@@ -2136,6 +2366,7 @@ Math.abs(score)<=3
 
 
 const support=low;
+
 const resistance=high;
 
 document.getElementById("supportValue").textContent=
@@ -2153,12 +2384,15 @@ window.signalExpiry=
 Date.now()+60000;
 
 window.lastSavedSignal=sig;
+
 window.lastSignalPrice=close;
+
 window.lastSignalTime=Date.now();
 
 
 const history=
 document.getElementById("signalHistory");
+
 
 if(history.textContent==="No signals yet")
 history.textContent="";
@@ -2182,80 +2416,126 @@ history.prepend(item);
 }
 
 
+/* ================= COUNTDOWN ================= */
+
 setInterval(()=>{
-const t=document.getElementById("countdownTimer");
+
+const t=
+document.getElementById("countdownTimer");
+
 
 if(!window.signalExpiry){
 
-  t.textContent="--";
-  return;
+t.textContent="--";
+
+return;
 
 }
 
-const remaining=window.signalExpiry-Date.now();
-const sec=Math.max(0,Math.ceil(remaining/1000));
+const remaining=
+window.signalExpiry-Date.now();
 
-t.textContent="00:"+String(sec).padStart(2,"0");
+const sec=
+Math.max(0,Math.ceil(remaining/1000));
+
+t.textContent=
+"00:"+
+String(sec).padStart(2,"0");
 
 
-// Full 1-minute signal timing finished
 if(
-  remaining<=0 &&
-  generateButton.dataset.waitingSignal==="true"
+remaining<=0 &&
+generateButton.dataset.waitingSignal==="true"
 ){
 
-  generateButton.dataset.waitingSignal="false";
-  generateButton.dataset.generating="false";
-  generateButton.disabled=false;
+generateButton.dataset.waitingSignal="false";
 
-  generateButton.innerHTML="↻ &nbsp; Analyze another chart";
-  generateButton.classList.remove("generate-loading");
+generateButton.dataset.generating="false";
+
+generateButton.disabled=false;
+
+generateButton.innerHTML=
+"↻ &nbsp; Analyze another chart";
+
+generateButton.classList.remove(
+"generate-loading"
+);
 
 }
 
 },1000);
 
 
+/* ================= GENERATE BUTTON ================= */
+
 generateButton.addEventListener("click",()=>{
 
-  if(generateButton.dataset.generating==="true") return;
+if(marketType!=="REAL"){
 
-  generateButton.dataset.generating="true";
-  generateButton.disabled=true;
+status.textContent=
+"OTC data source required";
 
-  generateButton.innerHTML="⟳ &nbsp; GENERATING SIGNAL...";
-  generateButton.classList.add("generate-loading");
+return;
 
-  analyzeMarket(true);
+}
 
-  // CALL/PUT signal generate hole
-  // puro 1-minute expiry porjonto button locked thakbe
-  if(window.activeSignal && window.signalExpiry){
 
-    generateButton.dataset.waitingSignal="true";
+if(generateButton.dataset.generating==="true")
+return;
 
-  }else{
 
-    // WAIT hole abar button available
-    generateButton.innerHTML="↻ &nbsp; Analyze another chart";
-    generateButton.classList.remove("generate-loading");
-    generateButton.disabled=false;
-    generateButton.dataset.generating="false";
+generateButton.dataset.generating="true";
 
-  }
+generateButton.disabled=true;
+
+generateButton.innerHTML=
+"⟳ &nbsp; GENERATING SIGNAL...";
+
+generateButton.classList.add(
+"generate-loading"
+);
+
+
+analyzeMarket(true);
+
+
+if(window.activeSignal && window.signalExpiry){
+
+generateButton.dataset.waitingSignal="true";
+
+}else{
+
+generateButton.innerHTML=
+"↻ &nbsp; Analyze another chart";
+
+generateButton.classList.remove(
+"generate-loading"
+);
+
+generateButton.disabled=false;
+
+generateButton.dataset.generating="false";
+
+}
 
 });
 
+
+/* ================= ACCESS KEY ENTER ================= */
 
 document.getElementById("accessKey")
 .addEventListener(
 "keydown",
 e=>{
+
 if(e.key==="Enter")
 unlockKURO();
+
 }
 );
 
+
+/* ================= START ================= */
 
 updatePrice();
 
@@ -2268,3 +2548,4 @@ updatePrice,
 
 </body>
 </html>
+```
