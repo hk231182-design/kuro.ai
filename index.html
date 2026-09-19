@@ -6,29 +6,31 @@
 <title>KURO AI</title>
 
 
-@media(max-width:380px){
+generateButton.addEventListener("click",()=>{
 
-  /* tomar existing CSS */
-}
+  if(generateButton.dataset.generating==="true") return;
 
+  generateButton.dataset.generating="true";
+  generateButton.disabled=true;
 
-/* EIKHANE PASTE KORBE */
+  generateButton.innerHTML="⟳ &nbsp; GENERATING SIGNAL...";
 
-.generate-loading{
-  animation:generatePulse .8s infinite alternate;
-  opacity:.85;
-}
+  generateButton.classList.add("generate-loading");
 
-@keyframes generatePulse{
-  from{
-    transform:scale(1);
-    box-shadow:0 0 0 rgba(20,180,255,0);
-  }
-  to{
-    transform:scale(.98);
-    box-shadow:0 0 25px rgba(20,180,255,.55);
-  }
-}
+  setTimeout(()=>{
+
+    analyzeMarket(true);
+
+    generateButton.innerHTML="↻ &nbsp; Analyze another chart";
+
+    generateButton.classList.remove("generate-loading");
+
+    generateButton.disabled=false;
+    generateButton.dataset.generating="false";
+
+  },1500);
+
+});
 
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
