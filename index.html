@@ -1727,7 +1727,7 @@ const marketSub=
 document.getElementById("marketSub");
 
 
-/* ================= MARKET DATA ================= */
+/* ================= REAL MARKET DATA ================= */
 
 const symbols={
 
@@ -1740,13 +1740,49 @@ const symbols={
 };
 
 
+/* ================= OTC MARKET DATA ================= */
+
+/*
+  These are frontend display symbols.
+  Live OTC pricing will be connected in the backend stage.
+*/
+
+const otcSymbols={
+
+"USD/BRL OTC":"BRLUSD_otc",
+"USD/INR OTC":"USDINR_otc",
+"USD/PKR OTC":"USDPKR_otc",
+"USD/NGN OTC":"USDNGN_otc",
+"EUR/JPY OTC":"EURJPY_otc",
+"GBP/JPY OTC":"GBPJPY_otc",
+"AUD/USD OTC":"AUDUSD_otc",
+"EUR/USD OTC":"EURUSD_otc",
+"GBP/USD OTC":"GBPUSD_otc",
+"USD/JPY OTC":"USDJPY_otc"
+
+};
+
+
+/* ================= FLAGS ================= */
+
 const flags={
 
 "EUR/USD":"🇪🇺🇺🇸",
 "GBP/USD":"🇬🇧🇺🇸",
 "USD/JPY":"🇺🇸🇯🇵",
 "AUD/USD":"🇦🇺🇺🇸",
-"USD/CAD":"🇺🇸🇨🇦"
+"USD/CAD":"🇺🇸🇨🇦",
+
+"USD/BRL OTC":"🇺🇸🇧🇷",
+"USD/INR OTC":"🇺🇸🇮🇳",
+"USD/PKR OTC":"🇺🇸🇵🇰",
+"USD/NGN OTC":"🇺🇸🇳🇬",
+"EUR/JPY OTC":"🇪🇺🇯🇵",
+"GBP/JPY OTC":"🇬🇧🇯🇵",
+"AUD/USD OTC":"🇦🇺🇺🇸",
+"EUR/USD OTC":"🇪🇺🇺🇸",
+"GBP/USD OTC":"🇬🇧🇺🇸",
+"USD/JPY OTC":"🇺🇸🇯🇵"
 
 };
 
@@ -1791,7 +1827,7 @@ window.lastSignalPrice=null;
 window.lastSignalTime=null;
 
 
-/* REAL MARKET */
+/* ================= REAL MARKET ================= */
 
 if(type==="REAL"){
 
@@ -1808,6 +1844,47 @@ livePill.textContent="↗ LIVE";
 marketSub.textContent=
 "● REAL MARKET • 1 MIN";
 
+
+/* REAL MARKET OPTIONS */
+
+assetSelect.innerHTML=`
+
+<option value="EUR/USD">
+🇪🇺🇺🇸 EUR/USD
+</option>
+
+<option value="GBP/USD">
+🇬🇧🇺🇸 GBP/USD
+</option>
+
+<option value="USD/JPY">
+🇺🇸🇯🇵 USD/JPY
+</option>
+
+<option value="AUD/USD">
+🇦🇺🇺🇸 AUD/USD
+</option>
+
+<option value="USD/CAD">
+🇺🇸🇨🇦 USD/CAD
+</option>
+
+`;
+
+
+/* DEFAULT REAL PAIR */
+
+assetSelect.value="EUR/USD";
+
+assetDisplay.textContent=
+"🇪🇺🇺🇸  EUR/USD";
+
+document.getElementById("assetFlags").textContent=
+"🇪🇺🇺🇸";
+
+document.getElementById("selectedAssetName").textContent=
+"EUR/USD";
+
 resetUI();
 
 updatePrice();
@@ -1815,7 +1892,7 @@ updatePrice();
 }
 
 
-/* OTC MARKET */
+/* ================= OTC MARKET ================= */
 
 else{
 
@@ -1823,6 +1900,7 @@ otcMarketBtn.classList.add("active");
 otcMarketBtn.classList.add("otc-active");
 
 realMarketBtn.classList.remove("active");
+realMarketBtn.classList.remove("otc-active");
 
 livePill.classList.add("otc");
 
@@ -1831,7 +1909,71 @@ livePill.textContent="OTC MODE";
 marketSub.textContent=
 "● OTC MARKET • 1 MIN";
 
+
+/* OTC MARKET OPTIONS */
+
+assetSelect.innerHTML=`
+
+<option value="USD/BRL OTC">
+🇺🇸🇧🇷 USD/BRL OTC
+</option>
+
+<option value="USD/INR OTC">
+🇺🇸🇮🇳 USD/INR OTC
+</option>
+
+<option value="USD/PKR OTC">
+🇺🇸🇵🇰 USD/PKR OTC
+</option>
+
+<option value="USD/NGN OTC">
+🇺🇸🇳🇬 USD/NGN OTC
+</option>
+
+<option value="EUR/JPY OTC">
+🇪🇺🇯🇵 EUR/JPY OTC
+</option>
+
+<option value="GBP/JPY OTC">
+🇬🇧🇯🇵 GBP/JPY OTC
+</option>
+
+<option value="AUD/USD OTC">
+🇦🇺🇺🇸 AUD/USD OTC
+</option>
+
+<option value="EUR/USD OTC">
+🇪🇺🇺🇸 EUR/USD OTC
+</option>
+
+<option value="GBP/USD OTC">
+🇬🇧🇺🇸 GBP/USD OTC
+</option>
+
+<option value="USD/JPY OTC">
+🇺🇸🇯🇵 USD/JPY OTC
+</option>
+
+`;
+
+
+/* DEFAULT OTC PAIR */
+
+assetSelect.value="USD/BRL OTC";
+
+assetDisplay.textContent=
+"🇺🇸🇧🇷  USD/BRL OTC";
+
+document.getElementById("assetFlags").textContent=
+"🇺🇸🇧🇷";
+
+document.getElementById("selectedAssetName").textContent=
+"USD/BRL OTC";
+
 resetUI();
+
+
+/* OTC LIVE FEED NOT CONNECTED YET */
 
 currentPrice.textContent="OTC DATA";
 
@@ -1846,12 +1988,14 @@ document.getElementById("confidenceText").textContent=
 "Connect an OTC market feed";
 
 document.getElementById("reasonBox").textContent=
-"OTC MARKET mode is ready, but this version does not use fake prices. A genuine OTC data source/API is required for live OTC signals.";
+"OTC pair selected. Waiting for the live OTC data feed.";
 
 }
 
 }
 
+
+/* ================= MARKET BUTTONS ================= */
 
 realMarketBtn.addEventListener(
 "click",
@@ -1859,7 +2003,6 @@ realMarketBtn.addEventListener(
 setMarketType("REAL");
 }
 );
-
 
 otcMarketBtn.addEventListener(
 "click",
@@ -1919,14 +2062,21 @@ assetSelect.addEventListener("change",()=>{
 
 const a=assetSelect.value;
 
+const selectedFlag=
+flags[a] ||
+(marketType==="REAL" ? "🇪🇺🇺🇸" : "🌐");
+
 assetDisplay.textContent=
-flags[a]+"  "+a;
+selectedFlag+"  "+a;
 
 document.getElementById("assetFlags").textContent=
-flags[a];
+selectedFlag;
 
 document.getElementById("selectedAssetName").textContent=
 a;
+
+
+/* REAL MARKET */
 
 if(marketType==="REAL"){
 
@@ -1934,7 +2084,12 @@ resetUI();
 
 updatePrice();
 
-}else{
+}
+
+
+/* OTC MARKET */
+
+else{
 
 resetUI();
 
@@ -1944,7 +2099,15 @@ marketStatus.textContent="NOT CONNECTED";
 
 signalBox.textContent="WAIT";
 
-status.textContent="OTC data source required";
+status.textContent=
+"OTC data source required";
+
+document.getElementById("confidenceText").textContent=
+"Connect an OTC market feed";
+
+document.getElementById("reasonBox").textContent=
+a+
+" selected. Waiting for the live OTC data feed.";
 
 }
 
@@ -1998,7 +2161,7 @@ priceHistory.shift();
 marketStatus.textContent="LIVE";
 
 
-/* ACCURACY */
+/* ================= ACCURACY ================= */
 
 if(
 window.lastSavedSignal &&
@@ -2177,6 +2340,12 @@ bias.className="yellow";
 
 function analyzeMarket(manual=false){
 
+/*
+  REAL MARKET ONLY FOR NOW.
+  OTC will use the same engine after the live OTC
+  price feed is connected.
+*/
+
 if(marketType!=="REAL")return;
 
 if(priceHistory.length<12){
@@ -2339,7 +2508,7 @@ sig==="CALL"
 ?"Recent 1-minute price movement is showing bullish momentum according to the current signal logic."
 :sig==="PUT"
 ?"Recent 1-minute price movement is showing bearish momentum according to the current signal logic."
-:"1-minute price data is being monitored for momentum.";
+:"1-minute price data is being monitored for momentum";
 
 
 document.getElementById("trendValue").textContent=
@@ -2547,4 +2716,3 @@ updatePrice,
 
 </body>
 </html>
-```
