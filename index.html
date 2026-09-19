@@ -1743,13 +1743,14 @@ const symbols={
 /* ================= OTC MARKET DATA ================= */
 
 /*
-  These are frontend display symbols.
-  Live OTC pricing will be connected in the backend stage.
+  Frontend OTC symbol mapping.
+  The actual live OTC feed will be connected later
+  through the backend/feeder.
 */
 
 const otcSymbols={
 
-"USD/BRL OTC":"BRLUSD_otc",
+"USD/BRL OTC":"USDBRL_otc",
 "USD/INR OTC":"USDINR_otc",
 "USD/PKR OTC":"USDPKR_otc",
 "USD/NGN OTC":"USDNGN_otc",
@@ -1787,6 +1788,110 @@ const flags={
 };
 
 
+/* ================= ASSET LISTS ================= */
+
+const realAssets=[
+
+{
+value:"EUR/USD",
+flag:"🇪🇺🇺🇸",
+symbol:"EURUSD"
+},
+
+{
+value:"GBP/USD",
+flag:"🇬🇧🇺🇸",
+symbol:"GBPUSD"
+},
+
+{
+value:"USD/JPY",
+flag:"🇺🇸🇯🇵",
+symbol:"USDJPY"
+},
+
+{
+value:"AUD/USD",
+flag:"🇦🇺🇺🇸",
+symbol:"AUDUSD"
+},
+
+{
+value:"USD/CAD",
+flag:"🇺🇸🇨🇦",
+symbol:"USDCAD"
+}
+
+];
+
+
+const otcAssets=[
+
+{
+value:"USD/BRL OTC",
+flag:"🇺🇸🇧🇷",
+symbol:"USDBRL_otc"
+},
+
+{
+value:"USD/INR OTC",
+flag:"🇺🇸🇮🇳",
+symbol:"USDINR_otc"
+},
+
+{
+value:"USD/PKR OTC",
+flag:"🇺🇸🇵🇰",
+symbol:"USDPKR_otc"
+},
+
+{
+value:"USD/NGN OTC",
+flag:"🇺🇸🇳🇬",
+symbol:"USDNGN_otc"
+},
+
+{
+value:"EUR/JPY OTC",
+flag:"🇪🇺🇯🇵",
+symbol:"EURJPY_otc"
+},
+
+{
+value:"GBP/JPY OTC",
+flag:"🇬🇧🇯🇵",
+symbol:"GBPJPY_otc"
+},
+
+{
+value:"AUD/USD OTC",
+flag:"🇦🇺🇺🇸",
+symbol:"AUDUSD_otc"
+},
+
+{
+value:"EUR/USD OTC",
+flag:"🇪🇺🇺🇸",
+symbol:"EURUSD_otc"
+},
+
+{
+value:"GBP/USD OTC",
+flag:"🇬🇧🇺🇸",
+symbol:"GBPUSD_otc"
+},
+
+{
+value:"USD/JPY OTC",
+flag:"🇺🇸🇯🇵",
+symbol:"USDJPY_otc"
+}
+
+];
+
+
+/* ================= STATE ================= */
+
 let marketType="REAL";
 
 let priceHistory=[];
@@ -1806,6 +1911,61 @@ function formatPrice(p){
 return p>=100
 ?p.toFixed(3)
 :p.toFixed(5);
+
+}
+
+
+/* ================= POPULATE ASSETS ================= */
+
+function populateAssets(type){
+
+const list=
+type==="REAL"
+?realAssets
+:otcAssets;
+
+assetSelect.innerHTML="";
+
+list.forEach(asset=>{
+
+const option=
+document.createElement("option");
+
+option.value=asset.value;
+
+option.textContent=
+asset.flag+
+" "+
+asset.value;
+
+assetSelect.appendChild(option);
+
+});
+
+}
+
+
+/* ================= UPDATE ASSET UI ================= */
+
+function updateAssetUI(){
+
+const a=
+assetSelect.value;
+
+const selectedFlag=
+flags[a] ||
+(marketType==="REAL"
+?"🇪🇺🇺🇸"
+:"🌐");
+
+assetDisplay.textContent=
+selectedFlag+"  "+a;
+
+document.getElementById("assetFlags").textContent=
+selectedFlag;
+
+document.getElementById("selectedAssetName").textContent=
+a;
 
 }
 
@@ -1845,45 +2005,13 @@ marketSub.textContent=
 "● REAL MARKET • 1 MIN";
 
 
-/* REAL MARKET OPTIONS */
+/* REAL ASSET LIST */
 
-assetSelect.innerHTML=`
-
-<option value="EUR/USD">
-🇪🇺🇺🇸 EUR/USD
-</option>
-
-<option value="GBP/USD">
-🇬🇧🇺🇸 GBP/USD
-</option>
-
-<option value="USD/JPY">
-🇺🇸🇯🇵 USD/JPY
-</option>
-
-<option value="AUD/USD">
-🇦🇺🇺🇸 AUD/USD
-</option>
-
-<option value="USD/CAD">
-🇺🇸🇨🇦 USD/CAD
-</option>
-
-`;
-
-
-/* DEFAULT REAL PAIR */
+populateAssets("REAL");
 
 assetSelect.value="EUR/USD";
 
-assetDisplay.textContent=
-"🇪🇺🇺🇸  EUR/USD";
-
-document.getElementById("assetFlags").textContent=
-"🇪🇺🇺🇸";
-
-document.getElementById("selectedAssetName").textContent=
-"EUR/USD";
+updateAssetUI();
 
 resetUI();
 
@@ -1910,70 +2038,18 @@ marketSub.textContent=
 "● OTC MARKET • 1 MIN";
 
 
-/* OTC MARKET OPTIONS */
+/* OTC ASSET LIST */
 
-assetSelect.innerHTML=`
-
-<option value="USD/BRL OTC">
-🇺🇸🇧🇷 USD/BRL OTC
-</option>
-
-<option value="USD/INR OTC">
-🇺🇸🇮🇳 USD/INR OTC
-</option>
-
-<option value="USD/PKR OTC">
-🇺🇸🇵🇰 USD/PKR OTC
-</option>
-
-<option value="USD/NGN OTC">
-🇺🇸🇳🇬 USD/NGN OTC
-</option>
-
-<option value="EUR/JPY OTC">
-🇪🇺🇯🇵 EUR/JPY OTC
-</option>
-
-<option value="GBP/JPY OTC">
-🇬🇧🇯🇵 GBP/JPY OTC
-</option>
-
-<option value="AUD/USD OTC">
-🇦🇺🇺🇸 AUD/USD OTC
-</option>
-
-<option value="EUR/USD OTC">
-🇪🇺🇺🇸 EUR/USD OTC
-</option>
-
-<option value="GBP/USD OTC">
-🇬🇧🇺🇸 GBP/USD OTC
-</option>
-
-<option value="USD/JPY OTC">
-🇺🇸🇯🇵 USD/JPY OTC
-</option>
-
-`;
-
-
-/* DEFAULT OTC PAIR */
+populateAssets("OTC");
 
 assetSelect.value="USD/BRL OTC";
 
-assetDisplay.textContent=
-"🇺🇸🇧🇷  USD/BRL OTC";
-
-document.getElementById("assetFlags").textContent=
-"🇺🇸🇧🇷";
-
-document.getElementById("selectedAssetName").textContent=
-"USD/BRL OTC";
+updateAssetUI();
 
 resetUI();
 
 
-/* OTC LIVE FEED NOT CONNECTED YET */
+/* OTC FEED WAITING */
 
 currentPrice.textContent="OTC DATA";
 
@@ -2062,18 +2138,7 @@ assetSelect.addEventListener("change",()=>{
 
 const a=assetSelect.value;
 
-const selectedFlag=
-flags[a] ||
-(marketType==="REAL" ? "🇪🇺🇺🇸" : "🌐");
-
-assetDisplay.textContent=
-selectedFlag+"  "+a;
-
-document.getElementById("assetFlags").textContent=
-selectedFlag;
-
-document.getElementById("selectedAssetName").textContent=
-a;
+updateAssetUI();
 
 
 /* REAL MARKET */
@@ -2643,6 +2708,9 @@ if(marketType!=="REAL"){
 status.textContent=
 "OTC data source required";
 
+document.getElementById("reasonBox").textContent=
+"OTC live feed is not connected yet. Signal generation will activate after the OTC data source is connected.";
+
 return;
 
 }
@@ -2704,6 +2772,12 @@ unlockKURO();
 
 
 /* ================= START ================= */
+
+populateAssets("REAL");
+
+assetSelect.value="EUR/USD";
+
+updateAssetUI();
 
 updatePrice();
 
