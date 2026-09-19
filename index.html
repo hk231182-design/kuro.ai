@@ -2183,28 +2183,35 @@ history.prepend(item);
 
 
 setInterval(()=>{
-
-const t=
-document.getElementById("countdownTimer");
+const t=document.getElementById("countdownTimer");
 
 if(!window.signalExpiry){
 
-t.textContent="--";
-return;
+  t.textContent="--";
+  return;
 
 }
 
-const sec=
-Math.max(
-0,
-Math.ceil(
-(window.signalExpiry-Date.now())/1000
-)
-);
+const remaining=window.signalExpiry-Date.now();
+const sec=Math.max(0,Math.ceil(remaining/1000));
 
-t.textContent=
-"00:"+
-String(sec).padStart(2,"0");
+t.textContent="00:"+String(sec).padStart(2,"0");
+
+
+// Full 1-minute signal timing finished
+if(
+  remaining<=0 &&
+  generateButton.dataset.waitingSignal==="true"
+){
+
+  generateButton.dataset.waitingSignal="false";
+  generateButton.dataset.generating="false";
+  generateButton.disabled=false;
+
+  generateButton.innerHTML="↻ &nbsp; Analyze another chart";
+  generateButton.classList.remove("generate-loading");
+
+}
 
 },1000);
 
@@ -2217,21 +2224,25 @@ generateButton.addEventListener("click",()=>{
   generateButton.disabled=true;
 
   generateButton.innerHTML="⟳ &nbsp; GENERATING SIGNAL...";
-
   generateButton.classList.add("generate-loading");
 
-  setTimeout(()=>{
+  analyzeMarket(true);
 
-    analyzeMarket(true);
+  // CALL/PUT signal generate hole
+  // puro 1-minute expiry porjonto button locked thakbe
+  if(window.activeSignal && window.signalExpiry){
 
+    generateButton.dataset.waitingSignal="true";
+
+  }else{
+
+    // WAIT hole abar button available
     generateButton.innerHTML="↻ &nbsp; Analyze another chart";
-
     generateButton.classList.remove("generate-loading");
-
     generateButton.disabled=false;
     generateButton.dataset.generating="false";
 
-  },1500);
+  }
 
 });
 
