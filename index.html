@@ -1646,11 +1646,17 @@ UNLOCK KURO AI
 </div>
 
 
+```html
 <script>
 
 const KURO_ACCESS_KEY = "KURO-2026";
 
 const OTC_BACKEND = "http://127.0.0.1:8000";
+
+
+/* ========================= */
+/* REAL MARKET SYMBOLS */
+/* ========================= */
 
 const symbols = {
     "EUR/USD": "EURUSD",
@@ -1659,6 +1665,11 @@ const symbols = {
     "AUD/USD": "AUDUSD",
     "USD/CAD": "USDCAD"
 };
+
+
+/* ========================= */
+/* OTC SYMBOLS */
+/* ========================= */
 
 const otcSymbols = {
     "USD/BRL OTC": "USDBRL_otc",
@@ -1672,6 +1683,69 @@ const otcSymbols = {
     "GBP/USD OTC": "GBPUSD_otc",
     "USD/JPY OTC": "USDJPY_otc"
 };
+
+
+/* ========================= */
+/* OTC ASSET OPTIONS */
+/* ========================= */
+
+const otcAssetOptions = [
+    {
+        value: "USD/BRL OTC",
+        label: "🇺🇸🇧🇷 USD/BRL OTC",
+        flags: "🇺🇸🇧🇷"
+    },
+    {
+        value: "USD/INR OTC",
+        label: "🇺🇸🇮🇳 USD/INR OTC",
+        flags: "🇺🇸🇮🇳"
+    },
+    {
+        value: "USD/PKR OTC",
+        label: "🇺🇸🇵🇰 USD/PKR OTC",
+        flags: "🇺🇸🇵🇰"
+    },
+    {
+        value: "USD/NGN OTC",
+        label: "🇺🇸🇳🇬 USD/NGN OTC",
+        flags: "🇺🇸🇳🇬"
+    },
+    {
+        value: "EUR/JPY OTC",
+        label: "🇪🇺🇯🇵 EUR/JPY OTC",
+        flags: "🇪🇺🇯🇵"
+    },
+    {
+        value: "GBP/JPY OTC",
+        label: "🇬🇧🇯🇵 GBP/JPY OTC",
+        flags: "🇬🇧🇯🇵"
+    },
+    {
+        value: "AUD/USD OTC",
+        label: "🇦🇺🇺🇸 AUD/USD OTC",
+        flags: "🇦🇺🇺🇸"
+    },
+    {
+        value: "EUR/USD OTC",
+        label: "🇪🇺🇺🇸 EUR/USD OTC",
+        flags: "🇪🇺🇺🇸"
+    },
+    {
+        value: "GBP/USD OTC",
+        label: "🇬🇧🇺🇸 GBP/USD OTC",
+        flags: "🇬🇧🇺🇸"
+    },
+    {
+        value: "USD/JPY OTC",
+        label: "🇺🇸🇯🇵 USD/JPY OTC",
+        flags: "🇺🇸🇯🇵"
+    }
+];
+
+
+/* ========================= */
+/* STATE */
+/* ========================= */
 
 let marketType = "REAL";
 
@@ -1687,17 +1761,39 @@ let totalDraws = 0;
 let signalExpiry = null;
 let lastSignalPrice = null;
 let lastSignalTime = null;
+
 let currentSignal = "WAIT";
 
 let countdownInterval = null;
 
 
 /* ========================= */
-/* DOM ELEMENTS */
+/* DOM */
 /* ========================= */
 
 const assetSelect =
     document.getElementById("assetSelect");
+
+const assetDisplay =
+    document.getElementById("assetDisplay");
+
+const assetFlags =
+    document.getElementById("assetFlags");
+
+const selectedAssetName =
+    document.getElementById("selectedAssetName");
+
+const marketSub =
+    document.getElementById("marketSub");
+
+const livePill =
+    document.getElementById("livePill");
+
+const realMarketBtn =
+    document.getElementById("realMarketBtn");
+
+const otcMarketBtn =
+    document.getElementById("otcMarketBtn");
 
 const currentPrice =
     document.getElementById("currentPrice");
@@ -1705,8 +1801,8 @@ const currentPrice =
 const marketStatus =
     document.getElementById("marketStatus");
 
-const signalText =
-    document.getElementById("signalText");
+const signalBox =
+    document.getElementById("signalBox");
 
 const confidenceText =
     document.getElementById("confidenceText");
@@ -1717,24 +1813,63 @@ const statusText =
 const reasonBox =
     document.getElementById("reasonBox");
 
+const confidence =
+    document.getElementById("confidence");
+
+const confidenceFill =
+    document.getElementById("confidenceFill");
+
+const supportValue =
+    document.getElementById("supportValue");
+
+const resistanceValue =
+    document.getElementById("resistanceValue");
+
+const trendValue =
+    document.getElementById("trendValue");
+
+const patternValue =
+    document.getElementById("patternValue");
+
+const analysisSub =
+    document.getElementById("analysisSub");
+
+const biasValue =
+    document.getElementById("biasValue");
+
+const trapRisk =
+    document.getElementById("trapRisk");
+
 const countdownTimer =
     document.getElementById("countdownTimer");
 
 const generateBtn =
-    document.getElementById("generateBtn");
+    document.getElementById("generateButton");
 
 const recentSignals =
-    document.getElementById("recentSignals");
+    document.getElementById("signalHistory");
+
+const winsCount =
+    document.getElementById("winsCount");
+
+const lossesCount =
+    document.getElementById("lossesCount");
+
+const drawsCount =
+    document.getElementById("drawsCount");
+
+const accuracyValue =
+    document.getElementById("accuracyValue");
 
 
 /* ========================= */
-/* SAFE TEXT HELPER */
+/* TEXT HELPER */
 /* ========================= */
 
-function setText(el, value) {
+function setText(element, value) {
 
-    if (el) {
-        el.textContent = value;
+    if (element) {
+        element.textContent = value;
     }
 
 }
@@ -1764,6 +1899,153 @@ function formatPrice(price) {
 
 
 /* ========================= */
+/* UPDATE ASSET UI */
+/* ========================= */
+
+function updateAssetUI() {
+
+    if (!assetSelect) {
+        return;
+    }
+
+    const asset =
+        assetSelect.value;
+
+    if (marketType === "OTC") {
+
+        const item =
+            otcAssetOptions.find(
+                x => x.value === asset
+            );
+
+        if (item) {
+
+            setText(
+                assetFlags,
+                item.flags
+            );
+
+            setText(
+                selectedAssetName,
+                asset
+            );
+
+            setText(
+                assetDisplay,
+                item.label
+            );
+
+        }
+
+    } else {
+
+        const flags = {
+            "EUR/USD": "🇪🇺🇺🇸",
+            "GBP/USD": "🇬🇧🇺🇸",
+            "USD/JPY": "🇺🇸🇯🇵",
+            "AUD/USD": "🇦🇺🇺🇸",
+            "USD/CAD": "🇺🇸🇨🇦"
+        };
+
+        setText(
+            assetFlags,
+            flags[asset] || "🌐"
+        );
+
+        setText(
+            selectedAssetName,
+            asset
+        );
+
+        setText(
+            assetDisplay,
+            (flags[asset] || "🌐") +
+            "  " +
+            asset
+        );
+
+    }
+
+}
+
+
+/* ========================= */
+/* BUILD OTC SELECT */
+/* ========================= */
+
+function loadOTCAssets() {
+
+    if (!assetSelect) {
+        return;
+    }
+
+    assetSelect.innerHTML = "";
+
+    otcAssetOptions.forEach(item => {
+
+        const option =
+            document.createElement("option");
+
+        option.value =
+            item.value;
+
+        option.textContent =
+            item.label;
+
+        assetSelect.appendChild(
+            option
+        );
+
+    });
+
+    updateAssetUI();
+
+}
+
+
+/* ========================= */
+/* BUILD REAL SELECT */
+/* ========================= */
+
+function loadRealAssets() {
+
+    if (!assetSelect) {
+        return;
+    }
+
+    assetSelect.innerHTML = "";
+
+    const realAssets = [
+        ["EUR/USD", "🇪🇺🇺🇸 EUR/USD"],
+        ["GBP/USD", "🇬🇧🇺🇸 GBP/USD"],
+        ["USD/JPY", "🇺🇸🇯🇵 USD/JPY"],
+        ["AUD/USD", "🇦🇺🇺🇸 AUD/USD"],
+        ["USD/CAD", "🇺🇸🇨🇦 USD/CAD"]
+    ];
+
+    realAssets.forEach(item => {
+
+        const option =
+            document.createElement("option");
+
+        option.value =
+            item[0];
+
+        option.textContent =
+            item[1];
+
+        assetSelect.appendChild(
+            option
+        );
+
+    });
+
+    updateAssetUI();
+
+}
+
+
+/* ========================= */
 /* MARKET TYPE */
 /* ========================= */
 
@@ -1781,37 +2063,145 @@ function setMarketType(type) {
 
     currentSignal = "WAIT";
 
-    setText(currentPrice, "--");
+    if (countdownInterval) {
 
-    setText(signalText, "WAIT");
+        clearInterval(
+            countdownInterval
+        );
 
-    setText(confidenceText, "Waiting for market data");
+        countdownInterval = null;
 
-    setText(statusText, "Connecting...");
-
-    setText(reasonBox, "Loading market data...");
+    }
 
     if (marketType === "OTC") {
 
-        setText(marketStatus, "OTC");
+        otcMarketBtn?.classList.add("active");
+        otcMarketBtn?.classList.add("otc-active");
 
-        setText(statusText, "OTC WAITING");
+        realMarketBtn?.classList.remove("active");
 
-        setText(reasonBox,
+        loadOTCAssets();
+
+        setText(
+            marketSub,
+            "● OTC MARKET • 1 MIN"
+        );
+
+        setText(
+            livePill,
+            "↗ OTC"
+        );
+
+        livePill?.classList.add("otc");
+
+        setText(
+            marketStatus,
+            "OTC WAITING"
+        );
+
+        setText(
+            currentPrice,
+            "OTC OFFLINE"
+        );
+
+        setText(
+            statusText,
+            "WAITING FOR FEED"
+        );
+
+        setText(
+            confidenceText,
+            "Waiting for OTC price"
+        );
+
+        setText(
+            reasonBox,
             "Connecting to KURO OTC backend..."
         );
 
     } else {
 
-        setText(marketStatus, "REAL MARKET");
+        realMarketBtn?.classList.add("active");
 
-        setText(statusText, "Connecting...");
+        otcMarketBtn?.classList.remove("active");
+        otcMarketBtn?.classList.remove("otc-active");
 
-        setText(reasonBox,
+        loadRealAssets();
+
+        setText(
+            marketSub,
+            "● REAL MARKET • 1 MIN"
+        );
+
+        setText(
+            livePill,
+            "↗ LIVE"
+        );
+
+        livePill?.classList.remove("otc");
+
+        setText(
+            marketStatus,
+            "CONNECTING"
+        );
+
+        setText(
+            currentPrice,
+            "Loading..."
+        );
+
+        setText(
+            statusText,
+            "CONNECTING"
+        );
+
+        setText(
+            confidenceText,
+            "Waiting for market data"
+        );
+
+        setText(
+            reasonBox,
             "Waiting for live market data..."
         );
 
     }
+
+    setText(
+        signalBox,
+        "WAIT"
+    );
+
+    setText(
+        confidence,
+        "--%"
+    );
+
+    if (confidenceFill) {
+        confidenceFill.style.width = "0%";
+    }
+
+    setText(
+        trendValue,
+        "Neutral"
+    );
+
+    setText(
+        patternValue,
+        "Monitoring"
+    );
+
+    setText(
+        biasValue,
+        "WAIT"
+    );
+
+    setText(
+        trapRisk,
+        "--"
+    );
+
+    updateAssetUI();
 
     updatePrice();
 
@@ -1819,38 +2209,49 @@ function setMarketType(type) {
 
 
 /* ========================= */
-/* REAL MARKET PRICE */
+/* REAL PRICE */
 /* ========================= */
 
 async function getRealPrice() {
 
-    const asset = assetSelect.value;
+    const asset =
+        assetSelect.value;
 
-    const symbol = symbols[asset];
+    const symbol =
+        symbols[asset];
 
     if (!symbol) {
-        throw new Error("Invalid asset");
+        throw new Error(
+            "Invalid real asset"
+        );
     }
 
-    const response = await fetch(
-        "https://biquote.io/api/" +
-        symbol +
-        "?allowStale=true",
-        {
-            cache: "no-store"
-        }
-    );
+    const response =
+        await fetch(
+            "https://biquote.io/api/" +
+            symbol +
+            "?allowStale=true",
+            {
+                cache: "no-store"
+            }
+        );
 
     if (!response.ok) {
-        throw new Error("Real market request failed");
+        throw new Error(
+            "Real market request failed"
+        );
     }
 
-    const data = await response.json();
+    const data =
+        await response.json();
 
-    const price = Number(data.mid);
+    const price =
+        Number(data.mid);
 
     if (!Number.isFinite(price)) {
-        throw new Error("Invalid real price");
+        throw new Error(
+            "Invalid real price"
+        );
     }
 
     return price;
@@ -1864,39 +2265,57 @@ async function getRealPrice() {
 
 async function getOTCPrice() {
 
-    const asset = assetSelect.value;
+    const asset =
+        assetSelect.value;
 
-    const symbol = otcSymbols[asset];
+    const symbol =
+        otcSymbols[asset];
 
     if (!symbol) {
-        throw new Error("OTC symbol not found");
-    }
-
-    const response = await fetch(
-        OTC_BACKEND +
-        "/price/" +
-        encodeURIComponent(symbol),
-        {
-            cache: "no-store"
-        }
-    );
-
-    if (!response.ok) {
-        throw new Error("OTC backend unavailable");
-    }
-
-    const data = await response.json();
-
-    if (!data.success) {
         throw new Error(
-            data.message || "No OTC price"
+            "OTC symbol not found"
         );
     }
 
-    const price = Number(data.price);
+    const response =
+        await fetch(
+            OTC_BACKEND +
+            "/price/" +
+            encodeURIComponent(symbol),
+            {
+                cache: "no-store"
+            }
+        );
+
+    if (!response.ok) {
+
+        throw new Error(
+            "OTC backend unavailable"
+        );
+
+    }
+
+    const data =
+        await response.json();
+
+    if (!data.success) {
+
+        throw new Error(
+            data.message ||
+            "No OTC price received"
+        );
+
+    }
+
+    const price =
+        Number(data.price);
 
     if (!Number.isFinite(price)) {
-        throw new Error("Invalid OTC price");
+
+        throw new Error(
+            "Invalid OTC price"
+        );
+
     }
 
     return price;
@@ -1905,7 +2324,7 @@ async function getOTCPrice() {
 
 
 /* ========================= */
-/* MAIN PRICE UPDATE */
+/* MAIN UPDATE */
 /* ========================= */
 
 async function updatePrice() {
@@ -1922,20 +2341,21 @@ async function updatePrice() {
 
         if (marketType === "OTC") {
 
-            price = await getOTCPrice();
+            price =
+                await getOTCPrice();
 
         } else {
 
-            price = await getRealPrice();
+            price =
+                await getRealPrice();
 
         }
 
 
-        /* ========================= */
-        /* STORE PRICE */
-        /* ========================= */
+        /* STORE */
 
-        lastPrice = price;
+        lastPrice =
+            price;
 
         priceHistory.push({
             price: price,
@@ -1947,14 +2367,13 @@ async function updatePrice() {
         }
 
 
-        /* ========================= */
-        /* UPDATE UI */
-        /* ========================= */
+        /* PRICE UI */
 
         setText(
             currentPrice,
             formatPrice(price)
         );
+
 
         if (marketType === "OTC") {
 
@@ -1983,16 +2402,11 @@ async function updatePrice() {
         }
 
 
-        /* ========================= */
-        /* ACCURACY CHECK */
-        /* ========================= */
+        /* ANALYSIS */
+
+        updateMarketLevels();
 
         evaluatePreviousSignal(price);
-
-
-        /* ========================= */
-        /* SIGNAL ANALYSIS */
-        /* ========================= */
 
         analyzeMarket(false);
 
@@ -2001,9 +2415,11 @@ async function updatePrice() {
     catch (error) {
 
         console.log(
-            marketType + " PRICE ERROR:",
+            marketType +
+            " PRICE ERROR:",
             error
         );
+
 
         if (marketType === "OTC") {
 
@@ -2029,7 +2445,7 @@ async function updatePrice() {
 
             setText(
                 reasonBox,
-                "Start the KURO OTC backend and wait for a live OTC price."
+                "OTC feed is not connected. Start the backend and wait for a live price."
             );
 
         } else {
@@ -2050,6 +2466,11 @@ async function updatePrice() {
             );
 
             setText(
+                confidenceText,
+                "Real market feed unavailable"
+            );
+
+            setText(
                 reasonBox,
                 "Unable to receive real market data."
             );
@@ -2063,6 +2484,40 @@ async function updatePrice() {
         loading = false;
 
     }
+
+}
+
+
+/* ========================= */
+/* MARKET LEVELS */
+/* ========================= */
+
+function updateMarketLevels() {
+
+    if (priceHistory.length < 3) {
+        return;
+    }
+
+    const prices =
+        priceHistory.map(
+            x => x.price
+        );
+
+    const low =
+        Math.min(...prices);
+
+    const high =
+        Math.max(...prices);
+
+    setText(
+        supportValue,
+        formatPrice(low)
+    );
+
+    setText(
+        resistanceValue,
+        formatPrice(high)
+    );
 
 }
 
@@ -2093,13 +2548,15 @@ function analyzeMarket(manual = false) {
 
 
     const prices =
-        priceHistory.map(x => x.price);
+        priceHistory.map(
+            x => x.price
+        );
 
     const c =
         prices.slice(-12);
 
-
-    const open = c[0];
+    const open =
+        c[0];
 
     const close =
         c[c.length - 1];
@@ -2114,10 +2571,8 @@ function analyzeMarket(manual = false) {
     const candleMove =
         ((close - open) / open) * 100;
 
-
     const range =
         ((high - low) / open) * 100;
-
 
     const lastMove =
         c[c.length - 1] -
@@ -2126,10 +2581,6 @@ function analyzeMarket(manual = false) {
 
     let score = 0;
 
-
-    /* ========================= */
-    /* CANDLE MOMENTUM */
-    /* ========================= */
 
     if (candleMove > 0.005) {
 
@@ -2143,10 +2594,6 @@ function analyzeMarket(manual = false) {
 
     }
 
-
-    /* ========================= */
-    /* RANGE */
-    /* ========================= */
 
     if (range > 0.01) {
 
@@ -2163,10 +2610,6 @@ function analyzeMarket(manual = false) {
     }
 
 
-    /* ========================= */
-    /* LAST MOVE */
-    /* ========================= */
-
     if (lastMove > 0) {
 
         score += 1;
@@ -2181,21 +2624,26 @@ function analyzeMarket(manual = false) {
 
 
     let signal = "WAIT";
+    let conf = 50;
 
-    let confidence = 50;
-
-    let status = "Market Unclear";
+    let status =
+        marketType === "OTC"
+            ? "OTC Market Unclear"
+            : "Market Unclear";
 
     let reason =
-        "Market momentum is not strong enough.";
+        "No strong directional confirmation.";
 
 
     if (score >= 3) {
 
         signal = "CALL";
 
-        confidence =
-            Math.min(95, 65 + score * 5);
+        conf =
+            Math.min(
+                95,
+                65 + score * 5
+            );
 
         status =
             marketType === "OTC"
@@ -2211,8 +2659,11 @@ function analyzeMarket(manual = false) {
 
         signal = "PUT";
 
-        confidence =
-            Math.min(95, 65 + Math.abs(score) * 5);
+        conf =
+            Math.min(
+                95,
+                65 + Math.abs(score) * 5
+            );
 
         status =
             marketType === "OTC"
@@ -2224,33 +2675,33 @@ function analyzeMarket(manual = false) {
 
     }
 
-    else {
 
-        signal = "WAIT";
-
-        confidence = 50;
-
-        status =
-            marketType === "OTC"
-                ? "OTC Market Unclear"
-                : "Market Unclear";
-
-        reason =
-            "No strong directional confirmation.";
-
-    }
-
-
-    /* ========================= */
     /* UI */
-    /* ========================= */
 
-    setText(signalText, signal);
+    setText(
+        signalBox,
+        signal
+    );
 
     setText(
         confidenceText,
-        "Confidence: " + confidence + "%"
+        "Confidence: " +
+        conf +
+        "%"
     );
+
+    setText(
+        confidence,
+        conf +
+        "%"
+    );
+
+    if (confidenceFill) {
+
+        confidenceFill.style.width =
+            conf + "%";
+
+    }
 
     setText(
         statusText,
@@ -2263,19 +2714,133 @@ function analyzeMarket(manual = false) {
     );
 
 
-    applySignalStyle(signal);
+    /* TREND */
+
+    if (score > 0) {
+
+        setText(
+            trendValue,
+            "Bullish"
+        );
+
+        setText(
+            biasValue,
+            "CALL"
+        );
+
+    }
+
+    else if (score < 0) {
+
+        setText(
+            trendValue,
+            "Bearish"
+        );
+
+        setText(
+            biasValue,
+            "PUT"
+        );
+
+    }
+
+    else {
+
+        setText(
+            trendValue,
+            "Neutral"
+        );
+
+        setText(
+            biasValue,
+            "WAIT"
+        );
+
+    }
 
 
-    /* ========================= */
-    /* NEW SIGNAL CONTROL */
-    /* ========================= */
+    /* PATTERN */
+
+    if (candleMove > 0.01) {
+
+        setText(
+            patternValue,
+            "Bullish Momentum"
+        );
+
+    }
+
+    else if (candleMove < -0.01) {
+
+        setText(
+            patternValue,
+            "Bearish Momentum"
+        );
+
+    }
+
+    else {
+
+        setText(
+            patternValue,
+            "Sideways"
+        );
+
+    }
+
+
+    /* TRAP RISK */
+
+    const absoluteMove =
+        Math.abs(candleMove);
+
+    if (absoluteMove > 0.05) {
+
+        setText(
+            trapRisk,
+            "HIGH"
+        );
+
+    }
+
+    else if (absoluteMove > 0.02) {
+
+        setText(
+            trapRisk,
+            "MEDIUM"
+        );
+
+    }
+
+    else {
+
+        setText(
+            trapRisk,
+            "LOW"
+        );
+
+    }
+
+
+    applySignalStyle(
+        signal
+    );
+
+
+    /* SIGNAL CONTROL */
 
     const now =
         new Date();
 
     const minuteKey =
+        now.getFullYear() +
+        "-" +
+        now.getMonth() +
+        "-" +
+        now.getDate() +
+        "-" +
         now.getHours() +
-        ":" +
+        "-" +
         now.getMinutes();
 
 
@@ -2289,9 +2854,7 @@ function analyzeMarket(manual = false) {
     }
 
 
-    if (
-        signal === "WAIT"
-    ) {
+    if (signal === "WAIT") {
 
         return;
 
@@ -2312,10 +2875,9 @@ function analyzeMarket(manual = false) {
 
     createSignal(
         signal,
-        confidence,
+        conf,
         reason
     );
-
 
     lastCandleMinute =
         minuteKey;
@@ -2329,7 +2891,7 @@ function analyzeMarket(manual = false) {
 
 function createSignal(
     signal,
-    confidence,
+    conf,
     reason
 ) {
 
@@ -2347,16 +2909,29 @@ function createSignal(
 
 
     setText(
-        signalText,
+        signalBox,
         signal
     );
 
     setText(
         confidenceText,
         "Confidence: " +
-        confidence +
+        conf +
         "%"
     );
+
+    setText(
+        confidence,
+        conf +
+        "%"
+    );
+
+    if (confidenceFill) {
+
+        confidenceFill.style.width =
+            conf + "%";
+
+    }
 
     setText(
         reasonBox,
@@ -2364,12 +2939,16 @@ function createSignal(
     );
 
 
-    applySignalStyle(signal);
+    applySignalStyle(
+        signal
+    );
+
 
     addRecentSignal(
         signal,
         lastPrice
     );
+
 
     startCountdown();
 
@@ -2382,38 +2961,88 @@ function createSignal(
 
 function applySignalStyle(signal) {
 
-    const card =
-        document.querySelector(
-            ".signal-card"
+    const panel =
+        document.getElementById(
+            "signalPanel"
         );
 
-    if (!card) {
+    if (!panel) {
         return;
     }
 
 
-    card.classList.remove(
-        "call",
-        "put",
-        "wait"
-    );
-
-
     if (signal === "CALL") {
 
-        card.classList.add("call");
+        panel.style.borderColor =
+            "rgba(0,255,120,.55)";
+
+        panel.style.background =
+            "linear-gradient(115deg,#071f18,#07131a 48%,#040b11)";
+
+        const circle =
+            document.getElementById(
+                "signalCircle"
+            );
+
+        if (circle) {
+
+            circle.textContent =
+                "↑";
+
+            circle.style.background =
+                "radial-gradient(circle at 40% 30%,#7cff48,#078d31 62%,#045c25)";
+
+        }
 
     }
 
     else if (signal === "PUT") {
 
-        card.classList.add("put");
+        panel.style.borderColor =
+            "rgba(255,55,75,.55)";
+
+        panel.style.background =
+            "linear-gradient(115deg,#210c12,#120a10 48%,#040b11)";
+
+        const circle =
+            document.getElementById(
+                "signalCircle"
+            );
+
+        if (circle) {
+
+            circle.textContent =
+                "↓";
+
+            circle.style.background =
+                "radial-gradient(circle at 40% 30%,#ff5c69,#a20f22 62%,#610715)";
+
+        }
 
     }
 
     else {
 
-        card.classList.add("wait");
+        panel.style.borderColor =
+            "rgba(0,180,255,.35)";
+
+        panel.style.background =
+            "linear-gradient(115deg,#071822,#07131a 48%,#040b11)";
+
+        const circle =
+            document.getElementById(
+                "signalCircle"
+            );
+
+        if (circle) {
+
+            circle.textContent =
+                "•";
+
+            circle.style.background =
+                "radial-gradient(circle at 40% 30%,#53cfff,#12669a 62%,#073b5c)";
+
+        }
 
     }
 
@@ -2426,7 +3055,7 @@ function applySignalStyle(signal) {
 
 function generateSignal() {
 
-    if (!lastPrice) {
+    if (!Number.isFinite(lastPrice)) {
 
         setText(
             statusText,
@@ -2438,7 +3067,6 @@ function generateSignal() {
         return;
 
     }
-
 
     analyzeMarket(true);
 
@@ -2486,11 +3114,15 @@ function startCountdown() {
                     countdownInterval
                 );
 
+                countdownInterval =
+                    null;
+
                 signalExpiry =
                     null;
 
                 currentSignal =
                     "WAIT";
+
 
                 setText(
                     countdownTimer,
@@ -2498,7 +3130,7 @@ function startCountdown() {
                 );
 
                 setText(
-                    signalText,
+                    signalBox,
                     "WAIT"
                 );
 
@@ -2521,12 +3153,10 @@ function startCountdown() {
                     remaining / 1000
                 );
 
-
             const minutes =
                 Math.floor(
                     totalSeconds / 60
                 );
-
 
             const seconds =
                 totalSeconds % 60;
@@ -2540,14 +3170,13 @@ function startCountdown() {
                 String(seconds).padStart(2, "0")
             );
 
-
         }, 500);
 
 }
 
 
 /* ========================= */
-/* ACCURACY TRACKER */
+/* ACCURACY */
 /* ========================= */
 
 function evaluatePreviousSignal(
@@ -2555,7 +3184,7 @@ function evaluatePreviousSignal(
 ) {
 
     if (
-        !lastSignalPrice ||
+        !Number.isFinite(lastSignalPrice) ||
         !lastSignalTime
     ) {
 
@@ -2569,21 +3198,18 @@ function evaluatePreviousSignal(
         lastSignalTime;
 
 
-    if (
-        elapsed < 60000
-    ) {
+    if (elapsed < 60000) {
 
         return;
 
     }
 
 
-    let result = "DRAW";
+    let result =
+        "DRAW";
 
 
-    if (
-        currentSignal === "CALL"
-    ) {
+    if (currentSignal === "CALL") {
 
         if (
             currentPriceValue >
@@ -2605,10 +3231,7 @@ function evaluatePreviousSignal(
 
     }
 
-
-    else if (
-        currentSignal === "PUT"
-    ) {
+    else if (currentSignal === "PUT") {
 
         if (
             currentPriceValue <
@@ -2672,8 +3295,7 @@ function updateAccuracy() {
         totalWins +
         totalLosses;
 
-
-    const accuracy =
+    const accuracyPercent =
         total > 0
             ? Math.round(
                 (totalWins / total) * 100
@@ -2681,66 +3303,31 @@ function updateAccuracy() {
             : 0;
 
 
-    const accuracyEl =
-        document.getElementById(
-            "accuracy"
-        );
+    setText(
+        winsCount,
+        totalWins
+    );
 
+    setText(
+        lossesCount,
+        totalLosses
+    );
 
-    const winsEl =
-        document.getElementById(
-            "totalWins"
-        );
+    setText(
+        drawsCount,
+        totalDraws
+    );
 
-
-    const lossesEl =
-        document.getElementById(
-            "totalLosses"
-        );
-
-
-    const drawsEl =
-        document.getElementById(
-            "totalDraws"
-        );
-
-
-    if (accuracyEl) {
-
-        accuracyEl.textContent =
-            accuracy + "%";
-
-    }
-
-
-    if (winsEl) {
-
-        winsEl.textContent =
-            totalWins;
-
-    }
-
-
-    if (lossesEl) {
-
-        lossesEl.textContent =
-            totalLosses;
-
-    }
-
-
-    if (drawsEl) {
-
-        drawsEl.textContent =
-            totalDraws;
-
-    }
+    setText(
+        accuracyValue,
+        accuracyPercent + "%"
+    );
 
 }
 
 
 /* ========================= */
-/* RECENT SIGNAL */
+/* RECENT SIGNALS */
 /* ========================= */
 
 function addRecentSignal(
@@ -2753,22 +3340,18 @@ function addRecentSignal(
     }
 
 
-    const empty =
-        recentSignals.querySelector(
-            ".no-signals"
-        );
+    if (
+        recentSignals.textContent.trim() ===
+        "No signals yet"
+    ) {
 
-
-    if (empty) {
-
-        empty.remove();
+        recentSignals.innerHTML = "";
 
     }
 
 
     const now =
         new Date();
-
 
     const time =
         now.toLocaleTimeString(
@@ -2786,24 +3369,23 @@ function addRecentSignal(
             "div"
         );
 
-
     item.className =
-        "signal-history-item";
+        "history-item";
 
 
     item.innerHTML = `
-        <div>
-            <strong>${signal}</strong>
-            <span>
-                ${marketType}
-            </span>
-        </div>
-
-        <div>
-            ENTRY ${formatPrice(price)}
-            <br>
-            ${time} • 1 MIN
-        </div>
+        <strong style="color:${
+            signal === "CALL"
+                ? "#63f45b"
+                : "#ff4050"
+        }">
+            ${signal}
+        </strong>
+        &nbsp; • &nbsp;
+        ${marketType}
+        <br>
+        ENTRY ${formatPrice(price)}
+        • ${time} • 1 MIN
     `;
 
 
@@ -2841,7 +3423,13 @@ if (assetSelect) {
 
             signalExpiry = null;
 
-            currentSignal = "WAIT";
+            lastSignalPrice = null;
+
+            lastSignalTime = null;
+
+            currentSignal =
+                "WAIT";
+
 
             setText(
                 currentPrice,
@@ -2849,7 +3437,7 @@ if (assetSelect) {
             );
 
             setText(
-                signalText,
+                signalBox,
                 "WAIT"
             );
 
@@ -2858,10 +3446,97 @@ if (assetSelect) {
                 "Waiting for market data"
             );
 
+            setText(
+                confidence,
+                "--%"
+            );
+
+            if (confidenceFill) {
+                confidenceFill.style.width =
+                    "0%";
+            }
+
+            updateAssetUI();
+
             updatePrice();
 
         }
     );
+
+}
+
+
+/* ========================= */
+/* MARKET BUTTONS */
+/* ========================= */
+
+realMarketBtn?.addEventListener(
+    "click",
+    () => {
+
+        setMarketType("REAL");
+
+    }
+);
+
+
+otcMarketBtn?.addEventListener(
+    "click",
+    () => {
+
+        setMarketType("OTC");
+
+    }
+);
+
+
+/* ========================= */
+/* ACCESS KEY */
+/* ========================= */
+
+function unlockKURO() {
+
+    const input =
+        document.getElementById(
+            "accessKey"
+        );
+
+    const screen =
+        document.getElementById(
+            "keyScreen"
+        );
+
+    const error =
+        document.getElementById(
+            "keyError"
+        );
+
+
+    if (
+        input &&
+        input.value ===
+        KURO_ACCESS_KEY
+    ) {
+
+        if (screen) {
+            screen.style.display =
+                "none";
+        }
+
+        if (error) {
+            error.textContent = "";
+        }
+
+    } else {
+
+        if (error) {
+
+            error.textContent =
+                "Invalid access key";
+
+        }
+
+    }
 
 }
 
@@ -2877,8 +3552,12 @@ setInterval(
 
 
 /* ========================= */
-/* INITIAL LOAD */
+/* INITIAL UI */
 /* ========================= */
+
+loadRealAssets();
+
+updateAssetUI();
 
 updateAccuracy();
 
@@ -2886,7 +3565,7 @@ updatePrice();
 
 
 /* ========================= */
-/* GLOBAL BUTTON */
+/* GLOBAL FUNCTIONS */
 /* ========================= */
 
 window.generateSignal =
@@ -2895,7 +3574,12 @@ window.generateSignal =
 window.setMarketType =
     setMarketType;
 
+window.unlockKURO =
+    unlockKURO;
+
 </script>
+```
+
 
 </body>
 </html>
