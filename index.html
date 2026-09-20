@@ -1,3 +1,4 @@
+```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -1646,7 +1647,6 @@ UNLOCK KURO AI
 </div>
 
 
-```html
 <script>
 
 const KURO_ACCESS_KEY = "KURO-2026";
@@ -1668,78 +1668,54 @@ const symbols = {
 
 
 /* ========================= */
-/* OTC SYMBOLS */
+/* FREE PLAN OTC SYMBOLS */
 /* ========================= */
 
 const otcSymbols = {
-    "USD/BRL OTC": "USDBRL_otc",
-    "USD/INR OTC": "USDINR_otc",
-    "USD/PKR OTC": "USDPKR_otc",
-    "USD/NGN OTC": "USDNGN_otc",
-    "EUR/JPY OTC": "EURJPY_otc",
-    "GBP/JPY OTC": "GBPJPY_otc",
-    "AUD/USD OTC": "AUDUSD_otc",
-    "EUR/USD OTC": "EURUSD_otc",
-    "GBP/USD OTC": "GBPUSD_otc",
-    "USD/JPY OTC": "USDJPY_otc"
+    "AUD/USD OTC": "AUDUSD_OTC",
+    "EUR/USD OTC": "EURUSD_OTC",
+    "GBP/USD OTC": "GBPUSD_OTC",
+    "USD/JPY OTC": "USDJPY_OTC",
+    "BTC/USD OTC": "BTCUSD_OTC"
 };
 
 
 /* ========================= */
-/* OTC ASSET OPTIONS */
+/* FREE PLAN OTC ASSETS */
 /* ========================= */
 
 const otcAssetOptions = [
-    {
-        value: "USD/BRL OTC",
-        label: "🇺🇸🇧🇷 USD/BRL OTC",
-        flags: "🇺🇸🇧🇷"
-    },
-    {
-        value: "USD/INR OTC",
-        label: "🇺🇸🇮🇳 USD/INR OTC",
-        flags: "🇺🇸🇮🇳"
-    },
-    {
-        value: "USD/PKR OTC",
-        label: "🇺🇸🇵🇰 USD/PKR OTC",
-        flags: "🇺🇸🇵🇰"
-    },
-    {
-        value: "USD/NGN OTC",
-        label: "🇺🇸🇳🇬 USD/NGN OTC",
-        flags: "🇺🇸🇳🇬"
-    },
-    {
-        value: "EUR/JPY OTC",
-        label: "🇪🇺🇯🇵 EUR/JPY OTC",
-        flags: "🇪🇺🇯🇵"
-    },
-    {
-        value: "GBP/JPY OTC",
-        label: "🇬🇧🇯🇵 GBP/JPY OTC",
-        flags: "🇬🇧🇯🇵"
-    },
+
     {
         value: "AUD/USD OTC",
         label: "🇦🇺🇺🇸 AUD/USD OTC",
         flags: "🇦🇺🇺🇸"
     },
+
     {
         value: "EUR/USD OTC",
         label: "🇪🇺🇺🇸 EUR/USD OTC",
         flags: "🇪🇺🇺🇸"
     },
+
     {
         value: "GBP/USD OTC",
         label: "🇬🇧🇺🇸 GBP/USD OTC",
         flags: "🇬🇧🇺🇸"
     },
+
     {
         value: "USD/JPY OTC",
         label: "🇺🇸🇯🇵 USD/JPY OTC",
         flags: "🇺🇸🇯🇵"
+    },
+
+    {
+        value: "BTC/USD OTC",
+        label: "₿ BTC/USD OTC",
+        flags: "₿"
     }
+
 ];
 
 
@@ -2272,10 +2248,42 @@ async function getOTCPrice() {
         otcSymbols[asset];
 
     if (!symbol) {
+
         throw new Error(
-            "OTC symbol not found"
+            "OTC asset not supported"
         );
+
     }
+
+
+    /* =========================
+       SWITCH BACKEND STREAM
+       ========================= */
+
+    try {
+
+        await fetch(
+            OTC_BACKEND +
+            "/set-asset/" +
+            encodeURIComponent(symbol),
+            {
+                cache: "no-store"
+            }
+        );
+
+    } catch (switchError) {
+
+        console.log(
+            "OTC STREAM SWITCH:",
+            switchError
+        );
+
+    }
+
+
+    /* =========================
+       GET LIVE PRICE
+       ========================= */
 
     const response =
         await fetch(
@@ -2287,6 +2295,7 @@ async function getOTCPrice() {
             }
         );
 
+
     if (!response.ok) {
 
         throw new Error(
@@ -2295,20 +2304,24 @@ async function getOTCPrice() {
 
     }
 
+
     const data =
         await response.json();
+
 
     if (!data.success) {
 
         throw new Error(
             data.message ||
-            "No OTC price received"
+            "Waiting for OTC live price"
         );
 
     }
 
+
     const price =
         Number(data.price);
+
 
     if (!Number.isFinite(price)) {
 
@@ -2317,6 +2330,7 @@ async function getOTCPrice() {
         );
 
     }
+
 
     return price;
 
@@ -2425,27 +2439,27 @@ async function updatePrice() {
 
             setText(
                 currentPrice,
-                "OTC OFFLINE"
+                "OTC WAITING"
             );
 
             setText(
                 marketStatus,
-                "OTC OFFLINE"
+                "OTC CONNECTING"
             );
 
             setText(
                 statusText,
-                "WAITING FOR FEED"
+                "WAITING FOR LIVE FEED"
             );
 
             setText(
                 confidenceText,
-                "OTC backend price not received"
+                "Waiting for OTC live price"
             );
 
             setText(
                 reasonBox,
-                "OTC feed is not connected. Start the backend and wait for a live price."
+                "Connecting to the selected OTC market..."
             );
 
         } else {
@@ -3443,7 +3457,9 @@ if (assetSelect) {
 
             setText(
                 confidenceText,
-                "Waiting for market data"
+                marketType === "OTC"
+                    ? "Connecting selected OTC asset"
+                    : "Waiting for market data"
             );
 
             setText(
@@ -3456,11 +3472,64 @@ if (assetSelect) {
                     "0%";
             }
 
+
             updateAssetUI();
+
+
+            /*
+             * OTC:
+             * Immediately tell backend to switch
+             * to the newly selected asset.
+             */
+
+            if (marketType === "OTC") {
+
+                const symbol =
+                    otcSymbols[
+                        assetSelect.value
+                    ];
+
+                if (symbol) {
+
+                    fetch(
+                        OTC_BACKEND +
+                        "/set-asset/" +
+                        encodeURIComponent(symbol),
+                        {
+                            cache: "no-store"
+                        }
+                    )
+                    .then(() => {
+                        updatePrice();
+                    })
+                    .catch(() => {
+                        updatePrice();
+                    });
+
+                    return;
+
+                }
+
+            }
+
 
             updatePrice();
 
         }
+    );
+
+}
+
+
+/* ========================= */
+/* GENERATE BUTTON CLICK */
+/* ========================= */
+
+if (generateBtn) {
+
+    generateBtn.addEventListener(
+        "click",
+        generateSignal
     );
 
 }
@@ -3578,8 +3647,7 @@ window.unlockKURO =
     unlockKURO;
 
 </script>
-```
-
 
 </body>
 </html>
+```
