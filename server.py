@@ -211,7 +211,7 @@ def run_otc_stream(symbol, stop_event):
             )
 
             stream = otc_client.stream(
-                "otc",
+               "quotex",
                 symbol,
                 reconnect=False
             )
