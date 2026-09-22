@@ -6,985 +6,1658 @@
 <title>KURO AI</title>
 
 <style>
-*{
-    box-sizing:border-box;
-    margin:0;
-    padding:0;
-}
-
-html{
-    scroll-behavior:smooth;
-}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
 
 body{
-    min-height:100vh;
-    font-family:Inter,Arial,Helvetica,sans-serif;
-    color:#fff;
-    background:
-        radial-gradient(circle at top,#101d35 0%,#060b14 42%,#03060b 100%);
+  min-height:100vh;
+  font-family:Inter,Arial,Helvetica,sans-serif;
+  color:#fff;
+  background:
+    radial-gradient(circle at 50% -8%,rgba(16,105,190,.28),transparent 32%),
+    radial-gradient(circle at 10% 35%,rgba(0,119,255,.08),transparent 30%),
+    linear-gradient(180deg,#07101d 0%,#03070d 58%,#02050a 100%);
 }
 
-button,
-select{
-    font-family:inherit;
-}
-
-button{
-    cursor:pointer;
-}
+button,input,select{font:inherit}
+button{cursor:pointer}
 
 .app{
-    width:100%;
-    max-width:520px;
-    margin:auto;
-    padding:18px 14px 35px;
+  width:100%;
+  max-width:680px;
+  margin:auto;
+  padding:18px 14px 28px;
 }
 
-/* ========================= */
-/* HEADER */
-/* ========================= */
+/* ================= HEADER ================= */
 
 .header{
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
-    margin-bottom:18px;
+  height:78px;
+  padding:0 14px 0 12px;
+  border:1px solid #173b55;
+  border-radius:25px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  background:linear-gradient(135deg,rgba(7,28,49,.96),rgba(4,15,28,.94));
+  box-shadow:
+    0 15px 45px rgba(0,0,0,.25),
+    inset 0 1px rgba(255,255,255,.04);
+  margin-bottom:14px;
 }
 
-.brand{
-    display:flex;
-    align-items:center;
-    gap:11px;
+.menu{
+  width:50px;
+  height:50px;
+  border-radius:18px;
+  border:1px solid #1b4562;
+  background:rgba(5,20,34,.72);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+
+.menu span,
+.menu span:before,
+.menu span:after{
+  content:"";
+  display:block;
+  width:27px;
+  height:2px;
+  background:#d9e7f3;
+  border-radius:5px;
+}
+
+.menu span:before{transform:translateY(-8px)}
+.menu span:after{transform:translateY(6px)}
+
+.logo-title{
+  font-size:28px;
+  font-weight:900;
+  letter-spacing:-1px;
+}
+
+.logo-title b{
+  color:#ff3b4f;
 }
 
 .avatar{
-    width:48px;
-    height:48px;
-    border-radius:50%;
-    overflow:hidden;
-    border:1px solid rgba(72,145,255,.45);
-    box-shadow:0 0 20px rgba(0,132,255,.18);
-    background:#101827;
+  width:50px;
+  height:50px;
+  border-radius:50%;
+  border:1px solid #24618a;
+  background:#091522;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  overflow:hidden;
+  box-shadow:0 0 20px rgba(0,150,255,.15);
 }
 
 .avatar img{
-    width:100%;
-    height:100%;
-    object-fit:cover;
-    display:block;
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  display:block;
 }
 
-.brand-text{
-    display:flex;
-    flex-direction:column;
+/* ================= MARKET TYPE ================= */
+
+.market-type{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:8px;
+  padding:5px;
+  margin-bottom:10px;
+  border:1px solid #173c55;
+  border-radius:16px;
+  background:#06111d;
 }
 
-.brand-title{
-    font-size:21px;
-    font-weight:900;
-    letter-spacing:.7px;
+.market-type button{
+  height:38px;
+  border:1px solid transparent;
+  border-radius:11px;
+  background:transparent;
+  color:#6f8598;
+  font-size:11px;
+  font-weight:900;
+  letter-spacing:.4px;
+  transition:.2s;
 }
 
-.brand-title span{
-    color:#ff3b3b;
-}
-
-.brand-sub{
-    color:#71809a;
-    font-size:10px;
-    letter-spacing:1.8px;
-    margin-top:2px;
-}
-
-.menu-btn{
-    width:43px;
-    height:43px;
-    border:1px solid rgba(255,255,255,.08);
-    border-radius:13px;
-    background:rgba(15,24,39,.85);
-    color:#9ba9bd;
-    font-size:22px;
-}
-
-/* ========================= */
-/* ACCESS */
-/* ========================= */
-
-.access-screen{
-    position:fixed;
-    inset:0;
-    z-index:1000;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    padding:20px;
-    background:#03060b;
-}
-
-.access-box{
-    width:100%;
-    max-width:390px;
-    padding:30px 24px;
-    border:1px solid rgba(66,135,255,.18);
-    border-radius:24px;
-    background:linear-gradient(
-        145deg,
-        rgba(15,26,45,.98),
-        rgba(5,10,18,.98)
+.market-type button.active{
+  color:#fff;
+  border-color:#167cc0;
+  background:
+    linear-gradient(
+      135deg,
+      rgba(13,151,229,.25),
+      rgba(30,83,178,.18)
     );
-    box-shadow:0 25px 70px rgba(0,0,0,.55);
-    text-align:center;
+  box-shadow:0 0 18px rgba(15,146,230,.12);
 }
 
-.access-logo{
-    width:72px;
-    height:72px;
-    margin:0 auto 17px;
-    border-radius:50%;
-    overflow:hidden;
-    border:1px solid rgba(73,143,255,.4);
+.market-type button.otc-active{
+  border-color:#7b5c18;
+  background:rgba(170,130,30,.12);
+  color:#ffd85b;
 }
 
-.access-logo img{
-    width:100%;
-    height:100%;
-    object-fit:cover;
+/* ================= MARKET ================= */
+
+.market{
+  border:1px solid #1d6485;
+  border-radius:28px;
+  padding:18px 17px 20px;
+  background:
+    linear-gradient(
+      145deg,
+      rgba(10,67,96,.9),
+      rgba(5,27,48,.97) 58%,
+      rgba(3,13,25,.98)
+    );
+  box-shadow:
+    0 18px 50px rgba(0,0,0,.28),
+    inset 0 1px rgba(255,255,255,.05);
+  margin-bottom:14px;
 }
 
-.access-box h1{
-    font-size:26px;
-    margin-bottom:8px;
+.market-top{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
 }
 
-.access-box p{
-    color:#7e8ca1;
-    font-size:13px;
-    margin-bottom:22px;
+.asset-left{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  min-width:0;
 }
 
-.access-input{
-    width:100%;
-    padding:14px 15px;
-    border:1px solid rgba(255,255,255,.08);
-    border-radius:12px;
-    outline:none;
-    background:#0a1220;
-    color:#fff;
-    text-align:center;
-    font-size:14px;
-    margin-bottom:12px;
+.flags{
+  min-width:76px;
+  height:50px;
+  border-radius:16px;
+  border:1px solid #295a73;
+  background:#081827;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:25px;
+  letter-spacing:-6px;
+  padding-right:5px;
 }
 
-.access-btn{
-    width:100%;
-    padding:14px;
-    border:0;
-    border-radius:12px;
-    background:linear-gradient(135deg,#1677ff,#0054d6);
-    color:#fff;
-    font-weight:800;
+.asset-name{
+  font-size:20px;
+  font-weight:900;
+  white-space:nowrap;
 }
 
-.access-error{
-    min-height:18px;
-    color:#ff5252;
-    font-size:12px;
-    margin-top:10px;
+.asset-sub{
+  color:#31baff;
+  font-size:12px;
+  font-weight:700;
+  margin-top:4px;
+  letter-spacing:.4px;
 }
 
-/* ========================= */
-/* MAIN CARD */
-/* ========================= */
-
-.card{
-    border:1px solid rgba(91,132,190,.13);
-    border-radius:22px;
-    background:
-        linear-gradient(
-            145deg,
-            rgba(13,24,41,.94),
-            rgba(5,11,20,.96)
-        );
-    box-shadow:
-        0 20px 55px rgba(0,0,0,.3),
-        inset 0 1px 0 rgba(255,255,255,.025);
-    padding:17px;
-    margin-bottom:14px;
+.live-pill{
+  padding:10px 14px;
+  border-radius:25px;
+  border:1px solid rgba(0,239,130,.25);
+  background:rgba(0,239,130,.09);
+  color:#2cff8a;
+  font-weight:900;
+  font-size:13px;
+  white-space:nowrap;
 }
 
-/* ========================= */
-/* MARKET TYPE */
-/* ========================= */
-
-.section-label{
-    color:#64748b;
-    font-size:10px;
-    font-weight:800;
-    letter-spacing:1.5px;
-    margin-bottom:9px;
+.live-pill.otc{
+  color:#ffd84d;
+  border-color:rgba(255,202,60,.25);
+  background:rgba(255,190,40,.08);
 }
 
-.market-toggle{
-    display:grid;
-    grid-template-columns:1fr 1fr;
-    gap:6px;
-    padding:5px;
-    border-radius:13px;
-    background:#07101d;
-    border:1px solid rgba(255,255,255,.05);
-    margin-bottom:16px;
+.select-area{
+  margin-top:14px;
+  position:relative;
 }
 
-.market-toggle button{
-    border:0;
-    border-radius:9px;
-    padding:11px 6px;
-    color:#66758a;
-    background:transparent;
-    font-size:11px;
-    font-weight:900;
-    letter-spacing:.4px;
+#assetDisplay{
+  height:45px;
+  width:100%;
+  border-radius:13px;
+  border:1px solid #19405a;
+  background:#061321;
+  display:flex;
+  align-items:center;
+  padding:0 13px;
+  color:#dcebf6;
+  font-weight:800;
+  font-size:13px;
 }
 
-.market-toggle button.active{
-    color:#fff;
-    background:linear-gradient(135deg,#146ff0,#0b4db4);
-    box-shadow:0 5px 16px rgba(0,93,220,.24);
+#assetSelect{
+  position:absolute;
+  inset:0;
+  width:100%;
+  height:100%;
+  opacity:0;
+  cursor:pointer;
 }
 
-/* ========================= */
-/* ASSET */
-/* ========================= */
-
-.asset-wrap{
-    position:relative;
-}
-
-.asset-select{
-    width:100%;
-    appearance:none;
-    -webkit-appearance:none;
-    border:1px solid rgba(255,255,255,.07);
-    border-radius:13px;
-    padding:14px 42px 14px 14px;
-    background:#08111f;
-    color:#fff;
-    outline:none;
-    font-size:14px;
-    font-weight:800;
-}
-
-.asset-arrow{
-    position:absolute;
-    right:15px;
-    top:50%;
-    transform:translateY(-50%);
-    pointer-events:none;
-    color:#71809a;
-}
-
-/* ========================= */
-/* PRICE */
-/* ========================= */
-
-.price-row{
-    display:flex;
-    align-items:flex-end;
-    justify-content:space-between;
-    margin-top:19px;
-}
-
-.price-label{
-    color:#65748b;
-    font-size:10px;
-    font-weight:800;
-    letter-spacing:1.4px;
-    margin-bottom:5px;
-}
-
-.price{
-    font-size:31px;
-    font-weight:900;
-    letter-spacing:.5px;
-}
-
-.market-status{
-    text-align:right;
-}
-
-.status-dot{
-    display:inline-block;
-    width:7px;
-    height:7px;
-    border-radius:50%;
-    background:#2f80ff;
-    margin-right:5px;
-    box-shadow:0 0 9px rgba(47,128,255,.8);
-}
-
-.status-text{
-    color:#7f8da3;
-    font-size:10px;
-    font-weight:800;
-    letter-spacing:.7px;
-}
-
-/* ========================= */
-/* SIGNAL */
-/* ========================= */
-
-.signal-card{
-    text-align:center;
-    padding:23px 12px;
-}
-
-.signal-title{
-    color:#65748b;
-    font-size:10px;
-    font-weight:800;
-    letter-spacing:2px;
-    margin-bottom:10px;
-}
+/* ================= SIGNAL ================= */
 
 .signal{
-    font-size:48px;
-    line-height:1;
-    font-weight:1000;
-    letter-spacing:2px;
-    color:#76859a;
-    text-shadow:none;
+  border:1px solid rgba(0,255,120,.32);
+  border-radius:25px;
+  padding:22px 18px;
+  background:
+    radial-gradient(
+      circle at 15% 50%,
+      rgba(0,255,120,.10),
+      transparent 25%
+    ),
+    linear-gradient(115deg,#071b18,#07131a 48%,#040b11);
+  box-shadow:
+    inset 0 0 30px rgba(0,255,120,.04),
+    0 16px 45px rgba(0,0,0,.24);
+  transition:.25s;
 }
 
-.signal.call{
-    color:#20d98a;
-    text-shadow:0 0 25px rgba(32,217,138,.3);
+.signal-row{
+  display:flex;
+  align-items:center;
+  gap:18px;
 }
 
-.signal.put{
-    color:#ff4c5c;
-    text-shadow:0 0 25px rgba(255,76,92,.3);
+.signal-icon{
+  width:82px;
+  height:82px;
+  flex-shrink:0;
+  border-radius:50%;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:52px;
+  font-weight:900;
+  color:#fff;
+  background:
+    radial-gradient(
+      circle at 40% 30%,
+      #7cff48,
+      #078d31 62%,
+      #045c25
+    );
+  box-shadow:0 0 30px rgba(38,255,81,.35);
 }
 
-.signal.wait{
-    color:#7a8799;
+.place{
+  font-size:12px;
+  letter-spacing:4px;
+  color:#d8e6df;
+  font-weight:800;
 }
 
-.confidence{
-    margin-top:11px;
-    color:#7e8ca0;
-    font-size:11px;
+.signal-word{
+  font-size:43px;
+  font-weight:1000;
+  color:#52ff42;
+  letter-spacing:1px;
+  margin-top:4px;
 }
 
-.time-left{
-    margin-top:8px;
-    color:#4e9cff;
-    font-size:12px;
-    font-weight:900;
-    letter-spacing:1px;
+.signal-status{
+  margin-top:13px;
+  color:#7f95a8;
+  font-size:11px;
+  font-weight:700;
 }
 
-/* ========================= */
-/* GENERATE */
-/* ========================= */
+/* ================= CARDS ================= */
 
-.generate-btn{
-    width:100%;
-    border:0;
-    border-radius:13px;
-    padding:14px;
-    margin-top:15px;
-    color:#fff;
-    font-size:12px;
-    font-weight:900;
-    letter-spacing:.8px;
-    background:linear-gradient(135deg,#1477ff,#0754ca);
-    box-shadow:0 9px 25px rgba(0,94,224,.2);
+.card{
+  border:1px solid #183149;
+  border-radius:24px;
+  padding:17px;
+  background:
+    linear-gradient(
+      145deg,
+      rgba(7,21,35,.97),
+      rgba(4,11,19,.97)
+    );
+  box-shadow:0 13px 38px rgba(0,0,0,.22);
+  margin-bottom:13px;
 }
 
-.generate-btn:active{
-    transform:scale(.985);
+.label{
+  color:#71869a;
+  font-size:11px;
+  font-weight:800;
+  letter-spacing:1.2px;
 }
 
-/* ========================= */
-/* INFO GRID */
-/* ========================= */
+/* ================= CONFIDENCE ================= */
 
-.info-grid{
-    display:grid;
-    grid-template-columns:1fr 1fr;
-    gap:8px;
+.conf-head{
+  display:flex;
+  justify-content:space-between;
+  align-items:end;
+  margin-bottom:11px;
 }
 
-.info-box{
-    border:1px solid rgba(255,255,255,.055);
-    border-radius:13px;
-    padding:13px;
-    background:#08111e;
+.conf-note{
+  color:#25b7ff;
+  font-size:13px;
+  font-weight:800;
+  margin-top:5px;
 }
 
-.info-label{
-    color:#607088;
-    font-size:9px;
-    font-weight:800;
-    letter-spacing:1.1px;
-    margin-bottom:6px;
+.conf-num{
+  font-size:35px;
+  font-weight:1000;
+  color:#34bfff;
 }
 
-.info-value{
-    color:#dce5f2;
-    font-size:13px;
-    font-weight:800;
+.bar{
+  height:14px;
+  border-radius:20px;
+  background:#172738;
+  overflow:hidden;
 }
 
-/* ========================= */
-/* ACCURACY */
-/* ========================= */
-
-.accuracy-box{
-    display:grid;
-    grid-template-columns:repeat(3,1fr);
-    gap:7px;
-    margin-top:9px;
+.fill{
+  height:100%;
+  width:0;
+  border-radius:20px;
+  background:linear-gradient(90deg,#38ef3d,#8aff46);
+  box-shadow:0 0 15px rgba(86,255,70,.35);
+  transition:.35s;
 }
 
-.stat{
-    padding:13px 8px;
-    text-align:center;
-    border:1px solid rgba(255,255,255,.055);
-    border-radius:13px;
-    background:#08111e;
+/* ================= SUPPORT / RESISTANCE ================= */
+
+.levels{
+  display:flex;
+  justify-content:space-between;
+  align-items:end;
+  margin-bottom:10px;
+}
+
+.level{
+  text-transform:uppercase;
+  font-size:12px;
+  font-weight:800;
+}
+
+.level.support{color:#ff5665}
+.level.resistance{color:#7df15c}
+
+.level-value{
+  font-size:25px;
+  font-weight:1000;
+  margin-top:8px;
+}
+
+.level-value.red{color:#ff4050}
+.level-value.green{color:#6cff55}
+
+.level-line{
+  height:8px;
+  border-radius:10px;
+  background:
+    linear-gradient(
+      90deg,
+      #e93245 0%,
+      #ef4e57 22%,
+      #1597d6 50%,
+      #28d06c 77%,
+      #5ce94d 100%
+    );
+  position:relative;
+}
+
+.level-dot{
+  position:absolute;
+  left:50%;
+  top:50%;
+  transform:translate(-50%,-50%);
+  width:22px;
+  height:22px;
+  border-radius:50%;
+  background:#11a9e8;
+  border:4px solid #123b52;
+  box-shadow:0 0 18px #0ca9ef;
+}
+
+/* ================= SMALL CARDS ================= */
+
+.two{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:12px;
+}
+
+.small-card{
+  min-width:0;
+}
+
+.small-head{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  color:#8193a4;
+  font-size:12px;
+  font-weight:800;
+}
+
+.small-icon{
+  width:40px;
+  height:40px;
+  border-radius:50%;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  background:rgba(0,201,180,.10);
+  border:1px solid #155b60;
+  color:#44f0c5;
+  font-size:19px;
+}
+
+.small-card.pattern .small-icon{
+  background:rgba(202,159,44,.11);
+  border-color:#5b4b1f;
+  color:#ffd657;
+}
+
+.small-value{
+  font-size:19px;
+  font-weight:900;
+  margin-top:8px;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+
+/* ================= ANALYSIS ================= */
+
+.analysis{
+  border-color:#12548b;
+  background:
+    linear-gradient(
+      135deg,
+      rgba(8,58,93,.9),
+      rgba(5,18,31,.98)
+    );
+}
+
+.analysis-row{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+}
+
+.analysis-left{
+  display:flex;
+  align-items:center;
+  gap:12px;
+}
+
+.analysis-icon{
+  width:50px;
+  height:50px;
+  border-radius:17px;
+  border:1px solid #1b78b5;
+  background:rgba(17,129,206,.16);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:24px;
+  color:#39bfff;
+}
+
+.analysis-title{
+  font-size:19px;
+  font-weight:900;
+}
+
+.analysis-sub{
+  color:#7e95a9;
+  font-size:12px;
+  margin-top:4px;
+}
+
+.see{
+  border:1px solid #1769a3;
+  background:rgba(20,135,215,.16);
+  color:#20b5ff;
+  padding:10px 14px;
+  border-radius:22px;
+  font-weight:900;
+}
+
+/* ================= BUTTON ================= */
+
+.main-btn{
+  width:100%;
+  height:62px;
+  border:0;
+  border-radius:24px;
+  background:
+    linear-gradient(
+      135deg,
+      #16b7ff,
+      #1688ec 55%,
+      #2b6cf0
+    );
+  color:#03111c;
+  font-size:17px;
+  font-weight:1000;
+  box-shadow:0 13px 35px rgba(17,151,239,.22);
+}
+
+.note{
+  text-align:center;
+  color:#607487;
+  font-size:10px;
+  margin-top:8px;
+}
+
+/* ================= HISTORY ================= */
+
+.history-title{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:12px;
+}
+
+.history-title h3{
+  font-size:15px;
+}
+
+.live-text{
+  color:#3dff8b;
+  font-size:10px;
+  font-weight:900;
+}
+
+.history-list{
+  color:#71879a;
+  font-size:11px;
+}
+
+.history-item{
+  padding:10px 12px;
+  border:1px solid #183149;
+  border-radius:12px;
+  background:#07111c;
+  margin-bottom:7px;
+}
+
+.stats{
+  display:grid;
+  grid-template-columns:repeat(5,1fr);
+  gap:7px;
+  border-top:1px solid #172b3e;
+  margin-top:14px;
+  padding-top:14px;
+}
+
+.stat{text-align:center}
+
+.stat-label{
+  font-size:8px;
+  color:#5e7387;
+  font-weight:800;
 }
 
 .stat-value{
-    font-size:17px;
-    font-weight:900;
+  font-size:13px;
+  font-weight:900;
+  margin-top:5px;
 }
 
-.stat-label{
-    margin-top:4px;
-    color:#607088;
-    font-size:8px;
-    font-weight:800;
-    letter-spacing:.7px;
+.red{color:#ff4050}
+.green{color:#63f45b}
+.yellow{color:#ffd54d}
+
+/* ================= KEY SCREEN ================= */
+
+#keyScreen{
+  position:fixed;
+  inset:0;
+  z-index:9999;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:20px;
+  background:
+    radial-gradient(
+      circle at 50% 25%,
+      rgba(16,129,220,.2),
+      transparent 34%
+    ),
+    #03070c;
 }
 
-/* ========================= */
-/* RECENT SIGNALS */
-/* ========================= */
-
-.recent-title{
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    margin-bottom:10px;
+.keybox{
+  width:100%;
+  max-width:370px;
+  padding:32px 24px;
+  text-align:center;
+  border:1px solid #1a4766;
+  border-radius:25px;
+  background:
+    linear-gradient(
+      145deg,
+      #0a1b2b,
+      #040b13
+    );
+  box-shadow:0 30px 90px rgba(0,0,0,.6);
 }
 
-.recent-title strong{
-    font-size:13px;
+.keylogo{
+  width:62px;
+  height:62px;
+  margin:auto auto 15px;
+  border-radius:20px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  background:
+    linear-gradient(
+      145deg,
+      #12aaff,
+      #245df0
+    );
+  font-size:29px;
+  font-weight:1000;
+  box-shadow:0 0 30px rgba(0,155,255,.25);
 }
 
-.recent-title span{
-    color:#59687d;
+.keybox h1{font-size:27px}
+.keybox h1 b{color:#20a8ff}
+
+.keybox p{
+  margin:8px 0 20px;
+  color:#6c8295;
+  font-size:9px;
+  letter-spacing:2px;
+}
+
+#accessKey{
+  width:100%;
+  height:48px;
+  border:1px solid #1c3e57;
+  border-radius:12px;
+  background:#050d16;
+  color:#fff;
+  text-align:center;
+  outline:none;
+}
+
+#accessKey:focus{
+  border-color:#1aaaff;
+}
+
+.keybox button{
+  width:100%;
+  height:48px;
+  margin-top:10px;
+  border:0;
+  border-radius:12px;
+  background:
+    linear-gradient(
+      135deg,
+      #12aaff,
+      #2e69f1
+    );
+  color:#04111c;
+  font-weight:1000;
+}
+
+#keyError{
+  height:18px;
+  margin-top:10px;
+  color:#ff4050;
+  font-size:10px;
+}
+
+/* ================= LOADING ================= */
+
+.generate-loading{
+  animation:generatePulse .8s infinite alternate;
+  opacity:.85;
+}
+
+@keyframes generatePulse{
+  from{
+    transform:scale(1);
+    box-shadow:0 0 0 rgba(20,180,255,0);
+  }
+  to{
+    transform:scale(.98);
+    box-shadow:0 0 25px rgba(20,180,255,.55);
+  }
+}
+
+/* ================= MOBILE ================= */
+
+@media(max-width:520px){
+
+  body{
+    overflow-x:hidden;
+  }
+
+  .app{
+    width:100%;
+    max-width:100%;
+    padding:8px 8px 16px;
+  }
+
+  .header{
+    height:62px;
+    min-height:62px;
+    padding:0 10px;
+    border-radius:19px;
+    margin-bottom:9px;
+  }
+
+  .logo-title{
+    font-size:22px;
+    letter-spacing:-.8px;
+  }
+
+  .menu,
+  .avatar{
+    width:42px;
+    height:42px;
+    min-width:42px;
+  }
+
+  .menu{
+    border-radius:14px;
+  }
+
+  .menu span,
+  .menu span:before,
+  .menu span:after{
+    width:23px;
+  }
+
+  .market-type{
+    margin-bottom:7px;
+    padding:4px;
+    border-radius:13px;
+    gap:5px;
+  }
+
+  .market-type button{
+    height:32px;
     font-size:9px;
-    letter-spacing:1px;
-}
+    border-radius:9px;
+  }
 
-.recent-list{
-    display:flex;
-    flex-direction:column;
+  .market{
+    border-radius:19px;
+    padding:11px 11px 12px;
+    margin-bottom:8px;
+  }
+
+  .market-top{
     gap:7px;
-}
+  }
 
-.empty{
-    color:#56657a;
-    font-size:11px;
-    text-align:center;
-    padding:13px;
-    border:1px dashed rgba(255,255,255,.07);
+  .asset-left{
+    gap:8px;
+  }
+
+  .flags{
+    min-width:55px;
+    width:55px;
+    height:38px;
     border-radius:12px;
-}
+    font-size:18px;
+    letter-spacing:-5px;
+  }
 
-.recent-item{
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
-    padding:11px 12px;
-    border:1px solid rgba(255,255,255,.05);
-    border-radius:12px;
-    background:#08111e;
-}
+  .asset-name{
+    font-size:16px;
+  }
 
-.recent-left{
-    display:flex;
-    align-items:center;
-    gap:9px;
-}
+  .asset-sub{
+    font-size:8px;
+    margin-top:2px;
+    letter-spacing:.2px;
+  }
 
-.recent-signal{
-    width:34px;
-    height:34px;
-    border-radius:10px;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    font-size:10px;
-    font-weight:900;
-}
-
-.recent-signal.call{
-    color:#20d98a;
-    background:rgba(32,217,138,.08);
-}
-
-.recent-signal.put{
-    color:#ff4c5c;
-    background:rgba(255,76,92,.08);
-}
-
-.recent-asset{
-    color:#d8e1ee;
-    font-size:11px;
-    font-weight:800;
-}
-
-.recent-time{
-    color:#5d6c80;
+  .live-pill{
+    padding:6px 9px;
     font-size:9px;
-    margin-top:3px;
-}
+  }
 
-.recent-result{
+  .select-area{
+    margin-top:8px;
+  }
+
+  #assetDisplay{
+    height:36px;
+    border-radius:10px;
+    padding:0 10px;
+    font-size:11px;
+  }
+
+  .card{
+    border-radius:17px;
+    padding:10px;
+    margin-bottom:8px;
+  }
+
+  .signal{
+    border-radius:16px;
+    padding:12px;
+  }
+
+  .signal-row{
+    gap:11px;
+  }
+
+  .signal-icon{
+    width:53px;
+    height:53px;
+    font-size:34px;
+  }
+
+  .place{
+    font-size:8px;
+    letter-spacing:2.5px;
+  }
+
+  .signal-word{
+    font-size:30px;
+    margin-top:2px;
+  }
+
+  .signal-status{
+    margin-top:7px;
+    font-size:9px;
+  }
+
+  .signal > div[style*="margin-top:18px"]{
+    margin-top:9px !important;
+  }
+
+  .conf-head{
+    margin-bottom:6px;
+  }
+
+  .label{
+    font-size:8px;
+    letter-spacing:.8px;
+  }
+
+  .conf-note{
+    font-size:9px;
+    margin-top:2px;
+  }
+
+  .conf-num{
+    font-size:24px;
+  }
+
+  .bar{
+    height:8px;
+  }
+
+  .levels{
+    margin-bottom:7px;
+  }
+
+  .level{
+    font-size:9px;
+  }
+
+  .level-value{
+    font-size:17px;
+    margin-top:4px;
+  }
+
+  .level-line{
+    height:5px;
+  }
+
+  .level-dot{
+    width:15px;
+    height:15px;
+    border-width:3px;
+  }
+
+  .two{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:7px;
+  }
+
+  .small-card{
+    margin-bottom:8px;
+    padding:10px;
+  }
+
+  .small-head{
+    gap:7px;
+    font-size:9px;
+  }
+
+  .small-icon{
+    width:30px;
+    height:30px;
+    border-radius:10px;
+    font-size:15px;
+  }
+
+  .small-value{
+    font-size:14px;
+    margin-top:5px;
+  }
+
+  .analysis{
+    padding:11px;
+  }
+
+  .analysis-row{
+    gap:7px;
+  }
+
+  .analysis-left{
+    gap:8px;
+  }
+
+  .analysis-icon{
+    width:38px;
+    height:38px;
+    border-radius:11px;
+    font-size:18px;
+  }
+
+  .analysis-title{
+    font-size:13px;
+  }
+
+  .analysis-sub{
+    font-size:8px;
+    margin-top:2px;
+  }
+
+  .see{
+    padding:7px 9px;
+    border-radius:15px;
+    font-size:9px;
+  }
+
+  #analysisDetails{
+    padding:11px;
+  }
+
+  #currentPrice{
+    font-size:20px !important;
+  }
+
+  #analysisDetails > div:nth-child(3){
+    margin-top:9px !important;
+  }
+
+  #reasonBox{
+    font-size:9px !important;
+    line-height:1.4 !important;
+  }
+
+  #analysisDetails .two{
+    margin-top:8px !important;
+  }
+
+  #analysisDetails .two > div{
+    padding:8px !important;
+    border-radius:10px !important;
+  }
+
+  .main-btn{
+    height:50px;
+    min-height:50px;
+    border-radius:17px;
+    font-size:14px;
+  }
+
+  .note{
+    font-size:8px;
+    margin-top:5px;
+  }
+
+  .history-title{
+    margin-bottom:8px;
+  }
+
+  .history-title h3{
+    font-size:11px;
+  }
+
+  .live-text{
+    font-size:8px;
+  }
+
+  .history-list{
+    font-size:9px;
+  }
+
+  .history-item{
+    padding:7px 8px;
+    border-radius:9px;
+    margin-bottom:5px;
+  }
+
+  .stats{
+    grid-template-columns:repeat(5,1fr);
+    gap:3px;
+    margin-top:8px;
+    padding-top:8px;
+  }
+
+  .stat-label{
+    font-size:6px;
+  }
+
+  .stat-value{
     font-size:10px;
-    font-weight:900;
+    margin-top:3px;
+  }
 }
 
-/* ========================= */
-/* RESPONSIVE */
-/* ========================= */
+/* VERY SMALL PHONES */
 
 @media(max-width:380px){
-    .app{
-        padding:13px 10px 30px;
-    }
 
-    .card{
-        padding:14px;
-    }
+  .app{
+    padding:6px 6px 12px;
+  }
 
-    .signal{
-        font-size:42px;
-    }
+  .header{
+    height:58px;
+    min-height:58px;
+  }
 
-    .price{
-        font-size:27px;
-    }
+  .menu,
+  .avatar{
+    width:39px;
+    height:39px;
+    min-width:39px;
+  }
+
+  .logo-title{
+    font-size:20px;
+  }
+
+  .market{
+    padding:9px;
+  }
+
+  .signal-word{
+    font-size:27px;
+  }
+
+  .signal-icon{
+    width:49px;
+    height:49px;
+    font-size:31px;
+  }
+
+  .main-btn{
+    height:47px;
+    min-height:47px;
+    font-size:13px;
+  }
 }
 </style>
 </head>
 
 <body>
 
-<!-- ========================= -->
-<!-- ACCESS SCREEN -->
-<!-- ========================= -->
+<div class="app">
 
-<div id="accessScreen" class="access-screen">
+<header class="header">
 
-    <div class="access-box">
+<button class="menu" type="button" aria-label="Menu">
+<span></span>
+</button>
 
-        <div class="access-logo">
-            <img
-                src="IMG_20260607_080029_947.jpg"
-                alt="KURO AI"
-            >
-        </div>
+<div class="logo-title">
+KURO <b>AI</b>
+</div>
 
-        <h1>KURO AI</h1>
+<div class="avatar">
+<img
+src="IMG_20260607_080029_947.jpg"
+alt="KURO AI Logo"
+>
+</div>
 
-        <p>Enter your access key to continue</p>
+</header>
 
-        <input
-            id="accessInput"
-            class="access-input"
-            type="password"
-            placeholder="Access Key"
-            autocomplete="off"
-        >
 
-        <button
-            id="accessBtn"
-            class="access-btn"
-            type="button"
-        >
-            UNLOCK
-        </button>
+<!-- ================= MARKET TYPE ================= -->
 
-        <div
-            id="accessError"
-            class="access-error"
-        ></div>
+<div class="market-type">
 
-    </div>
+<button
+id="realMarketBtn"
+class="active"
+type="button"
+>
+REAL MARKET
+</button>
+
+<button
+id="otcMarketBtn"
+type="button"
+>
+OTC MARKET
+</button>
 
 </div>
 
 
-<!-- ========================= -->
-<!-- APP -->
-<!-- ========================= -->
+<section class="market">
 
-<div id="app" class="app" style="display:none;">
+<div class="market-top">
 
-    <!-- HEADER -->
+<div class="asset-left">
 
-    <div class="header">
+<div class="flags" id="assetFlags">
+🇪🇺🇺🇸
+</div>
 
-        <div class="brand">
+<div>
 
-            <div class="avatar">
-                <img
-                    src="IMG_20260607_080029_947.jpg"
-                    alt="KURO AI Logo"
-                >
-            </div>
+<div class="asset-name" id="selectedAssetName">
+EUR/USD
+</div>
 
-            <div class="brand-text">
-                <div class="brand-title">
-                    KURO <span>AI</span>
-                </div>
+<div class="asset-sub" id="marketSub">
+● REAL MARKET • 1 MIN
+</div>
 
-                <div class="brand-sub">
-                    BINARY SIGNAL
-                </div>
-            </div>
+</div>
 
-        </div>
+</div>
 
-        <button
-            class="menu-btn"
-            type="button"
-        >
-            ⋮
-        </button>
+<div class="live-pill" id="livePill">
+↗ LIVE
+</div>
 
-    </div>
+</div>
 
 
-    <!-- MARKET / ASSET -->
+<div class="select-area">
 
-    <div class="card">
+<div id="assetDisplay">
+🇪🇺🇺🇸 &nbsp; EUR/USD
+</div>
 
-        <div class="section-label">
-            MARKET TYPE
-        </div>
+<select id="assetSelect">
 
-        <div class="market-toggle">
+<option value="EUR/USD">
+🇪🇺🇺🇸 EUR/USD
+</option>
 
-            <button
-                id="realMarketBtn"
-                class="active"
-                type="button"
-            >
-                REAL MARKET
-            </button>
+<option value="GBP/USD">
+🇬🇧🇺🇸 GBP/USD
+</option>
 
-            <button
-                id="otcMarketBtn"
-                type="button"
-            >
-                OTC MARKET
-            </button>
+<option value="USD/JPY">
+🇺🇸🇯🇵 USD/JPY
+</option>
 
-        </div>
+<option value="AUD/USD">
+🇦🇺🇺🇸 AUD/USD
+</option>
 
+<option value="USD/CAD">
+🇺🇸🇨🇦 USD/CAD
+</option>
 
-        <div class="section-label">
-            ASSET
-        </div>
+</select>
 
-        <div class="asset-wrap">
+</div>
 
-            <select
-                id="assetSelect"
-                class="asset-select"
-            ></select>
+</section>
 
-            <span class="asset-arrow">
-                ▾
-            </span>
 
-        </div>
+<div class="card">
 
+<div class="signal" id="signalPanel">
 
-        <div class="price-row">
+<div class="signal-row">
 
-            <div>
+<div class="signal-icon" id="signalCircle">
+•
+</div>
 
-                <div class="price-label">
-                    CURRENT PRICE
-                </div>
+<div>
 
-                <div
-                    id="currentPrice"
-                    class="price"
-                >
-                    --
-                </div>
+<div class="place">
+PLACE OPTION
+</div>
 
-            </div>
+<div class="signal-word" id="signalBox">
+WAIT
+</div>
 
+</div>
 
-            <div class="market-status">
+</div>
 
-                <div>
-                    <span class="status-dot"></span>
-                    <span
-                        id="statusText"
-                        class="status-text"
-                    >
-                        CONNECTING
-                    </span>
-                </div>
+<div class="signal-status" id="status">
+Collecting 1-Min Data
+</div>
 
-            </div>
+</div>
 
-        </div>
 
-    </div>
+<div style="margin-top:18px">
 
+<div class="conf-head">
 
-    <!-- SIGNAL -->
+<div>
 
-    <div class="card signal-card">
+<div class="label">
+CONFIDENCE
+</div>
 
-        <div class="signal-title">
-            1-MIN SIGNAL
-        </div>
+<div class="conf-note" id="confidenceText">
+Waiting for market data
+</div>
 
-        <div
-            id="signal"
-            class="signal wait"
-        >
-            WAIT
-        </div>
+</div>
 
-        <div
-            id="confidence"
-            class="confidence"
-        >
-            Waiting for market data
-        </div>
+<div class="conf-num" id="confidence">
+--%
+</div>
 
-        <div
-            id="timeLeft"
-            class="time-left"
-        ></div>
+</div>
 
-        <button
-            id="generateBtn"
-            class="generate-btn"
-            type="button"
-        >
-            GENERATE SIGNAL
-        </button>
+<div class="bar">
+<div class="fill" id="confidenceFill"></div>
+</div>
 
-    </div>
+</div>
 
+</div>
 
-    <!-- MARKET INFO -->
 
-    <div class="card">
+<div class="card">
 
-        <div class="info-grid">
+<div class="levels">
 
-            <div class="info-box">
+<div>
 
-                <div class="info-label">
-                    MARKET
-                </div>
+<div class="level support">
+↓ SUPPORT
+</div>
 
-                <div
-                    id="marketValue"
-                    class="info-value"
-                >
-                    REAL MARKET
-                </div>
+<div class="level-value red" id="supportValue">
+--
+</div>
 
-            </div>
+</div>
 
+<div style="text-align:right">
 
-            <div class="info-box">
+<div class="level resistance">
+RESISTANCE ↑
+</div>
 
-                <div class="info-label">
-                    DIRECTION
-                </div>
+<div class="level-value green" id="resistanceValue">
+--
+</div>
 
-                <div
-                    id="directionValue"
-                    class="info-value"
-                >
-                    WAIT
-                </div>
+</div>
 
-            </div>
+</div>
 
+<div class="level-line">
+<div class="level-dot"></div>
+</div>
 
-            <div class="info-box">
+</div>
 
-                <div class="info-label">
-                    TREND
-                </div>
 
-                <div
-                    id="trendValue"
-                    class="info-value"
-                >
-                    NEUTRAL
-                </div>
+<div class="two">
 
-            </div>
+<div class="card small-card">
 
+<div class="small-head">
 
-            <div class="info-box">
+<div class="small-icon">
+⌁
+</div>
 
-                <div class="info-label">
-                    RANGE
-                </div>
+<span>TREND</span>
 
-                <div
-                    id="rangeValue"
-                    class="info-value"
-                >
-                    --
-                </div>
+</div>
 
-            </div>
+<div class="small-value" id="trendValue">
+Neutral
+</div>
 
-        </div>
+</div>
 
-    </div>
 
+<div class="card small-card pattern">
 
-    <!-- ACCURACY -->
+<div class="small-head">
 
-    <div class="card">
+<div class="small-icon">
+⌗
+</div>
 
-        <div class="recent-title">
+<span>PATTERN</span>
 
-            <strong>
-                Accuracy Tracker
-            </strong>
+</div>
 
-            <span>
-                LIVE
-            </span>
+<div class="small-value" id="patternValue">
+Monitoring
+</div>
 
-        </div>
+</div>
 
+</div>
 
-        <div class="accuracy-box">
 
-            <div class="stat">
+<div class="card analysis">
 
-                <div
-                    id="wins"
-                    class="stat-value"
-                >
-                    0
-                </div>
+<div class="analysis-row">
 
-                <div class="stat-label">
-                    WINS
-                </div>
+<div class="analysis-left">
 
-            </div>
+<div class="analysis-icon">
+◔
+</div>
 
+<div>
 
-            <div class="stat">
+<div class="analysis-title">
+Analysis Details
+</div>
 
-                <div
-                    id="losses"
-                    class="stat-value"
-                >
-                    0
-                </div>
+<div class="analysis-sub" id="analysisSub">
+Structure • Momentum • 1-Min
+</div>
 
-                <div class="stat-label">
-                    LOSSES
-                </div>
+</div>
 
-            </div>
+</div>
 
+<button
+class="see"
+type="button"
+onclick="document.getElementById('analysisDetails').scrollIntoView({behavior:'smooth'})"
+>
+See all ›
+</button>
 
-            <div class="stat">
+</div>
 
-                <div
-                    id="accuracy"
-                    class="stat-value"
-                >
-                    0%
-                </div>
+</div>
 
-                <div class="stat-label">
-                    ACCURACY
-                </div>
 
-            </div>
+<div class="card" id="analysisDetails">
 
-        </div>
+<div class="label">
+CURRENT PRICE
+</div>
 
-    </div>
+<div style="display:flex;justify-content:space-between;align-items:end;margin-top:5px">
 
+<div
+style="font-size:24px;font-weight:1000"
+id="currentPrice"
+>
+Loading...
+</div>
 
-    <!-- RECENT SIGNALS -->
+<div style="text-align:right">
 
-    <div class="card">
+<div class="label">
+MARKET
+</div>
 
-        <div class="recent-title">
+<div
+class="green"
+style="font-weight:1000"
+id="marketStatus"
+>
+CONNECTING
+</div>
 
-            <strong>
-                Recent Signals
-            </strong>
+</div>
 
-            <span>
-                HISTORY
-            </span>
+</div>
 
-        </div>
 
-        <div
-            id="recentSignals"
-            class="recent-list"
-        >
+<div style="margin-top:15px" class="label">
+MARKET ANALYSIS
+</div>
 
-            <div class="empty">
-                No signals yet
-            </div>
+<div
+style="margin-top:8px;color:#8297aa;font-size:11px;line-height:1.55"
+id="reasonBox"
+>
+Collecting enough 1-minute market data to analyze momentum.
+</div>
 
-        </div>
 
-    </div>
+<div class="two" style="margin-top:12px">
+
+<div
+style="border:1px solid #183149;border-radius:13px;padding:11px;background:#06101a"
+>
+
+<div class="label">
+BIAS
+</div>
+
+<div
+id="biasValue"
+class="yellow"
+style="font-weight:1000;margin-top:5px"
+>
+WAIT
+</div>
+
+</div>
+
+
+<div
+style="border:1px solid #183149;border-radius:13px;padding:11px;background:#06101a"
+>
+
+<div class="label">
+TRAP RISK
+</div>
+
+<div
+id="trapRisk"
+class="yellow"
+style="font-weight:1000;margin-top:5px"
+>
+--
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+
+<div class="card" style="padding:10px">
+
+<button class="main-btn" id="generateButton">
+↻ &nbsp; Analyze another chart
+</button>
+
+<div class="note">
+KURO AI • 1-MINUTE MOMENTUM ENGINE
+</div>
+
+</div>
+
+
+<div class="card">
+
+<div class="history-title">
+
+<h3>
+RECENT SIGNALS
+</h3>
+
+<span class="live-text">
+● LIVE
+</span>
+
+</div>
+
+<div class="history-list" id="signalHistory">
+No signals yet
+</div>
+
+<div class="stats">
+
+<div class="stat">
+
+<div class="stat-label">
+TIME LEFT
+</div>
+
+<div class="stat-value" id="countdownTimer">
+--
+</div>
+
+</div>
+
+
+<div class="stat">
+
+<div class="stat-label">
+WINS
+</div>
+
+<div class="stat-value green" id="winsCount">
+0
+</div>
+
+</div>
+
+
+<div class="stat">
+
+<div class="stat-label">
+LOSSES
+</div>
+
+<div class="stat-value red" id="lossesCount">
+0
+</div>
+
+</div>
+
+
+<div class="stat">
+
+<div class="stat-label">
+DRAWS
+</div>
+
+<div class="stat-value yellow" id="drawsCount">
+0
+</div>
+
+</div>
+
+
+<div class="stat">
+
+<div class="stat-label">
+ACCURACY
+</div>
+
+<div class="stat-value" id="accuracyValue">
+0%
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+
+<!-- ================= ACCESS KEY ================= -->
+
+<div id="keyScreen">
+
+<div class="keybox">
+
+<div class="keylogo">
+K
+</div>
+
+<h1>
+KURO <b>AI</b>
+</h1>
+
+<p>
+ENTER ACCESS KEY
+</p>
+
+<input
+id="accessKey"
+type="password"
+placeholder="Enter your access key"
+>
+
+<button
+type="button"
+onclick="unlockKURO()"
+>
+UNLOCK KURO AI
+</button>
+
+<div id="keyError"></div>
+
+</div>
 
 </div>
 
 
 <script>
 
-/* ================================================= */
-/* KURO AI CONFIG */
-/* ================================================= */
-
 const KURO_ACCESS_KEY = "KURO-2026";
 
-const OTC_BACKEND =
-    "https://kuro-ai-2.onrender.com";
+const OTC_BACKEND = "https://kuro-ai-2.onrender.com";
 
 
-/* ================================================= */
-/* ASSETS */
-/* ================================================= */
+/* ========================= */
+/* REAL MARKET SYMBOLS */
+/* ========================= */
 
-const realAssets = {
+const symbols = {
     "EUR/USD": "EURUSD",
     "GBP/USD": "GBPUSD",
     "USD/JPY": "USDJPY",
@@ -993,75 +1666,103 @@ const realAssets = {
 };
 
 
+/* ========================= */
+/* FREE PLAN OTC SYMBOLS */
+/* ========================= */
+
 const otcSymbols = {
-
-    "AUD/USD OTC":
-        "AUDUSD_OTC",
-
-    "EUR/USD OTC":
-        "EURUSD_OTC",
-
-    "GBP/USD OTC":
-        "GBPUSD_OTC",
-
-    "USD/JPY OTC":
-        "USDJPY_OTC",
-
-    "BTC/USD OTC":
-        "BTCUSD_OTC"
-
+    "AUD/USD OTC": "AUDUSD_OTC",
+    "EUR/USD OTC": "EURUSD_OTC",
+    "GBP/USD OTC": "GBPUSD_OTC",
+    "USD/JPY OTC": "USDJPY_OTC",
+    "BTC/USD OTC": "BTCUSD_OTC"
 };
 
 
-/* ================================================= */
+/* ========================= */
+/* FREE PLAN OTC ASSETS */
+/* ========================= */
+
+const otcAssetOptions = [
+
+    {
+        value: "AUD/USD OTC",
+        label: "🇦🇺🇺🇸 AUD/USD OTC",
+        flags: "🇦🇺🇺🇸"
+    },
+
+    {
+        value: "EUR/USD OTC",
+        label: "🇪🇺🇺🇸 EUR/USD OTC",
+        flags: "🇪🇺🇺🇸"
+    },
+
+    {
+        value: "GBP/USD OTC",
+        label: "🇬🇧🇺🇸 GBP/USD OTC",
+        flags: "🇬🇧🇺🇸"
+    },
+
+    {
+        value: "USD/JPY OTC",
+        label: "🇺🇸🇯🇵 USD/JPY OTC",
+        flags: "🇺🇸🇯🇵"
+    },
+
+    {
+        value: "BTC/USD OTC",
+        label: "₿ BTC/USD OTC",
+        flags: "₿"
+    }
+
+];
+
+
+/* ========================= */
 /* STATE */
-/* ================================================= */
+/* ========================= */
 
 let marketType = "REAL";
 
 let priceHistory = [];
+let lastPrice = null;
+let loading = false;
+let lastCandleMinute = null;
+
+let totalWins = 0;
+let totalLosses = 0;
+let totalDraws = 0;
+
+let signalExpiry = null;
+let lastSignalPrice = null;
+let lastSignalTime = null;
 
 let currentSignal = "WAIT";
 
-let lastCandleMinute = null;
-
-let signalExpiry = null;
-
-let lastSignalPrice = null;
-
-let lastSignalTime = null;
-
-let countdownTimer = null;
-
-let totalWins = 0;
-
-let totalLosses = 0;
-
-let totalDraws = 0;
-
-let recentSignals = [];
-
-let updateRunning = false;
+let countdownInterval = null;
 
 
-/* ================================================= */
+/* ========================= */
 /* DOM */
-/* ================================================= */
+/* ========================= */
 
-const accessScreen =
-    document.getElementById("accessScreen");
+const assetSelect =
+    document.getElementById("assetSelect");
 
-const app =
-    document.getElementById("app");
+const assetDisplay =
+    document.getElementById("assetDisplay");
 
-const accessInput =
-    document.getElementById("accessInput");
+const assetFlags =
+    document.getElementById("assetFlags");
 
-const accessBtn =
-    document.getElementById("accessBtn");
+const selectedAssetName =
+    document.getElementById("selectedAssetName");
 
-const accessError =
-    document.getElementById("accessError");
+const marketSub =
+    document.getElementById("marketSub");
+
+const livePill =
+    document.getElementById("livePill");
 
 const realMarketBtn =
     document.getElementById("realMarketBtn");
@@ -1069,248 +1770,411 @@ const realMarketBtn =
 const otcMarketBtn =
     document.getElementById("otcMarketBtn");
 
-const assetSelect =
-    document.getElementById("assetSelect");
-
-const currentPriceEl =
+const currentPrice =
     document.getElementById("currentPrice");
 
+const marketStatus =
+    document.getElementById("marketStatus");
+
+const signalBox =
+    document.getElementById("signalBox");
+
+const confidenceText =
+    document.getElementById("confidenceText");
+
 const statusText =
-    document.getElementById("statusText");
+    document.getElementById("status");
 
-const signalEl =
-    document.getElementById("signal");
+const reasonBox =
+    document.getElementById("reasonBox");
 
-const confidenceEl =
+const confidence =
     document.getElementById("confidence");
 
-const timeLeftEl =
-    document.getElementById("timeLeft");
+const confidenceFill =
+    document.getElementById("confidenceFill");
 
-const marketValueEl =
-    document.getElementById("marketValue");
+const supportValue =
+    document.getElementById("supportValue");
 
-const directionValueEl =
-    document.getElementById("directionValue");
+const resistanceValue =
+    document.getElementById("resistanceValue");
 
-const trendValueEl =
+const trendValue =
     document.getElementById("trendValue");
 
-const rangeValueEl =
-    document.getElementById("rangeValue");
+const patternValue =
+    document.getElementById("patternValue");
 
-const winsEl =
-    document.getElementById("wins");
+const analysisSub =
+    document.getElementById("analysisSub");
 
-const lossesEl =
-    document.getElementById("losses");
+const biasValue =
+    document.getElementById("biasValue");
 
-const accuracyEl =
-    document.getElementById("accuracy");
+const trapRisk =
+    document.getElementById("trapRisk");
 
-const recentSignalsEl =
-    document.getElementById("recentSignals");
+const countdownTimer =
+    document.getElementById("countdownTimer");
 
 const generateBtn =
-    document.getElementById("generateBtn");
+    document.getElementById("generateButton");
+
+const recentSignals =
+    document.getElementById("signalHistory");
+
+const winsCount =
+    document.getElementById("winsCount");
+
+const lossesCount =
+    document.getElementById("lossesCount");
+
+const drawsCount =
+    document.getElementById("drawsCount");
+
+const accuracyValue =
+    document.getElementById("accuracyValue");
 
 
-/* ================================================= */
-/* ACCESS KEY */
-/* ================================================= */
+/* ========================= */
+/* TEXT HELPER */
+/* ========================= */
 
-function unlockApp(){
+function setText(element, value) {
 
-    const value =
-        accessInput.value.trim();
-
-    if(value === KURO_ACCESS_KEY){
-
-        accessScreen.style.display =
-            "none";
-
-        app.style.display =
-            "block";
-
-        localStorage.setItem(
-            "kuro_access",
-            "1"
-        );
-
-        loadRealAssets();
-
-        updateAssetUI();
-
-        updateAccuracy();
-
-        updatePrice();
-
-    }else{
-
-        accessError.textContent =
-            "Invalid access key.";
-
-        accessInput.value = "";
-
-        accessInput.focus();
-
+    if (element) {
+        element.textContent = value;
     }
 
 }
 
 
-accessBtn.addEventListener(
-    "click",
-    unlockApp
-);
+/* ========================= */
+/* PRICE FORMAT */
+/* ========================= */
+
+function formatPrice(price) {
+
+    if (!Number.isFinite(price)) {
+        return "--";
+    }
+
+    if (price >= 100) {
+        return price.toFixed(3);
+    }
+
+    if (price >= 10) {
+        return price.toFixed(4);
+    }
+
+    return price.toFixed(5);
+
+}
 
 
-accessInput.addEventListener(
-    "keydown",
-    function(e){
+/* ========================= */
+/* UPDATE ASSET UI */
+/* ========================= */
 
-        if(e.key === "Enter"){
-            unlockApp();
+function updateAssetUI() {
+
+    if (!assetSelect) {
+        return;
+    }
+
+    const asset =
+        assetSelect.value;
+
+    if (marketType === "OTC") {
+
+        const item =
+            otcAssetOptions.find(
+                x => x.value === asset
+            );
+
+        if (item) {
+
+            setText(
+                assetFlags,
+                item.flags
+            );
+
+            setText(
+                selectedAssetName,
+                asset
+            );
+
+            setText(
+                assetDisplay,
+                item.label
+            );
+
         }
 
+    } else {
+
+        const flags = {
+            "EUR/USD": "🇪🇺🇺🇸",
+            "GBP/USD": "🇬🇧🇺🇸",
+            "USD/JPY": "🇺🇸🇯🇵",
+            "AUD/USD": "🇦🇺🇺🇸",
+            "USD/CAD": "🇺🇸🇨🇦"
+        };
+
+        setText(
+            assetFlags,
+            flags[asset] || "🌐"
+        );
+
+        setText(
+            selectedAssetName,
+            asset
+        );
+
+        setText(
+            assetDisplay,
+            (flags[asset] || "🌐") +
+            "  " +
+            asset
+        );
+
     }
-);
-
-
-if(
-    localStorage.getItem("kuro_access") === "1"
-){
-
-    accessScreen.style.display =
-        "none";
-
-    app.style.display =
-        "block";
 
 }
 
 
-/* ================================================= */
-/* ASSET LOAD */
-/* ================================================= */
+/* ========================= */
+/* BUILD OTC SELECT */
+/* ========================= */
 
-function loadRealAssets(){
+function loadOTCAssets() {
+
+    if (!assetSelect) {
+        return;
+    }
 
     assetSelect.innerHTML = "";
 
-    Object.keys(realAssets)
-        .forEach(function(asset){
+    otcAssetOptions.forEach(item => {
 
-            const option =
-                document.createElement("option");
+        const option =
+            document.createElement("option");
 
-            option.value = asset;
+        option.value =
+            item.value;
 
-            option.textContent = asset;
+        option.textContent =
+            item.label;
 
-            assetSelect.appendChild(option);
+        assetSelect.appendChild(
+            option
+        );
 
-        });
+    });
+
+    updateAssetUI();
 
 }
 
 
-/* ================================================= */
-/* OTC ASSET LOAD */
-/* ================================================= */
+/* ========================= */
+/* BUILD REAL SELECT */
+/* ========================= */
 
-function loadOTCAssets(){
+function loadRealAssets() {
+
+    if (!assetSelect) {
+        return;
+    }
 
     assetSelect.innerHTML = "";
 
-    Object.keys(otcSymbols)
-        .forEach(function(asset){
+    const realAssets = [
+        ["EUR/USD", "🇪🇺🇺🇸 EUR/USD"],
+        ["GBP/USD", "🇬🇧🇺🇸 GBP/USD"],
+        ["USD/JPY", "🇺🇸🇯🇵 USD/JPY"],
+        ["AUD/USD", "🇦🇺🇺🇸 AUD/USD"],
+        ["USD/CAD", "🇺🇸🇨🇦 USD/CAD"]
+    ];
 
-            const option =
-                document.createElement("option");
+    realAssets.forEach(item => {
 
-            option.value = asset;
+        const option =
+            document.createElement("option");
 
-            option.textContent = asset;
+        option.value =
+            item[0];
 
-            assetSelect.appendChild(option);
+        option.textContent =
+            item[1];
 
-        });
+        assetSelect.appendChild(
+            option
+        );
+
+    });
+
+    updateAssetUI();
 
 }
 
 
-/* ================================================= */
+/* ========================= */
 /* MARKET TYPE */
-/* ================================================= */
+/* ========================= */
 
-function setMarketType(type){
+function setMarketType(type) {
 
     marketType = type;
 
     priceHistory = [];
+    lastPrice = null;
+    lastCandleMinute = null;
+
+    signalExpiry = null;
+    lastSignalPrice = null;
+    lastSignalTime = null;
 
     currentSignal = "WAIT";
 
-    signalExpiry = null;
+    if (countdownInterval) {
 
-    lastSignalPrice = null;
-
-    lastSignalTime = null;
-
-    lastCandleMinute = null;
-
-    clearInterval(countdownTimer);
-
-    timeLeftEl.textContent = "";
-
-    signalEl.textContent = "WAIT";
-
-    signalEl.className =
-        "signal wait";
-
-    confidenceEl.textContent =
-        "Waiting for market data";
-
-
-    if(type === "REAL"){
-
-        realMarketBtn.classList.add(
-            "active"
+        clearInterval(
+            countdownInterval
         );
 
-        otcMarketBtn.classList.remove(
-            "active"
-        );
-
-        marketValueEl.textContent =
-            "REAL MARKET";
-
-        loadRealAssets();
-
-        statusText.textContent =
-            "LIVE MARKET";
-
-    }else{
-
-        realMarketBtn.classList.remove(
-            "active"
-        );
-
-        otcMarketBtn.classList.add(
-            "active"
-        );
-
-        marketValueEl.textContent =
-            "OTC MARKET";
-
-        loadOTCAssets();
-
-        statusText.textContent =
-            "OTC CONNECTING";
+        countdownInterval = null;
 
     }
 
+    if (marketType === "OTC") {
+
+        otcMarketBtn?.classList.add("active");
+        otcMarketBtn?.classList.add("otc-active");
+
+        realMarketBtn?.classList.remove("active");
+
+        loadOTCAssets();
+
+        setText(
+            marketSub,
+            "● OTC MARKET • 1 MIN"
+        );
+
+        setText(
+            livePill,
+            "↗ OTC"
+        );
+
+        livePill?.classList.add("otc");
+
+        setText(
+            marketStatus,
+            "OTC WAITING"
+        );
+
+        setText(
+            currentPrice,
+            "OTC OFFLINE"
+        );
+
+        setText(
+            statusText,
+            "WAITING FOR FEED"
+        );
+
+        setText(
+            confidenceText,
+            "Waiting for OTC price"
+        );
+
+        setText(
+            reasonBox,
+            "Connecting to KURO OTC backend..."
+        );
+
+    } else {
+
+        realMarketBtn?.classList.add("active");
+
+        otcMarketBtn?.classList.remove("active");
+        otcMarketBtn?.classList.remove("otc-active");
+
+        loadRealAssets();
+
+        setText(
+            marketSub,
+            "● REAL MARKET • 1 MIN"
+        );
+
+        setText(
+            livePill,
+            "↗ LIVE"
+        );
+
+        livePill?.classList.remove("otc");
+
+        setText(
+            marketStatus,
+            "CONNECTING"
+        );
+
+        setText(
+            currentPrice,
+            "Loading..."
+        );
+
+        setText(
+            statusText,
+            "CONNECTING"
+        );
+
+        setText(
+            confidenceText,
+            "Waiting for market data"
+        );
+
+        setText(
+            reasonBox,
+            "Waiting for live market data..."
+        );
+
+    }
+
+    setText(
+        signalBox,
+        "WAIT"
+    );
+
+    setText(
+        confidence,
+        "--%"
+    );
+
+    if (confidenceFill) {
+        confidenceFill.style.width = "0%";
+    }
+
+    setText(
+        trendValue,
+        "Neutral"
+    );
+
+    setText(
+        patternValue,
+        "Monitoring"
+    );
+
+    setText(
+        biasValue,
+        "WAIT"
+    );
+
+    setText(
+        trapRisk,
+        "--"
+    );
 
     updateAssetUI();
 
@@ -1319,137 +2183,62 @@ function setMarketType(type){
 }
 
 
-realMarketBtn.addEventListener(
-    "click",
-    function(){
-        setMarketType("REAL");
-    }
-);
+/* ========================= */
+/* REAL PRICE */
+/* ========================= */
 
-
-otcMarketBtn.addEventListener(
-    "click",
-    function(){
-        setMarketType("OTC");
-    }
-);
-
-
-/* ================================================= */
-/* ASSET UI */
-/* ================================================= */
-
-function updateAssetUI(){
-
-    directionValueEl.textContent =
-        "WAIT";
-
-    trendValueEl.textContent =
-        "NEUTRAL";
-
-    rangeValueEl.textContent =
-        "--";
-
-}
-
-
-/* ================================================= */
-/* REAL MARKET PRICE */
-/* ================================================= */
-
-async function getRealPrice(){
+async function getRealPrice() {
 
     const asset =
         assetSelect.value;
 
     const symbol =
-        realAssets[asset];
+        symbols[asset];
 
-    if(!symbol){
-
+    if (!symbol) {
         throw new Error(
-            "Asset not supported"
+            "Invalid real asset"
         );
-
     }
-
 
     const response =
         await fetch(
-            "https://biquote.io/api/?allowStale=true",
+            "https://biquote.io/api/" +
+            symbol +
+            "?allowStale=true",
             {
-                cache:"no-store"
+                cache: "no-store"
             }
         );
 
-
-    if(!response.ok){
-
+    if (!response.ok) {
         throw new Error(
-            "Real market API unavailable"
+            "Real market request failed"
         );
-
     }
-
 
     const data =
         await response.json();
 
+    const price =
+        Number(data.mid);
 
-    let price = null;
-
-
-    if(
-        data &&
-        data[symbol] &&
-        data[symbol].mid !== undefined
-    ){
-
-        price =
-            Number(
-                data[symbol].mid
-            );
-
-    }
-
-
-    if(
-        price === null &&
-        data &&
-        data.data &&
-        data.data[symbol] &&
-        data.data[symbol].mid !== undefined
-    ){
-
-        price =
-            Number(
-                data.data[symbol].mid
-            );
-
-    }
-
-
-    if(
-        !Number.isFinite(price)
-    ){
-
+    if (!Number.isFinite(price)) {
         throw new Error(
-            "Current price unavailable"
+            "Invalid real price"
         );
-
     }
-
 
     return price;
 
 }
 
 
-/* ================================================= */
-/* OTC MARKET PRICE */
-/* ================================================= */
+/* ========================= */
+/* OTC PRICE */
+/* ========================= */
 
-async function getOTCPrice(){
+async function getOTCPrice() {
 
     const asset =
         assetSelect.value;
@@ -1457,8 +2246,7 @@ async function getOTCPrice(){
     const symbol =
         otcSymbols[asset];
 
-
-    if(!symbol){
+    if (!symbol) {
 
         throw new Error(
             "OTC asset not supported"
@@ -1467,20 +2255,22 @@ async function getOTCPrice(){
     }
 
 
-    /* Switch OTC stream */
+    /* =========================
+       SWITCH BACKEND STREAM
+       ========================= */
 
-    try{
+    try {
 
         await fetch(
             OTC_BACKEND +
             "/set-asset/" +
             encodeURIComponent(symbol),
             {
-                cache:"no-store"
+                cache: "no-store"
             }
         );
 
-    }catch(switchError){
+    } catch (switchError) {
 
         console.log(
             "OTC STREAM SWITCH:",
@@ -1490,7 +2280,9 @@ async function getOTCPrice(){
     }
 
 
-    /* Get price */
+    /* =========================
+       GET LIVE PRICE
+       ========================= */
 
     const response =
         await fetch(
@@ -1498,12 +2290,12 @@ async function getOTCPrice(){
             "/price/" +
             encodeURIComponent(symbol),
             {
-                cache:"no-store"
+                cache: "no-store"
             }
         );
 
 
-    if(!response.ok){
+    if (!response.ok) {
 
         throw new Error(
             "OTC backend unavailable"
@@ -1516,7 +2308,7 @@ async function getOTCPrice(){
         await response.json();
 
 
-    if(!data.success){
+    if (!data.success) {
 
         throw new Error(
             data.message ||
@@ -1530,9 +2322,7 @@ async function getOTCPrice(){
         Number(data.price);
 
 
-    if(
-        !Number.isFinite(price)
-    ){
+    if (!Number.isFinite(price)) {
 
         throw new Error(
             "Invalid OTC price"
@@ -1546,117 +2336,246 @@ async function getOTCPrice(){
 }
 
 
-/* ================================================= */
-/* GET CURRENT PRICE */
-/* ================================================= */
+/* ========================= */
+/* MAIN UPDATE */
+/* ========================= */
 
-async function fetchCurrentPrice(){
+async function updatePrice() {
 
-    if(marketType === "OTC"){
-
-        return await getOTCPrice();
-
-    }
-
-    return await getRealPrice();
-
-}
-
-
-/* ================================================= */
-/* UPDATE PRICE */
-/* ================================================= */
-
-async function updatePrice(){
-
-    if(updateRunning){
+    if (loading) {
         return;
     }
 
-    updateRunning = true;
+    loading = true;
 
+    try {
 
-    try{
+        let price;
 
-        const price =
-            await fetchCurrentPrice();
+        if (marketType === "OTC") {
 
+            price =
+                await getOTCPrice();
 
-        if(!Number.isFinite(price)){
+        } else {
 
-            throw new Error(
-                "Invalid price"
-            );
+            price =
+                await getRealPrice();
 
         }
 
 
-        currentPriceEl.textContent =
-            price.toFixed(
-                price < 10 ? 5 : 3
-            );
+        /* STORE */
 
+        lastPrice =
+            price;
 
         priceHistory.push({
-
             price: price,
-
             time: Date.now()
-
         });
 
+        if (priceHistory.length > 60) {
+            priceHistory.shift();
+        }
 
-        if(priceHistory.length > 30){
 
-            priceHistory =
-                priceHistory.slice(-30);
+        /* PRICE UI */
+
+        setText(
+            currentPrice,
+            formatPrice(price)
+        );
+
+
+        if (marketType === "OTC") {
+
+            setText(
+                marketStatus,
+                "OTC LIVE"
+            );
+
+            setText(
+                statusText,
+                "OTC CONNECTED"
+            );
+
+        } else {
+
+            setText(
+                marketStatus,
+                "REAL MARKET"
+            );
+
+            setText(
+                statusText,
+                "MARKET LIVE"
+            );
 
         }
 
 
-        statusText.textContent =
-            marketType === "OTC"
-                ? "OTC LIVE"
-                : "LIVE MARKET";
-
+        /* ANALYSIS */
 
         updateMarketLevels();
 
-        evaluatePreviousSignal(
-            price
-        );
+        evaluatePreviousSignal(price);
 
         analyzeMarket(false);
 
+    }
 
-    }catch(error){
+    catch (error) {
 
         console.log(
-            "PRICE ERROR:",
+            marketType +
+            " PRICE ERROR:",
             error
         );
 
 
-        statusText.textContent =
-            marketType === "OTC"
-                ? "OTC WAITING"
-                : "PRICE UNAVAILABLE";
+        if (marketType === "OTC") {
+
+            setText(
+                currentPrice,
+                "OTC WAITING"
+            );
+
+            setText(
+                marketStatus,
+                "OTC CONNECTING"
+            );
+
+            setText(
+                statusText,
+                "WAITING FOR LIVE FEED"
+            );
+
+            setText(
+                confidenceText,
+                "Waiting for OTC live price"
+            );
+
+            setText(
+                reasonBox,
+                "Connecting to the selected OTC market..."
+            );
+
+        } else {
+
+            setText(
+                currentPrice,
+                "UNAVAILABLE"
+            );
+
+            setText(
+                marketStatus,
+                "MARKET OFFLINE"
+            );
+
+            setText(
+                statusText,
+                "PRICE UNAVAILABLE"
+            );
+
+            setText(
+                confidenceText,
+                "Real market feed unavailable"
+            );
+
+            setText(
+                reasonBox,
+                "Unable to receive real market data."
+            );
+
+        }
 
     }
 
+    finally {
 
-    updateRunning = false;
+        loading = false;
+
+    }
 
 }
 
 
-/* ================================================= */
+/* ========================= */
 /* MARKET LEVELS */
-/* ================================================= */
+/* ========================= */
 
-function updateMarketLevels(){
+function updateMarketLevels() {
 
-    if(priceHistory.length < 2){
+    if (priceHistory.length < 3) {
+        return;
+    }
+
+    const prices =
+        priceHistory.map(
+            x => x.price
+        );
+
+    const low =
+        Math.min(...prices);
+
+    const high =
+        Math.max(...prices);
+
+    setText(
+        supportValue,
+        formatPrice(low)
+    );
+
+    setText(
+        resistanceValue,
+        formatPrice(high)
+    );
+
+}
+
+
+/* ========================= */
+/* SIGNAL ANALYSIS */
+/* ========================= */
+
+function analyzeMarket(manual = false) {
+
+    /*
+     * IMPORTANT:
+     * If a CALL or PUT is already active,
+     * keep it visible until the 60-second
+     * expiry finishes.
+     *
+     * This prevents the 5-second price refresh
+     * from changing the active signal to WAIT.
+     */
+
+    if (
+        !manual &&
+        currentSignal !== "WAIT" &&
+        signalExpiry &&
+        Date.now() < signalExpiry
+    ) {
+
+        return;
+
+    }
+
+
+    if (priceHistory.length < 12) {
+
+        setText(
+            confidenceText,
+            "Collecting 1-Min Data"
+        );
+
+        setText(
+            statusText,
+            marketType === "OTC"
+                ? "OTC ANALYZING"
+                : "COLLECTING DATA"
+        );
 
         return;
 
@@ -1665,407 +2584,494 @@ function updateMarketLevels(){
 
     const prices =
         priceHistory.map(
-            item => item.price
+            x => x.price
         );
 
-
-    const last =
-        prices[prices.length - 1];
-
-    const previous =
-        prices[prices.length - 2];
-
-
-    if(last > previous){
-
-        directionValueEl.textContent =
-            "UP";
-
-    }else if(last < previous){
-
-        directionValueEl.textContent =
-            "DOWN";
-
-    }else{
-
-        directionValueEl.textContent =
-            "FLAT";
-
-    }
-
-
-    const recent =
+    const c =
         prices.slice(-12);
 
-
-    if(recent.length >= 2){
-
-        const first =
-            recent[0];
-
-        const lastValue =
-            recent[recent.length - 1];
-
-
-        if(lastValue > first){
-
-            trendValueEl.textContent =
-                "BULLISH";
-
-        }else if(lastValue < first){
-
-            trendValueEl.textContent =
-                "BEARISH";
-
-        }else{
-
-            trendValueEl.textContent =
-                "NEUTRAL";
-
-        }
-
-
-        const high =
-            Math.max(...recent);
-
-        const low =
-            Math.min(...recent);
-
-
-        const range =
-            ((high - low) / first) *
-            100;
-
-
-        rangeValueEl.textContent =
-            range.toFixed(3) + "%";
-
-    }
-
-}
-
-
-/* ================================================= */
-/* ANALYZE MARKET */
-/* IMPORTANT ACTIVE SIGNAL FIX */
-/* ================================================= */
-
-function analyzeMarket(
-    manual = false
-){
-
-    /*
-        IMPORTANT:
-
-        If CALL/PUT is active and its
-        60-second countdown has not expired,
-        automatic 5-second updates must NOT
-        overwrite it with WAIT/opposite signal.
-    */
-
-    if(
-        currentSignal !== "WAIT" &&
-        signalExpiry &&
-        Date.now() < signalExpiry &&
-        !manual
-    ){
-
-        return;
-
-    }
-
-
-    if(priceHistory.length < 12){
-
-        if(
-            currentSignal === "WAIT"
-        ){
-
-            signalEl.textContent =
-                "WAIT";
-
-            signalEl.className =
-                "signal wait";
-
-            confidenceEl.textContent =
-                marketType === "OTC"
-                    ? "Collecting OTC 1-Min Data"
-                    : "Collecting 1-Min Data";
-
-            timeLeftEl.textContent = "";
-
-        }
-
-        return;
-
-    }
-
-
-    const prices =
-        priceHistory
-            .slice(-12)
-            .map(
-                item => item.price
-            );
-
-
     const open =
-        prices[0];
+        c[0];
 
     const close =
-        prices[prices.length - 1];
+        c[c.length - 1];
 
     const high =
-        Math.max(...prices);
+        Math.max(...c);
 
     const low =
-        Math.min(...prices);
+        Math.min(...c);
 
 
     const candleMove =
-        ((close - open) / open) *
-        100;
-
+        ((close - open) / open) * 100;
 
     const range =
-        ((high - low) / open) *
-        100;
-
+        ((high - low) / open) * 100;
 
     const lastMove =
-        close -
-        prices[prices.length - 2];
+        c[c.length - 1] -
+        c[c.length - 2];
 
 
     let score = 0;
 
-    let reason = [];
 
-
-    /* Candle direction */
-
-    if(candleMove > 0.005){
+    if (candleMove > 0.005) {
 
         score += 2;
 
-        reason.push(
-            "Bullish candle"
-        );
+    }
 
-    }else if(candleMove < -0.005){
+    else if (candleMove < -0.005) {
 
         score -= 2;
-
-        reason.push(
-            "Bearish candle"
-        );
 
     }
 
 
-    /* Range */
+    if (range > 0.01) {
 
-    if(range > 0.01){
-
-        if(close > open){
+        if (close > open) {
 
             score += 1;
 
-            reason.push(
-                "Strong range"
-            );
-
-        }else{
+        } else {
 
             score -= 1;
-
-            reason.push(
-                "Strong bearish range"
-            );
 
         }
 
     }
 
 
-    /* Last movement */
-
-    if(lastMove > 0){
+    if (lastMove > 0) {
 
         score += 1;
 
-        reason.push(
-            "Last move UP"
-        );
+    }
 
-    }else if(lastMove < 0){
+    else if (lastMove < 0) {
 
         score -= 1;
-
-        reason.push(
-            "Last move DOWN"
-        );
 
     }
 
 
     let signal = "WAIT";
+    let conf = 50;
 
-    let confidence = 50;
+    let status =
+        marketType === "OTC"
+            ? "OTC Market Unclear"
+            : "Market Unclear";
+
+    let reason =
+        "No strong directional confirmation.";
 
 
-    if(score >= 3){
+    if (score >= 3) {
 
         signal = "CALL";
 
-        confidence =
+        conf =
             Math.min(
                 95,
-                70 + score * 5
+                65 + score * 5
             );
 
-    }else if(score <= -3){
+        status =
+            marketType === "OTC"
+                ? "OTC Bullish"
+                : "1-Min Bullish";
+
+        reason =
+            "Short-term bullish momentum detected.";
+
+    }
+
+    else if (score <= -3) {
 
         signal = "PUT";
 
-        confidence =
+        conf =
             Math.min(
                 95,
-                70 + Math.abs(score) * 5
+                65 + Math.abs(score) * 5
             );
 
-    }else{
+        status =
+            marketType === "OTC"
+                ? "OTC Bearish"
+                : "1-Min Bearish";
 
-        signal = "WAIT";
-
-        confidence =
-            50 +
-            Math.abs(score) * 4;
-
-    }
-
-
-    /* Current trend information */
-
-    if(close > open){
-
-        trendValueEl.textContent =
-            "BULLISH";
-
-    }else if(close < open){
-
-        trendValueEl.textContent =
-            "BEARISH";
-
-    }else{
-
-        trendValueEl.textContent =
-            "NEUTRAL";
+        reason =
+            "Short-term bearish momentum detected.";
 
     }
 
 
-    rangeValueEl.textContent =
-        range.toFixed(3) + "%";
+    /* ========================= */
+    /* MINUTE CONTROL */
+    /* ========================= */
+
+    const now =
+        new Date();
+
+    const minuteKey =
+        now.getFullYear() +
+        "-" +
+        now.getMonth() +
+        "-" +
+        now.getDate() +
+        "-" +
+        now.getHours() +
+        "-" +
+        now.getMinutes();
 
 
     /*
-        Manual generate can create signal
-        immediately from current data.
-    */
+     * Do not create another automatic
+     * signal in the same minute.
+     */
 
-    if(manual){
+    if (
+        !manual &&
+        minuteKey === lastCandleMinute
+    ) {
 
-        if(signal === "CALL"){
+        return;
 
-            createSignal(
-                "CALL",
-                confidence,
-                reason.join(" • ")
-            );
+    }
 
-        }else if(signal === "PUT"){
 
-            createSignal(
-                "PUT",
-                confidence,
-                reason.join(" • ")
-            );
+    /*
+     * WAIT means no new signal.
+     */
 
-        }else{
+    if (signal === "WAIT") {
 
-            signalEl.textContent =
-                "WAIT";
+        setText(
+            signalBox,
+            "WAIT"
+        );
 
-            signalEl.className =
-                "signal wait";
+        setText(
+            confidenceText,
+            "Confidence: " +
+            conf +
+            "%"
+        );
 
-            confidenceEl.textContent =
-                "Market unclear";
+        setText(
+            confidence,
+            conf +
+            "%"
+        );
+
+        if (confidenceFill) {
+
+            confidenceFill.style.width =
+                conf + "%";
 
         }
 
-        return;
+        setText(
+            statusText,
+            status
+        );
 
-    }
-
-
-    /*
-        Only create a new signal once
-        per minute.
-    */
-
-    const minuteKey =
-        Math.floor(
-            Date.now() / 60000
+        setText(
+            reasonBox,
+            reason
         );
 
 
-    if(
-        minuteKey ===
-        lastCandleMinute
-    ){
+        /* TREND */
+
+        if (score > 0) {
+
+            setText(
+                trendValue,
+                "Bullish"
+            );
+
+            setText(
+                biasValue,
+                "CALL"
+            );
+
+        }
+
+        else if (score < 0) {
+
+            setText(
+                trendValue,
+                "Bearish"
+            );
+
+            setText(
+                biasValue,
+                "PUT"
+            );
+
+        }
+
+        else {
+
+            setText(
+                trendValue,
+                "Neutral"
+            );
+
+            setText(
+                biasValue,
+                "WAIT"
+            );
+
+        }
+
+
+        /* PATTERN */
+
+        if (candleMove > 0.01) {
+
+            setText(
+                patternValue,
+                "Bullish Momentum"
+            );
+
+        }
+
+        else if (candleMove < -0.01) {
+
+            setText(
+                patternValue,
+                "Bearish Momentum"
+            );
+
+        }
+
+        else {
+
+            setText(
+                patternValue,
+                "Sideways"
+            );
+
+        }
+
+
+        /* TRAP RISK */
+
+        const absoluteMove =
+            Math.abs(candleMove);
+
+        if (absoluteMove > 0.05) {
+
+            setText(
+                trapRisk,
+                "HIGH"
+            );
+
+        }
+
+        else if (absoluteMove > 0.02) {
+
+            setText(
+                trapRisk,
+                "MEDIUM"
+            );
+
+        }
+
+        else {
+
+            setText(
+                trapRisk,
+                "LOW"
+            );
+
+        }
+
+
+        applySignalStyle(
+            "WAIT"
+        );
 
         return;
 
     }
 
 
-    if(signal === "WAIT"){
+    /* ========================= */
+    /* SIGNAL UI */
+    /* ========================= */
 
-        signalEl.textContent =
-            "WAIT";
+    setText(
+        signalBox,
+        signal
+    );
 
-        signalEl.className =
-            "signal wait";
+    setText(
+        confidenceText,
+        "Confidence: " +
+        conf +
+        "%"
+    );
 
-        confidenceEl.textContent =
-            marketType === "OTC"
-                ? "OTC Market Unclear"
-                : "Market Unclear";
+    setText(
+        confidence,
+        conf +
+        "%"
+    );
 
-        return;
+    if (confidenceFill) {
+
+        confidenceFill.style.width =
+            conf + "%";
+
+    }
+
+    setText(
+        statusText,
+        status
+    );
+
+    setText(
+        reasonBox,
+        reason
+    );
+
+
+    /* ========================= */
+    /* TREND */
+    /* ========================= */
+
+    if (score > 0) {
+
+        setText(
+            trendValue,
+            "Bullish"
+        );
+
+        setText(
+            biasValue,
+            "CALL"
+        );
+
+    }
+
+    else if (score < 0) {
+
+        setText(
+            trendValue,
+            "Bearish"
+        );
+
+        setText(
+            biasValue,
+            "PUT"
+        );
+
+    }
+
+    else {
+
+        setText(
+            trendValue,
+            "Neutral"
+        );
+
+        setText(
+            biasValue,
+            "WAIT"
+        );
 
     }
 
 
-    if(
-        signal === currentSignal &&
-        signalExpiry &&
-        Date.now() < signalExpiry
-    ){
+    /* ========================= */
+    /* PATTERN */
+    /* ========================= */
 
-        return;
+    if (candleMove > 0.01) {
+
+        setText(
+            patternValue,
+            "Bullish Momentum"
+        );
 
     }
 
+    else if (candleMove < -0.01) {
+
+        setText(
+            patternValue,
+            "Bearish Momentum"
+        );
+
+    }
+
+    else {
+
+        setText(
+            patternValue,
+            "Sideways"
+        );
+
+    }
+
+
+    /* ========================= */
+    /* TRAP RISK */
+    /* ========================= */
+
+    const absoluteMove =
+        Math.abs(candleMove);
+
+    if (absoluteMove > 0.05) {
+
+        setText(
+            trapRisk,
+            "HIGH"
+        );
+
+    }
+
+    else if (absoluteMove > 0.02) {
+
+        setText(
+            trapRisk,
+            "MEDIUM"
+        );
+
+    }
+
+    else {
+
+        setText(
+            trapRisk,
+            "LOW"
+        );
+
+    }
+
+
+    applySignalStyle(
+        signal
+    );
+
+
+    /* ========================= */
+    /* CREATE NEW SIGNAL */
+    /* ========================= */
 
     createSignal(
         signal,
-        confidence,
-        reason.join(" • ")
+        conf,
+        reason
     );
-
 
     lastCandleMinute =
         minuteKey;
@@ -2073,192 +3079,308 @@ function analyzeMarket(
 }
 
 
-/* ================================================= */
+/* ========================= */
 /* CREATE SIGNAL */
-/* ================================================= */
+/* ========================= */
 
 function createSignal(
     signal,
-    confidence,
+    conf,
     reason
-){
+) {
 
     currentSignal =
         signal;
 
-
     lastSignalPrice =
-        priceHistory.length
-            ? priceHistory[
-                priceHistory.length - 1
-              ].price
-            : null;
-
+        lastPrice;
 
     lastSignalTime =
         Date.now();
 
-
     signalExpiry =
-        Date.now() +
-        60000;
+        Date.now() + 60000;
 
 
-    signalEl.textContent =
-        signal;
+    setText(
+        signalBox,
+        signal
+    );
+
+    setText(
+        confidenceText,
+        "Confidence: " +
+        conf +
+        "%"
+    );
+
+    setText(
+        confidence,
+        conf +
+        "%"
+    );
+
+    if (confidenceFill) {
+
+        confidenceFill.style.width =
+            conf + "%";
+
+    }
+
+    setText(
+        reasonBox,
+        reason
+    );
 
 
-    signalEl.className =
-        signal === "CALL"
-            ? "signal call"
-            : "signal put";
+    applySignalStyle(
+        signal
+    );
 
 
-    confidenceEl.textContent =
-        confidence +
-        "% CONFIDENCE • " +
-        (
-            reason ||
-            (
-                signal === "CALL"
-                    ? "Bullish setup"
-                    : "Bearish setup"
-            )
-        );
-
-
-    directionValueEl.textContent =
-        signal;
+    addRecentSignal(
+        signal,
+        lastPrice
+    );
 
 
     startCountdown();
 
+}
 
-    addRecentSignal(
-        signal
-    );
+
+/* ========================= */
+/* SIGNAL STYLE */
+/* ========================= */
+
+function applySignalStyle(signal) {
+
+    const panel =
+        document.getElementById(
+            "signalPanel"
+        );
+
+    if (!panel) {
+        return;
+    }
+
+
+    if (signal === "CALL") {
+
+        panel.style.borderColor =
+            "rgba(0,255,120,.55)";
+
+        panel.style.background =
+            "linear-gradient(115deg,#071f18,#07131a 48%,#040b11)";
+
+        const circle =
+            document.getElementById(
+                "signalCircle"
+            );
+
+        if (circle) {
+
+            circle.textContent =
+                "↑";
+
+            circle.style.background =
+                "radial-gradient(circle at 40% 30%,#7cff48,#078d31 62%,#045c25)";
+
+        }
+
+    }
+
+    else if (signal === "PUT") {
+
+        panel.style.borderColor =
+            "rgba(255,55,75,.55)";
+
+        panel.style.background =
+            "linear-gradient(115deg,#210c12,#120a10 48%,#040b11)";
+
+        const circle =
+            document.getElementById(
+                "signalCircle"
+            );
+
+        if (circle) {
+
+            circle.textContent =
+                "↓";
+
+            circle.style.background =
+                "radial-gradient(circle at 40% 30%,#ff5c69,#a20f22 62%,#610715)";
+
+        }
+
+    }
+
+    else {
+
+        panel.style.borderColor =
+            "rgba(0,180,255,.35)";
+
+        panel.style.background =
+            "linear-gradient(115deg,#071822,#07131a 48%,#040b11)";
+
+        const circle =
+            document.getElementById(
+                "signalCircle"
+            );
+
+        if (circle) {
+
+            circle.textContent =
+                "•";
+
+            circle.style.background =
+                "radial-gradient(circle at 40% 30%,#53cfff,#12669a 62%,#073b5c)";
+
+        }
+
+    }
 
 }
 
 
-/* ================================================= */
+/* ========================= */
+/* GENERATE BUTTON */
+/* ========================= */
+
+function generateSignal() {
+
+    if (!Number.isFinite(lastPrice)) {
+
+        setText(
+            statusText,
+            marketType === "OTC"
+                ? "OTC DATA WAITING"
+                : "PRICE WAITING"
+        );
+
+        return;
+
+    }
+
+    analyzeMarket(true);
+
+}
+
+
+/* ========================= */
 /* COUNTDOWN */
-/* ================================================= */
+/* ========================= */
 
-function startCountdown(){
+function startCountdown() {
 
-    clearInterval(
-        countdownTimer
-    );
+    if (countdownInterval) {
 
-
-    function updateCountdown(){
-
-        if(!signalExpiry){
-
-            timeLeftEl.textContent =
-                "";
-
-            return;
-
-        }
-
-
-        const remaining =
-            Math.max(
-                0,
-                signalExpiry -
-                Date.now()
-            );
-
-
-        if(remaining <= 0){
-
-            clearInterval(
-                countdownTimer
-            );
-
-
-            currentSignal =
-                "WAIT";
-
-            signalExpiry =
-                null;
-
-
-            signalEl.textContent =
-                "WAIT";
-
-            signalEl.className =
-                "signal wait";
-
-
-            confidenceEl.textContent =
-                "SIGNAL EXPIRED";
-
-            timeLeftEl.textContent =
-                "TIME LEFT: 00:00";
-
-
-            directionValueEl.textContent =
-                "WAIT";
-
-
-            return;
-
-        }
-
-
-        const totalSeconds =
-            Math.ceil(
-                remaining / 1000
-            );
-
-
-        const minutes =
-            Math.floor(
-                totalSeconds / 60
-            );
-
-
-        const seconds =
-            totalSeconds % 60;
-
-
-        timeLeftEl.textContent =
-            "TIME LEFT: " +
-            String(minutes).padStart(2,"0") +
-            ":" +
-            String(seconds).padStart(2,"0");
+        clearInterval(
+            countdownInterval
+        );
 
     }
 
 
-    updateCountdown();
+    countdownInterval =
+        setInterval(() => {
+
+            if (!signalExpiry) {
+
+                setText(
+                    countdownTimer,
+                    "TIME LEFT: --:--"
+                );
+
+                return;
+
+            }
 
 
-    countdownTimer =
-        setInterval(
-            updateCountdown,
-            250
-        );
+            const remaining =
+                signalExpiry -
+                Date.now();
+
+
+            if (remaining <= 0) {
+
+                clearInterval(
+                    countdownInterval
+                );
+
+                countdownInterval =
+                    null;
+
+                signalExpiry =
+                    null;
+
+                currentSignal =
+                    "WAIT";
+
+
+                setText(
+                    countdownTimer,
+                    "TIME LEFT: 00:00"
+                );
+
+                setText(
+                    signalBox,
+                    "WAIT"
+                );
+
+                setText(
+                    statusText,
+                    "SIGNAL EXPIRED"
+                );
+
+                applySignalStyle(
+                    "WAIT"
+                );
+
+                return;
+
+            }
+
+
+            const totalSeconds =
+                Math.floor(
+                    remaining / 1000
+                );
+
+            const minutes =
+                Math.floor(
+                    totalSeconds / 60
+                );
+
+            const seconds =
+                totalSeconds % 60;
+
+
+            setText(
+                countdownTimer,
+                "TIME LEFT: " +
+                String(minutes).padStart(2, "0") +
+                ":" +
+                String(seconds).padStart(2, "0")
+            );
+
+        }, 500);
 
 }
 
 
-/* ================================================= */
-/* PREVIOUS SIGNAL RESULT */
-/* ================================================= */
+/* ========================= */
+/* ACCURACY */
+/* ========================= */
 
 function evaluatePreviousSignal(
-    currentPrice
-){
+    currentPriceValue
+) {
 
-    if(
-        !lastSignalTime ||
-        !lastSignalPrice ||
-        currentSignal === "WAIT"
-    ){
+    if (
+        !Number.isFinite(lastSignalPrice) ||
+        !lastSignalTime
+    ) {
 
         return;
 
@@ -2270,73 +3392,54 @@ function evaluatePreviousSignal(
         lastSignalTime;
 
 
-    if(elapsed < 60000){
+    if (elapsed < 60000) {
 
         return;
 
     }
 
 
-    if(
-        recentSignals.length === 0
-    ){
-
-        return;
-
-    }
+    let result =
+        "DRAW";
 
 
-    const latest =
-        recentSignals[0];
+    if (currentSignal === "CALL") {
 
-
-    if(
-        latest.evaluated
-    ){
-
-        return;
-
-    }
-
-
-    let result = "DRAW";
-
-
-    if(
-        latest.signal === "CALL"
-    ){
-
-        if(
-            currentPrice >
-            latest.entryPrice
-        ){
+        if (
+            currentPriceValue >
+            lastSignalPrice
+        ) {
 
             result = "WIN";
 
-        }else if(
-            currentPrice <
-            latest.entryPrice
-        ){
+        }
+
+        else if (
+            currentPriceValue <
+            lastSignalPrice
+        ) {
 
             result = "LOSS";
 
         }
 
-    }else if(
-        latest.signal === "PUT"
-    ){
+    }
 
-        if(
-            currentPrice <
-            latest.entryPrice
-        ){
+    else if (currentSignal === "PUT") {
+
+        if (
+            currentPriceValue <
+            lastSignalPrice
+        ) {
 
             result = "WIN";
 
-        }else if(
-            currentPrice >
-            latest.entryPrice
-        ){
+        }
+
+        else if (
+            currentPriceValue >
+            lastSignalPrice
+        ) {
 
             result = "LOSS";
 
@@ -2345,22 +3448,19 @@ function evaluatePreviousSignal(
     }
 
 
-    latest.result =
-        result;
-
-    latest.evaluated =
-        true;
-
-
-    if(result === "WIN"){
+    if (result === "WIN") {
 
         totalWins++;
 
-    }else if(result === "LOSS"){
+    }
+
+    else if (result === "LOSS") {
 
         totalLosses++;
 
-    }else{
+    }
+
+    else {
 
         totalDraws++;
 
@@ -2369,241 +3469,231 @@ function evaluatePreviousSignal(
 
     updateAccuracy();
 
-    renderRecentSignals();
+
+    lastSignalTime =
+        null;
+
+    lastSignalPrice =
+        null;
 
 }
 
 
-/* ================================================= */
-/* RECENT SIGNAL */
-/* ================================================= */
+/* ========================= */
+/* ACCURACY UI */
+/* ========================= */
+
+function updateAccuracy() {
+
+    const total =
+        totalWins +
+        totalLosses;
+
+    const accuracyPercent =
+        total > 0
+            ? Math.round(
+                (totalWins / total) * 100
+            )
+            : 0;
+
+
+    setText(
+        winsCount,
+        totalWins
+    );
+
+    setText(
+        lossesCount,
+        totalLosses
+    );
+
+    setText(
+        drawsCount,
+        totalDraws
+    );
+
+    setText(
+        accuracyValue,
+        accuracyPercent + "%"
+    );
+
+}
+
+
+/* ========================= */
+/* RECENT SIGNALS */
+/* ========================= */
 
 function addRecentSignal(
-    signal
-){
+    signal,
+    price
+) {
 
-    const entryPrice =
-        priceHistory.length
-            ? priceHistory[
-                priceHistory.length - 1
-              ].price
-            : null;
+    if (!recentSignals) {
+        return;
+    }
 
 
-    recentSignals.unshift({
+    if (
+        recentSignals.textContent.trim() ===
+        "No signals yet"
+    ) {
 
-        signal:
-            signal,
-
-        asset:
-            assetSelect.value,
-
-        market:
-            marketType,
-
-        entryPrice:
-            entryPrice,
-
-        time:
-            Date.now(),
-
-        result:
-            "PENDING",
-
-        evaluated:
-            false
-
-    });
-
-
-    if(
-        recentSignals.length > 10
-    ){
-
-        recentSignals =
-            recentSignals.slice(
-                0,
-                10
-            );
+        recentSignals.innerHTML = "";
 
     }
 
 
-    renderRecentSignals();
+    const now =
+        new Date();
+
+    const time =
+        now.toLocaleTimeString(
+            [],
+            {
+                hour: "2-digit",
+                minute: "2-digit",
+                second: "2-digit"
+            }
+        );
+
+
+    const item =
+        document.createElement(
+            "div"
+        );
+
+    item.className =
+        "history-item";
+
+
+    item.innerHTML = `
+        <strong style="color:${
+            signal === "CALL"
+                ? "#63f45b"
+                : "#ff4050"
+        }">
+            ${signal}
+        </strong>
+        &nbsp; • &nbsp;
+        ${marketType}
+        <br>
+        ENTRY ${formatPrice(price)}
+        • ${time} • 1 MIN
+    `;
+
+
+    recentSignals.prepend(
+        item
+    );
+
+
+    while (
+        recentSignals.children.length > 10
+    ) {
+
+        recentSignals.lastElementChild.remove();
+
+    }
 
 }
 
 
-/* ================================================= */
-/* RENDER RECENT */
-/* ================================================= */
+/* ========================= */
+/* ASSET CHANGE */
+/* ========================= */
 
-function renderRecentSignals(){
+if (assetSelect) {
 
-    if(
-        recentSignals.length === 0
-    ){
+    assetSelect.addEventListener(
+        "change",
+        () => {
 
-        recentSignalsEl.innerHTML =
-            '<div class="empty">No signals yet</div>';
+            priceHistory = [];
 
-        return;
+            lastPrice = null;
 
-    }
+            lastCandleMinute = null;
 
+            signalExpiry = null;
 
-    recentSignalsEl.innerHTML =
-        "";
+            lastSignalPrice = null;
 
+            lastSignalTime = null;
 
-    recentSignals.forEach(
-        function(item){
-
-            const div =
-                document.createElement(
-                    "div"
-                );
+            currentSignal =
+                "WAIT";
 
 
-            div.className =
-                "recent-item";
-
-
-            const left =
-                document.createElement(
-                    "div"
-                );
-
-            left.className =
-                "recent-left";
-
-
-            const badge =
-                document.createElement(
-                    "div"
-                );
-
-            badge.className =
-                "recent-signal " +
-                (
-                    item.signal === "CALL"
-                        ? "call"
-                        : "put"
-                );
-
-            badge.textContent =
-                item.signal;
-
-
-            const text =
-                document.createElement(
-                    "div"
-                );
-
-
-            const asset =
-                document.createElement(
-                    "div"
-                );
-
-            asset.className =
-                "recent-asset";
-
-            asset.textContent =
-                item.asset;
-
-
-            const time =
-                document.createElement(
-                    "div"
-                );
-
-            time.className =
-                "recent-time";
-
-            time.textContent =
-                new Date(
-                    item.time
-                ).toLocaleTimeString(
-                    [],
-                    {
-                        hour:"2-digit",
-                        minute:"2-digit"
-                    }
-                );
-
-
-            text.appendChild(
-                asset
+            setText(
+                currentPrice,
+                "--"
             );
 
-            text.appendChild(
-                time
+            setText(
+                signalBox,
+                "WAIT"
             );
 
-
-            left.appendChild(
-                badge
+            setText(
+                confidenceText,
+                marketType === "OTC"
+                    ? "Connecting selected OTC asset"
+                    : "Waiting for market data"
             );
 
-            left.appendChild(
-                text
+            setText(
+                confidence,
+                "--%"
             );
 
-
-            const result =
-                document.createElement(
-                    "div"
-                );
-
-            result.className =
-                "recent-result";
-
-            result.textContent =
-                item.result;
+            if (confidenceFill) {
+                confidenceFill.style.width =
+                    "0%";
+            }
 
 
-            if(
-                item.result === "PENDING"
-            ){
+            updateAssetUI();
 
-                result.style.color =
-                    "#71809a";
 
-            }else if(
-                item.result === "WIN"
-            ){
+            /*
+             * OTC:
+             * Immediately tell backend to switch
+             * to the newly selected asset.
+             */
 
-                result.style.color =
-                    "#20d98a";
+            if (marketType === "OTC") {
 
-            }else if(
-                item.result === "LOSS"
-            ){
+                const symbol =
+                    otcSymbols[
+                        assetSelect.value
+                    ];
 
-                result.style.color =
-                    "#ff4c5c";
+                if (symbol) {
 
-            }else{
+                    fetch(
+                        OTC_BACKEND +
+                        "/set-asset/" +
+                        encodeURIComponent(symbol),
+                        {
+                            cache: "no-store"
+                        }
+                    )
+                    .then(() => {
+                        updatePrice();
+                    })
+                    .catch(() => {
+                        updatePrice();
+                    });
 
-                result.style.color =
-                    "#f4b942";
+                    return;
+
+                }
 
             }
 
 
-            div.appendChild(
-                left
-            );
-
-            div.appendChild(
-                result
-            );
-
-
-            recentSignalsEl.appendChild(
-                div
-            );
+            updatePrice();
 
         }
     );
@@ -2611,164 +3701,98 @@ function renderRecentSignals(){
 }
 
 
-/* ================================================= */
-/* ACCURACY */
-/* ================================================= */
+/* ========================= */
+/* GENERATE BUTTON CLICK */
+/* ========================= */
 
-function updateAccuracy(){
+if (generateBtn) {
 
-    winsEl.textContent =
-        totalWins;
-
-    lossesEl.textContent =
-        totalLosses;
-
-
-    const total =
-        totalWins +
-        totalLosses;
-
-
-    const accuracy =
-        total > 0
-            ? Math.round(
-                (
-                    totalWins /
-                    total
-                ) * 100
-            )
-            : 0;
-
-
-    accuracyEl.textContent =
-        accuracy + "%";
+    generateBtn.addEventListener(
+        "click",
+        generateSignal
+    );
 
 }
 
 
-/* ================================================= */
-/* GENERATE BUTTON */
-/* ================================================= */
+/* ========================= */
+/* MARKET BUTTONS */
+/* ========================= */
 
-generateBtn.addEventListener(
+realMarketBtn?.addEventListener(
     "click",
-    function(){
+    () => {
 
-        if(
-            priceHistory.length < 12
-        ){
-
-            confidenceEl.textContent =
-                marketType === "OTC"
-                    ? "Collecting OTC 1-Min Data"
-                    : "Collecting 1-Min Data";
-
-            return;
-
-        }
-
-
-        analyzeMarket(true);
+        setMarketType("REAL");
 
     }
 );
 
 
-/* ================================================= */
-/* ASSET CHANGE */
-/* ================================================= */
+otcMarketBtn?.addEventListener(
+    "click",
+    () => {
 
-assetSelect.addEventListener(
-    "change",
-    async function(){
+        setMarketType("OTC");
 
-        priceHistory = [];
-
-        currentSignal =
-            "WAIT";
-
-        signalExpiry =
-            null;
-
-        lastSignalPrice =
-            null;
-
-        lastSignalTime =
-            null;
-
-        lastCandleMinute =
-            null;
+    }
+);
 
 
-        clearInterval(
-            countdownTimer
+/* ========================= */
+/* ACCESS KEY */
+/* ========================= */
+
+function unlockKURO() {
+
+    const input =
+        document.getElementById(
+            "accessKey"
+        );
+
+    const screen =
+        document.getElementById(
+            "keyScreen"
+        );
+
+    const error =
+        document.getElementById(
+            "keyError"
         );
 
 
-        signalEl.textContent =
-            "WAIT";
+    if (
+        input &&
+        input.value ===
+        KURO_ACCESS_KEY
+    ) {
 
-        signalEl.className =
-            "signal wait";
+        if (screen) {
+            screen.style.display =
+                "none";
+        }
 
+        if (error) {
+            error.textContent = "";
+        }
 
-        confidenceEl.textContent =
-            "Collecting 1-Min Data";
+    } else {
 
+        if (error) {
 
-        timeLeftEl.textContent =
-            "";
-
-
-        if(
-            marketType === "OTC"
-        ){
-
-            const symbol =
-                otcSymbols[
-                    assetSelect.value
-                ];
-
-
-            if(symbol){
-
-                try{
-
-                    await fetch(
-                        OTC_BACKEND +
-                        "/set-asset/" +
-                        encodeURIComponent(
-                            symbol
-                        ),
-                        {
-                            cache:
-                                "no-store"
-                        }
-                    );
-
-                }catch(error){
-
-                    console.log(
-                        "Asset switch error:",
-                        error
-                    );
-
-                }
-
-            }
+            error.textContent =
+                "Invalid access key";
 
         }
 
-
-        updatePrice();
-
     }
-);
+
+}
 
 
-/* ================================================= */
-/* AUTO UPDATE */
-/* ================================================= */
+/* ========================= */
+/* AUTO REFRESH */
+/* ========================= */
 
 setInterval(
     updatePrice,
@@ -2776,9 +3800,9 @@ setInterval(
 );
 
 
-/* ================================================= */
-/* INITIAL */
-/* ================================================= */
+/* ========================= */
+/* INITIAL UI */
+/* ========================= */
 
 loadRealAssets();
 
@@ -2786,13 +3810,21 @@ updateAssetUI();
 
 updateAccuracy();
 
-if(
-    localStorage.getItem("kuro_access") === "1"
-){
+updatePrice();
 
-    updatePrice();
 
-}
+/* ========================= */
+/* GLOBAL FUNCTIONS */
+/* ========================= */
+
+window.generateSignal =
+    generateSignal;
+
+window.setMarketType =
+    setMarketType;
+
+window.unlockKURO =
+    unlockKURO;
 
 </script>
 
