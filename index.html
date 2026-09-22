@@ -1739,6 +1739,18 @@ let lastSignalTime = null;
 
 let currentSignal = "WAIT";
 
+/*
+ * IMPORTANT:
+ * Keeps the original CALL/PUT for accuracy.
+ *
+ * currentSignal becomes WAIT after the
+ * 60-second countdown expires.
+ *
+ * accuracySignal does NOT change until
+ * that signal has been evaluated.
+ */
+let accuracySignal = null;
+
 let countdownInterval = null;
 
 
@@ -2037,6 +2049,12 @@ function setMarketType(type) {
     lastSignalTime = null;
 
     currentSignal = "WAIT";
+
+    /*
+     * Reset accuracy memory when switching
+     * between REAL and OTC.
+     */
+    accuracySignal = null;
 
     if (countdownInterval) {
 
@@ -2419,6 +2437,11 @@ async function updatePrice() {
 
         updateMarketLevels();
 
+        /*
+         * IMPORTANT:
+         * Evaluate the old CALL/PUT before
+         * creating a possible new signal.
+         */
         evaluatePreviousSignal(price);
 
         analyzeMarket(false);
@@ -2985,7 +3008,7 @@ function analyzeMarket(manual = false) {
 
         setText(
             biasValue,
-            "WAIT"
+        "WAIT"
         );
 
     }
@@ -3090,6 +3113,17 @@ function createSignal(
 ) {
 
     currentSignal =
+        signal;
+
+    /*
+     * IMPORTANT:
+     * Save original CALL/PUT separately.
+     *
+     * This value stays unchanged when
+     * countdown changes currentSignal
+     * to WAIT after 60 seconds.
+     */
+    accuracySignal =
         signal;
 
     lastSignalPrice =
@@ -3314,6 +3348,14 @@ function startCountdown() {
                 signalExpiry =
                     null;
 
+                /*
+                 * Display becomes WAIT after
+                 * expiry.
+                 *
+                 * accuracySignal is NOT changed.
+                 *
+                 * This is the important fix.
+                 */
                 currentSignal =
                     "WAIT";
 
@@ -3377,9 +3419,22 @@ function evaluatePreviousSignal(
     currentPriceValue
 ) {
 
+    /*
+     * IMPORTANT:
+     *
+     * Do NOT use currentSignal here.
+     *
+     * currentSignal becomes WAIT when the
+     * countdown expires.
+     *
+     * accuracySignal keeps the original
+     * CALL / PUT until evaluation is done.
+     */
+
     if (
         !Number.isFinite(lastSignalPrice) ||
-        !lastSignalTime
+        !lastSignalTime ||
+        !accuracySignal
     ) {
 
         return;
@@ -3392,6 +3447,11 @@ function evaluatePreviousSignal(
         lastSignalTime;
 
 
+    /*
+     * Wait until at least 60 seconds
+     * have passed from the entry.
+     */
+
     if (elapsed < 60000) {
 
         return;
@@ -3403,7 +3463,11 @@ function evaluatePreviousSignal(
         "DRAW";
 
 
-    if (currentSignal === "CALL") {
+    /* ========================= */
+    /* CALL RESULT */
+    /* ========================= */
+
+    if (accuracySignal === "CALL") {
 
         if (
             currentPriceValue >
@@ -3425,7 +3489,12 @@ function evaluatePreviousSignal(
 
     }
 
-    else if (currentSignal === "PUT") {
+
+    /* ========================= */
+    /* PUT RESULT */
+    /* ========================= */
+
+    else if (accuracySignal === "PUT") {
 
         if (
             currentPriceValue <
@@ -3447,6 +3516,10 @@ function evaluatePreviousSignal(
 
     }
 
+
+    /* ========================= */
+    /* SAVE RESULT */
+    /* ========================= */
 
     if (result === "WIN") {
 
@@ -3469,6 +3542,19 @@ function evaluatePreviousSignal(
 
     updateAccuracy();
 
+
+    /*
+     * IMPORTANT:
+     *
+     * Clear the saved signal only AFTER
+     * it has been evaluated.
+     *
+     * This prevents the same signal from
+     * being counted more than once.
+     */
+
+    accuracySignal =
+        null;
 
     lastSignalTime =
         null;
@@ -3623,6 +3709,14 @@ if (assetSelect) {
 
             currentSignal =
                 "WAIT";
+
+            /*
+             * IMPORTANT:
+             * Forget the old signal when changing
+             * the selected asset.
+             */
+            accuracySignal =
+                null;
 
 
             setText(
