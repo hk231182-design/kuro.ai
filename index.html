@@ -559,6 +559,12 @@ button{cursor:pointer}
   font-size:17px;
   font-weight:1000;
   box-shadow:0 13px 35px rgba(17,151,239,.22);
+  transition:.2s;
+}
+
+.main-btn:disabled{
+  cursor:not-allowed;
+  opacity:.85;
 }
 
 .note{
@@ -1507,7 +1513,7 @@ style="font-weight:1000;margin-top:5px"
 <div class="card" style="padding:10px">
 
 <button class="main-btn" id="generateButton">
-↻ &nbsp; Analyze another chart
+↻ &nbsp; ANALYZE ANOTHER CHART
 </button>
 
 <div class="note">
@@ -1667,7 +1673,7 @@ const symbols = {
 
 
 /* ========================= */
-/* FREE PLAN OTC SYMBOLS */
+/* OTC SYMBOLS */
 /* ========================= */
 
 const otcSymbols = {
@@ -1680,7 +1686,7 @@ const otcSymbols = {
 
 
 /* ========================= */
-/* FREE PLAN OTC ASSETS */
+/* OTC ASSETS */
 /* ========================= */
 
 const otcAssetOptions = [
@@ -1727,7 +1733,41 @@ let marketType = "REAL";
 let priceHistory = [];
 let lastPrice = null;
 let loading = false;
+
+/*
+ * Last candle on which a signal was generated.
+ */
 let lastCandleMinute = null;
+
+/*
+ * NEW:
+ *
+ * Signals are completely manual.
+ *
+ * false = system only collects price data.
+ * true  = user clicked ANALYZE ANOTHER CHART
+ *         and system is waiting for the next
+ *         1-minute candle start.
+ */
+let signalGenerationArmed = false;
+
+/*
+ * NEW:
+ *
+ * Minute in which the user clicked the button.
+ *
+ * The signal will NOT be generated inside this
+ * same minute. It waits for the next candle.
+ */
+let generationStartMinute = null;
+
+/*
+ * NEW:
+ *
+ * Prevents processing the same candle more than once.
+ */
+let lastProcessedGenerationMinute = null;
+
 
 let totalWins = 0;
 let totalLosses = 0;
@@ -1740,7 +1780,6 @@ let lastSignalTime = null;
 let currentSignal = "WAIT";
 
 /*
- * IMPORTANT:
  * Keeps the original CALL/PUT for accuracy.
  *
  * currentSignal becomes WAIT after the
@@ -1850,6 +1889,75 @@ const accuracyValue =
 
 
 /* ========================= */
+/* BUTTON STATE */
+/* ========================= */
+
+function setGenerateButtonState(state) {
+
+    if (!generateBtn) {
+        return;
+    }
+
+    generateBtn.classList.remove(
+        "generate-loading"
+    );
+
+    generateBtn.disabled = false;
+
+
+    /*
+     * READY
+     */
+
+    if (state === "READY") {
+
+        generateBtn.innerHTML =
+            "↻ &nbsp; ANALYZE ANOTHER CHART";
+
+        return;
+
+    }
+
+
+    /*
+     * GENERATING
+     */
+
+    if (state === "GENERATING") {
+
+        generateBtn.textContent =
+            "SIGNALS GENERATING...";
+
+        generateBtn.disabled = true;
+
+        generateBtn.classList.add(
+            "generate-loading"
+        );
+
+        return;
+
+    }
+
+
+    /*
+     * RUNNING
+     */
+
+    if (state === "RUNNING") {
+
+        generateBtn.textContent =
+            "SIGNALS RUNNING";
+
+        generateBtn.disabled = true;
+
+        return;
+
+    }
+
+}
+
+
+/* ========================= */
 /* TEXT HELPER */
 /* ========================= */
 
@@ -1858,6 +1966,27 @@ function setText(element, value) {
     if (element) {
         element.textContent = value;
     }
+
+}
+
+
+/* ========================= */
+/* MINUTE KEY */
+/* ========================= */
+
+function getMinuteKey(date = new Date()) {
+
+    return (
+        date.getFullYear() +
+        "-" +
+        date.getMonth() +
+        "-" +
+        date.getDate() +
+        "-" +
+        date.getHours() +
+        "-" +
+        date.getMinutes()
+    );
 
 }
 
@@ -2033,6 +2162,28 @@ function loadRealAssets() {
 
 
 /* ========================= */
+/* RESET SIGNAL GENERATION */
+/* ========================= */
+
+function resetSignalGeneration() {
+
+    signalGenerationArmed =
+        false;
+
+    generationStartMinute =
+        null;
+
+    lastProcessedGenerationMinute =
+        null;
+
+    setGenerateButtonState(
+        "READY"
+    );
+
+}
+
+
+/* ========================= */
 /* MARKET TYPE */
 /* ========================= */
 
@@ -2049,6 +2200,11 @@ function setMarketType(type) {
     lastSignalTime = null;
 
     currentSignal = "WAIT";
+
+    /*
+     * Reset manual generation.
+     */
+    resetSignalGeneration();
 
     /*
      * Reset accuracy memory when switching
@@ -2273,10 +2429,6 @@ async function getOTCPrice() {
     }
 
 
-    /* =========================
-       SWITCH BACKEND STREAM
-       ========================= */
-
     try {
 
         await fetch(
@@ -2297,10 +2449,6 @@ async function getOTCPrice() {
 
     }
 
-
-    /* =========================
-       GET LIVE PRICE
-       ========================= */
 
     const response =
         await fetch(
@@ -2413,10 +2561,19 @@ async function updatePrice() {
                 "OTC LIVE"
             );
 
-            setText(
-                statusText,
-                "OTC CONNECTED"
-            );
+            /*
+             * Do not overwrite
+             * SIGNALS GENERATING / RUNNING.
+             */
+            if (!signalGenerationArmed &&
+                currentSignal === "WAIT") {
+
+                setText(
+                    statusText,
+                    "OTC CONNECTED"
+                );
+
+            }
 
         } else {
 
@@ -2425,10 +2582,19 @@ async function updatePrice() {
                 "REAL MARKET"
             );
 
-            setText(
-                statusText,
-                "MARKET LIVE"
-            );
+            /*
+             * Do not overwrite
+             * SIGNALS GENERATING / RUNNING.
+             */
+            if (!signalGenerationArmed &&
+                currentSignal === "WAIT") {
+
+                setText(
+                    statusText,
+                    "MARKET LIVE"
+                );
+
+            }
 
         }
 
@@ -2438,13 +2604,20 @@ async function updatePrice() {
         updateMarketLevels();
 
         /*
-         * IMPORTANT:
          * Evaluate the old CALL/PUT before
-         * creating a possible new signal.
+         * checking the next candle.
          */
         evaluatePreviousSignal(price);
 
-        analyzeMarket(false);
+        /*
+         * NEW:
+         *
+         * No automatic signal generation here.
+         *
+         * Signal generation is controlled only
+         * by the ANALYZE ANOTHER CHART button.
+         */
+        processSignalGeneration();
 
     }
 
@@ -2469,10 +2642,14 @@ async function updatePrice() {
                 "OTC CONNECTING"
             );
 
-            setText(
-                statusText,
-                "WAITING FOR LIVE FEED"
-            );
+            if (!signalGenerationArmed) {
+
+                setText(
+                    statusText,
+                    "WAITING FOR LIVE FEED"
+                );
+
+            }
 
             setText(
                 confidenceText,
@@ -2496,10 +2673,14 @@ async function updatePrice() {
                 "MARKET OFFLINE"
             );
 
-            setText(
-                statusText,
-                "PRICE UNAVAILABLE"
-            );
+            if (!signalGenerationArmed) {
+
+                setText(
+                    statusText,
+                    "PRICE UNAVAILABLE"
+                );
+
+            }
 
             setText(
                 confidenceText,
@@ -2520,6 +2701,158 @@ async function updatePrice() {
         loading = false;
 
     }
+
+}
+
+
+/* ========================= */
+/* PROCESS SIGNAL GENERATION */
+/* ========================= */
+
+function processSignalGeneration() {
+
+    /*
+     * Nothing happens automatically.
+     *
+     * User MUST click the button first.
+     */
+    if (!signalGenerationArmed) {
+        return;
+    }
+
+
+    /*
+     * Never generate another signal while
+     * a CALL/PUT is active.
+     */
+    if (
+        currentSignal !== "WAIT" &&
+        signalExpiry &&
+        Date.now() < signalExpiry
+    ) {
+
+        return;
+
+    }
+
+
+    const currentMinute =
+        getMinuteKey();
+
+
+    /*
+     * The button was clicked during this minute.
+     *
+     * Wait for the NEXT minute/candle.
+     */
+    if (
+        generationStartMinute ===
+        currentMinute
+    ) {
+
+        return;
+
+    }
+
+
+    /*
+     * Same generation candle already processed.
+     */
+    if (
+        lastProcessedGenerationMinute ===
+        currentMinute
+    ) {
+
+        return;
+
+    }
+
+
+    /*
+     * Mark this candle as processed before
+     * analysis so repeated 5-second refreshes
+     * cannot create duplicate signals.
+     */
+    lastProcessedGenerationMinute =
+        currentMinute;
+
+
+    /*
+     * At the start of a new minute, analyze
+     * ONLY data from the completed previous
+     * minute.
+     */
+    const now =
+        Date.now();
+
+    const currentMinuteStart =
+        new Date();
+
+    currentMinuteStart.setSeconds(0, 0);
+
+    const candleStartTime =
+        currentMinuteStart.getTime();
+
+
+    const completedMinutePrices =
+        priceHistory.filter(
+            item =>
+                item.time <
+                candleStartTime
+        );
+
+
+    /*
+     * Need the same minimum data requirement
+     * as the original engine.
+     */
+    if (
+        completedMinutePrices.length <
+        12
+    ) {
+
+        /*
+         * Allow another attempt on the next
+         * candle because this candle did not
+         * have enough completed data.
+         */
+        lastProcessedGenerationMinute =
+            null;
+
+        setText(
+            signalBox,
+            "WAIT"
+        );
+
+        setText(
+            statusText,
+            marketType === "OTC"
+                ? "OTC COLLECTING 1-MIN DATA"
+                : "COLLECTING 1-MIN DATA"
+        );
+
+        setText(
+            confidenceText,
+            "Waiting for completed 1-Min candle"
+        );
+
+        setText(
+            reasonBox,
+            "Not enough completed 1-minute market data yet."
+        );
+
+        return;
+
+    }
+
+
+    /*
+     * Generate ONLY at candle start.
+     */
+    analyzeMarket(
+        true,
+        completedMinutePrices
+    );
 
 }
 
@@ -2562,20 +2895,29 @@ function updateMarketLevels() {
 /* SIGNAL ANALYSIS */
 /* ========================= */
 
-function analyzeMarket(manual = false) {
+function analyzeMarket(
+    manual = false,
+    suppliedHistory = null
+) {
 
     /*
-     * IMPORTANT:
-     * If a CALL or PUT is already active,
-     * keep it visible until the 60-second
-     * expiry finishes.
+     * This function is now only used for
+     * a user-authorized generation cycle.
      *
-     * This prevents the 5-second price refresh
-     * from changing the active signal to WAIT.
+     * manual=true means the candle-start
+     * generation process was armed by the user.
      */
 
+    if (!manual) {
+        return;
+    }
+
+
+    /*
+     * Never create a signal while another
+     * CALL/PUT is active.
+     */
     if (
-        !manual &&
         currentSignal !== "WAIT" &&
         signalExpiry &&
         Date.now() < signalExpiry
@@ -2586,7 +2928,15 @@ function analyzeMarket(manual = false) {
     }
 
 
-    if (priceHistory.length < 12) {
+    const sourceHistory =
+        suppliedHistory ||
+        priceHistory;
+
+
+    if (
+        !sourceHistory ||
+        sourceHistory.length < 12
+    ) {
 
         setText(
             confidenceText,
@@ -2606,12 +2956,18 @@ function analyzeMarket(manual = false) {
 
 
     const prices =
-        priceHistory.map(
+        sourceHistory.map(
             x => x.price
         );
 
+
+    /*
+     * Analyze the last 12 samples from
+     * the COMPLETED candle.
+     */
     const c =
         prices.slice(-12);
+
 
     const open =
         c[0];
@@ -2734,42 +3090,15 @@ function analyzeMarket(manual = false) {
     }
 
 
-    /* ========================= */
-    /* MINUTE CONTROL */
-    /* ========================= */
-
-    const now =
-        new Date();
-
-    const minuteKey =
-        now.getFullYear() +
-        "-" +
-        now.getMonth() +
-        "-" +
-        now.getDate() +
-        "-" +
-        now.getHours() +
-        "-" +
-        now.getMinutes();
-
-
     /*
-     * Do not create another automatic
-     * signal in the same minute.
-     */
-
-    if (
-        !manual &&
-        minuteKey === lastCandleMinute
-    ) {
-
-        return;
-
-    }
-
-
-    /*
-     * WAIT means no new signal.
+     * WAIT:
+     *
+     * Keep the generation cycle active.
+     * The user does NOT need to click again.
+     *
+     * The next completed candle will be
+     * analyzed automatically because the
+     * current generation request is still armed.
      */
 
     if (signal === "WAIT") {
@@ -2801,7 +3130,9 @@ function analyzeMarket(manual = false) {
 
         setText(
             statusText,
-            status
+            marketType === "OTC"
+                ? "OTC WAITING FOR SIGNAL"
+                : "WAITING FOR SIGNAL"
         );
 
         setText(
@@ -2922,6 +3253,15 @@ function analyzeMarket(manual = false) {
             "WAIT"
         );
 
+        /*
+         * IMPORTANT:
+         *
+         * Keep SIGNALS GENERATING.
+         */
+        setGenerateButtonState(
+            "GENERATING"
+        );
+
         return;
 
     }
@@ -3008,7 +3348,7 @@ function analyzeMarket(manual = false) {
 
         setText(
             biasValue,
-        "WAIT"
+            "WAIT"
         );
 
     }
@@ -3096,8 +3436,30 @@ function analyzeMarket(manual = false) {
         reason
     );
 
+
+    /*
+     * Candle has successfully generated
+     * a signal.
+     */
     lastCandleMinute =
-        minuteKey;
+        getMinuteKey();
+
+
+    /*
+     * Generation request is now consumed.
+     *
+     * The next signal requires another
+     * button click.
+     */
+    signalGenerationArmed =
+        false;
+
+    generationStartMinute =
+        null;
+
+    setGenerateButtonState(
+        "RUNNING"
+    );
 
 }
 
@@ -3116,7 +3478,6 @@ function createSignal(
         signal;
 
     /*
-     * IMPORTANT:
      * Save original CALL/PUT separately.
      *
      * This value stays unchanged when
@@ -3164,6 +3525,14 @@ function createSignal(
     setText(
         reasonBox,
         reason
+    );
+
+
+    setText(
+        statusText,
+        marketType === "OTC"
+            ? "OTC SIGNAL RUNNING"
+            : "1-MIN SIGNAL RUNNING"
     );
 
 
@@ -3283,6 +3652,32 @@ function applySignalStyle(signal) {
 
 function generateSignal() {
 
+    /*
+     * Do not allow another request while
+     * a signal is running.
+     */
+    if (
+        currentSignal !== "WAIT" &&
+        signalExpiry &&
+        Date.now() < signalExpiry
+    ) {
+
+        return;
+
+    }
+
+
+    /*
+     * Already waiting for the next candle.
+     */
+    if (signalGenerationArmed) {
+        return;
+    }
+
+
+    /*
+     * Need live price before starting.
+     */
     if (!Number.isFinite(lastPrice)) {
 
         setText(
@@ -3296,7 +3691,58 @@ function generateSignal() {
 
     }
 
-    analyzeMarket(true);
+
+    /*
+     * ARM THE GENERATION ENGINE.
+     */
+    signalGenerationArmed =
+        true;
+
+
+    /*
+     * Save the current minute.
+     *
+     * This guarantees that the signal
+     * cannot be generated in the middle
+     * of the current candle.
+     */
+    generationStartMinute =
+        getMinuteKey();
+
+
+    lastProcessedGenerationMinute =
+        null;
+
+
+    /*
+     * Button immediately changes.
+     */
+    setGenerateButtonState(
+        "GENERATING"
+    );
+
+
+    setText(
+        signalBox,
+        "WAIT"
+    );
+
+    setText(
+        statusText,
+        marketType === "OTC"
+            ? "OTC SIGNALS GENERATING..."
+            : "SIGNALS GENERATING..."
+    );
+
+    setText(
+        confidenceText,
+        "Waiting for next 1-Min candle"
+    );
+
+    setText(
+        reasonBox,
+        "Signal generation armed. Waiting for the next candle start."
+    );
 
 }
 
@@ -3314,6 +3760,11 @@ function startCountdown() {
         );
 
     }
+
+
+    setGenerateButtonState(
+        "RUNNING"
+    );
 
 
     countdownInterval =
@@ -3348,13 +3799,12 @@ function startCountdown() {
                 signalExpiry =
                     null;
 
+
                 /*
                  * Display becomes WAIT after
                  * expiry.
                  *
                  * accuracySignal is NOT changed.
-                 *
-                 * This is the important fix.
                  */
                 currentSignal =
                     "WAIT";
@@ -3375,8 +3825,29 @@ function startCountdown() {
                     "SIGNAL EXPIRED"
                 );
 
+                setText(
+                    confidenceText,
+                    "Ready for next analysis"
+                );
+
+                setText(
+                    reasonBox,
+                    "1-minute signal completed. Analyze another chart for the next signal."
+                );
+
                 applySignalStyle(
                     "WAIT"
+                );
+
+
+                /*
+                 * IMPORTANT:
+                 *
+                 * User must click again.
+                 * No automatic signal is allowed.
+                 */
+                setGenerateButtonState(
+                    "READY"
                 );
 
                 return;
@@ -3420,8 +3891,6 @@ function evaluatePreviousSignal(
 ) {
 
     /*
-     * IMPORTANT:
-     *
      * Do NOT use currentSignal here.
      *
      * currentSignal becomes WAIT when the
@@ -3447,11 +3916,6 @@ function evaluatePreviousSignal(
         lastSignalTime;
 
 
-    /*
-     * Wait until at least 60 seconds
-     * have passed from the entry.
-     */
-
     if (elapsed < 60000) {
 
         return;
@@ -3463,9 +3927,7 @@ function evaluatePreviousSignal(
         "DRAW";
 
 
-    /* ========================= */
-    /* CALL RESULT */
-    /* ========================= */
+    /* CALL */
 
     if (accuracySignal === "CALL") {
 
@@ -3490,9 +3952,7 @@ function evaluatePreviousSignal(
     }
 
 
-    /* ========================= */
-    /* PUT RESULT */
-    /* ========================= */
+    /* PUT */
 
     else if (accuracySignal === "PUT") {
 
@@ -3517,9 +3977,7 @@ function evaluatePreviousSignal(
     }
 
 
-    /* ========================= */
     /* SAVE RESULT */
-    /* ========================= */
 
     if (result === "WIN") {
 
@@ -3544,15 +4002,8 @@ function evaluatePreviousSignal(
 
 
     /*
-     * IMPORTANT:
-     *
-     * Clear the saved signal only AFTER
-     * it has been evaluated.
-     *
-     * This prevents the same signal from
-     * being counted more than once.
+     * Clear only after evaluation.
      */
-
     accuracySignal =
         null;
 
@@ -3710,13 +4161,34 @@ if (assetSelect) {
             currentSignal =
                 "WAIT";
 
+
             /*
-             * IMPORTANT:
+             * Reset generation cycle.
+             *
+             * User must click the button again
+             * after changing the asset.
+             */
+            resetSignalGeneration();
+
+
+            /*
              * Forget the old signal when changing
              * the selected asset.
              */
             accuracySignal =
                 null;
+
+
+            if (countdownInterval) {
+
+                clearInterval(
+                    countdownInterval
+                );
+
+                countdownInterval =
+                    null;
+
+            }
 
 
             setText(
@@ -3727,6 +4199,11 @@ if (assetSelect) {
             setText(
                 signalBox,
                 "WAIT"
+            );
+
+            setText(
+                statusText,
+                "WAITING FOR ANALYSIS"
             );
 
             setText(
@@ -3903,6 +4380,8 @@ loadRealAssets();
 updateAssetUI();
 
 updateAccuracy();
+
+resetSignalGeneration();
 
 updatePrice();
 
