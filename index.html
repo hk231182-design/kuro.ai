@@ -2939,10 +2939,28 @@ function updateLivePriceUI(price) {
         formatPrice(price)
     );
 
-
     setConnectionState(
         "LIVE"
     );
+
+    /*
+     * LIVE DATA RECEIVED
+     *
+     * If there is no active signal and
+     * generation is not armed, the button
+     * MUST become READY.
+     */
+    if (
+        currentSignal === "WAIT" &&
+        !signalGenerationArmed &&
+        !signalExpiry
+    ) {
+
+        setGenerateButtonState(
+            "READY"
+        );
+
+    }
 
 
     /*
@@ -2954,6 +2972,10 @@ function updateLivePriceUI(price) {
         Date.now() < signalExpiry
     ) {
 
+        setGenerateButtonState(
+            "RUNNING"
+        );
+
         return;
 
     }
@@ -2964,6 +2986,10 @@ function updateLivePriceUI(price) {
      */
     if (signalGenerationArmed) {
 
+        setGenerateButtonState(
+            "GENERATING"
+        );
+
         setText(
             statusText,
             marketType === "OTC"
@@ -2971,12 +2997,10 @@ function updateLivePriceUI(price) {
                 : "SIGNALS GENERATING..."
         );
 
-
         setText(
             confidenceText,
             "Waiting for the next 1-Min candle"
         );
-
 
         setText(
             reasonBox,
@@ -2986,430 +3010,6 @@ function updateLivePriceUI(price) {
     }
 
 }
-
-
-/* =========================================================
-   MAIN UPDATE
-   ========================================================= */
-
-async function updatePrice() {
-
-    if (!engineStarted) {
-        return;
-    }
-
-
-    if (loading) {
-        return;
-    }
-
-
-    const requestId =
-        ++activeRequestId;
-
-
-    loading = true;
-
-
-    try {
-
-        let price;
-
-
-        if (marketType === "OTC") {
-
-            price =
-                await getOTCPrice();
-
-        } else {
-
-            price =
-                await getRealPrice();
-
-        }
-
-
-        if (
-            requestId !==
-            activeRequestId
-        ) {
-
-            return;
-
-        }
-
-
-        retryCount = 0;
-
-
-        lastPrice =
-            price;
-
-
-        priceHistory.push({
-
-            price: price,
-            time: Date.now()
-
-        });
-
-
-        /*
-         * Keep enough data for candle analysis.
-         */
-        if (
-            priceHistory.length >
-            120
-        ) {
-
-            priceHistory.shift();
-
-        }
-
-
-        updateLivePriceUI(
-            price
-        );
-
-
-        updateMarketLevels();
-
-
-        /*
-         * Evaluate previous CALL/PUT first.
-         */
-        evaluatePreviousSignal(
-            price
-        );
-
-
-        /*
-         * Process ONLY if generation
-         * was armed by the user.
-         */
-        processSignalGeneration();
-
-    }
-
-    catch (error) {
-
-        console.log(
-            marketType +
-            " PRICE ERROR:",
-            error
-        );
-
-
-        if (
-            requestId !==
-            activeRequestId
-        ) {
-
-            return;
-
-        }
-
-
-        handleMarketError(
-            error
-        );
-
-    }
-
-    finally {
-
-        loading = false;
-
-    }
-
-}
-
-
-/* =========================================================
-   ERROR / RETRY UX
-   ========================================================= */
-
-function handleMarketError(error) {
-
-    console.log(
-        "KURO MARKET ERROR:",
-        error
-    );
-
-
-    retryCount++;
-
-
-    if (retryCount <= 2) {
-
-        setConnectionState(
-            "WAITING"
-        );
-
-    } else {
-
-        setConnectionState(
-            "RECONNECTING"
-        );
-
-    }
-
-
-    if (
-        currentSignal !== "WAIT" &&
-        signalExpiry &&
-        Date.now() < signalExpiry
-    ) {
-
-        return;
-
-    }
-
-
-    const retryDelay =
-        Math.min(
-            8000,
-            2000 +
-            (retryCount * 1000)
-        );
-
-
-    if (retryTimer) {
-
-        clearTimeout(
-            retryTimer
-        );
-
-    }
-
-
-    retryTimer =
-        setTimeout(
-            () => {
-
-                retryTimer =
-                    null;
-
-                updatePrice();
-
-            },
-            retryDelay
-        );
-
-}
-
-
-/* =========================================================
-   FIXED SIGNAL GENERATION ENGINE
-   ========================================================= */
-
-function processSignalGeneration() {
-
-    /*
-     * IMPORTANT:
-     *
-     * No automatic signal generation.
-     * User must first click:
-     * ANALYZE ANOTHER CHART
-     */
-    if (!signalGenerationArmed) {
-        return;
-    }
-
-
-    /*
-     * Need live market price.
-     */
-    if (!Number.isFinite(lastPrice)) {
-
-        setText(
-            statusText,
-            marketType === "OTC"
-                ? "WAITING FOR OTC DATA"
-                : "WAITING FOR MARKET DATA"
-        );
-
-        return;
-
-    }
-
-
-    /*
-     * Never generate while another
-     * signal is active.
-     */
-    if (
-        currentSignal !== "WAIT" &&
-        signalExpiry &&
-        Date.now() < signalExpiry
-    ) {
-
-        return;
-
-    }
-
-
-    const now =
-        new Date();
-
-
-    const currentMinute =
-        getMinuteKey(now);
-
-
-    /*
-     * User clicked during the current minute.
-     *
-     * NEVER analyze the same candle.
-     * Wait for the next candle.
-     */
-    if (
-        generationStartMinute ===
-        currentMinute
-    ) {
-
-        setText(
-            signalBox,
-            "WAIT"
-        );
-
-
-        setText(
-            statusText,
-            marketType === "OTC"
-                ? "OTC WAITING FOR CANDLE START"
-                : "WAITING FOR CANDLE START"
-        );
-
-
-        setText(
-            confidenceText,
-            "Waiting for the next 1-Min candle"
-        );
-
-
-        setText(
-            reasonBox,
-            "Live market data is ready. Analysis will start at the next candle."
-        );
-
-
-        return;
-
-    }
-
-
-    /*
-     * Prevent duplicate analysis
-     * during the same candle.
-     */
-    if (
-        lastProcessedGenerationMinute ===
-        currentMinute
-    ) {
-
-        return;
-
-    }
-
-
-    /*
-     * Exact current candle start.
-     */
-    const candleStart =
-        new Date(now);
-
-
-    candleStart.setSeconds(
-        0,
-        0
-    );
-
-
-    const candleStartTime =
-        candleStart.getTime();
-
-
-    /*
-     * Only use data collected BEFORE
-     * this candle started.
-     */
-    const completedPrices =
-        priceHistory.filter(
-            item =>
-                item.time <
-                candleStartTime
-        );
-
-
-    /*
-     * Not enough completed data.
-     *
-     * Keep generation armed.
-     */
-    if (
-        completedPrices.length <
-        12
-    ) {
-
-        setText(
-            signalBox,
-            "WAIT"
-        );
-
-
-        setText(
-            statusText,
-            marketType === "OTC"
-                ? "OTC COLLECTING 1-MIN DATA"
-                : "COLLECTING 1-MIN DATA"
-        );
-
-
-        setText(
-            confidenceText,
-            "Building completed 1-Min market data"
-        );
-
-
-        setText(
-            reasonBox,
-            "Not enough completed market data yet. KURO AI will continue collecting."
-        );
-
-
-        /*
-         * DO NOT mark this minute as processed.
-         * It can be checked again when more
-         * data is available.
-         */
-        lastProcessedGenerationMinute =
-            null;
-
-
-        return;
-
-    }
-
-
-    /*
-     * Mark this candle as processed
-     * BEFORE analysis.
-     */
-    lastProcessedGenerationMinute =
-        currentMinute;
-
-
-    /*
-     * Analyze completed data.
-     */
-    analyzeMarket(
-        true,
-        completedPrices
-    );
-
-}
-
 
 /* =========================================================
    MARKET LEVELS
@@ -5094,23 +4694,26 @@ function unlockKURO() {
 
 
     engineStarted =
-        true;
+    true;
 
+resetMarketData();
 
-    resetMarketData();
+setConnectionState(
+    "CONNECTING"
+);
 
+/*
+ * Keep button disabled only while
+ * waiting for the FIRST live price.
+ *
+ * Once live price arrives,
+ * updateLivePriceUI() changes it to READY.
+ */
+setGenerateButtonState(
+    "DISABLED"
+);
 
-    setConnectionState(
-        "CONNECTING"
-    );
-
-
-    setGenerateButtonState(
-        "DISABLED"
-    );
-
-
-    updatePrice();
+updatePrice();
 
 }
 
