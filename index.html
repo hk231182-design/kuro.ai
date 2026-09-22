@@ -1181,9 +1181,6 @@ alt="KURO AI Logo"
 
 </header>
 
-
-<!-- ================= MARKET TYPE ================= -->
-
 <div class="market-type">
 
 <button
@@ -1202,7 +1199,6 @@ OTC MARKET
 </button>
 
 </div>
-
 
 <section class="market" id="marketCard">
 
@@ -1233,7 +1229,6 @@ EUR/USD
 </div>
 
 </div>
-
 
 <div class="select-area">
 
@@ -1269,7 +1264,6 @@ EUR/USD
 
 </section>
 
-
 <div class="card">
 
 <div class="signal" id="signalPanel">
@@ -1300,7 +1294,6 @@ CONNECTING TO MARKET
 
 </div>
 
-
 <div style="margin-top:18px">
 
 <div class="conf-head">
@@ -1330,7 +1323,6 @@ Connecting to market data...
 </div>
 
 </div>
-
 
 <div class="card">
 
@@ -1368,7 +1360,6 @@ RESISTANCE ↑
 
 </div>
 
-
 <div class="two">
 
 <div class="card small-card">
@@ -1389,7 +1380,6 @@ Neutral
 
 </div>
 
-
 <div class="card small-card pattern">
 
 <div class="small-head">
@@ -1409,7 +1399,6 @@ Monitoring
 </div>
 
 </div>
-
 
 <div class="card analysis">
 
@@ -1447,7 +1436,6 @@ See all ›
 
 </div>
 
-
 <div class="card" id="analysisDetails">
 
 <div class="label">
@@ -1481,7 +1469,6 @@ CONNECTING
 
 </div>
 
-
 <div style="margin-top:15px" class="label">
 MARKET ANALYSIS
 </div>
@@ -1492,7 +1479,6 @@ id="reasonBox"
 >
 Connecting to live market data...
 </div>
-
 
 <div class="two" style="margin-top:12px">
 
@@ -1513,7 +1499,6 @@ WAIT
 </div>
 
 </div>
-
 
 <div
 style="border:1px solid #183149;border-radius:13px;padding:11px;background:#06101a"
@@ -1537,7 +1522,6 @@ style="font-weight:1000;margin-top:5px"
 
 </div>
 
-
 <div class="card" style="padding:10px">
 
 <button class="main-btn" id="generateButton">
@@ -1549,7 +1533,6 @@ KURO AI • 1-MINUTE MOMENTUM ENGINE
 </div>
 
 </div>
-
 
 <div class="card">
 
@@ -1583,7 +1566,6 @@ TIME LEFT
 
 </div>
 
-
 <div class="stat">
 
 <div class="stat-label">
@@ -1595,7 +1577,6 @@ WINS
 </div>
 
 </div>
-
 
 <div class="stat">
 
@@ -1609,7 +1590,6 @@ LOSSES
 
 </div>
 
-
 <div class="stat">
 
 <div class="stat-label">
@@ -1621,7 +1601,6 @@ DRAWS
 </div>
 
 </div>
-
 
 <div class="stat">
 
@@ -1640,9 +1619,6 @@ ACCURACY
 </div>
 
 </div>
-
-
-<!-- ================= ACCESS KEY ================= -->
 
 <div id="keyScreen">
 
@@ -1687,6 +1663,7 @@ UNLOCK KURO AI
 /* =========================================================
    KURO AI
    PREMIUM MARKET ENGINE
+   FIXED CANDLE-START SIGNAL GENERATION
    ========================================================= */
 
 
@@ -1698,7 +1675,6 @@ const KURO_ACCESS_KEY = "KURO-2026";
 
 const OTC_BACKEND =
     "https://kuro-ai-2.onrender.com";
-
 
 const PRICE_REFRESH_MS = 5000;
 
@@ -1795,7 +1771,9 @@ let otcConfiguredSymbol = null;
 let activeRequestId = 0;
 
 
+/* ========================= */
 /* SIGNAL STATE */
+/* ========================= */
 
 let lastCandleMinute = null;
 
@@ -1805,13 +1783,11 @@ let generationStartMinute = null;
 
 let lastProcessedGenerationMinute = null;
 
-
 let totalWins = 0;
 
 let totalLosses = 0;
 
 let totalDraws = 0;
-
 
 let signalExpiry = null;
 
@@ -2003,7 +1979,6 @@ function setGenerateButtonState(state) {
         return;
     }
 
-
     generateBtn.classList.remove(
         "generate-loading"
     );
@@ -2067,14 +2042,14 @@ function setGenerateButtonState(state) {
 
 function setConnectionState(state) {
 
-    if (!marketStatus ||
+    if (
+        !marketStatus ||
         !currentPrice ||
         !statusText ||
         !confidenceText ||
-        !reasonBox) {
-
+        !reasonBox
+    ) {
         return;
-
     }
 
 
@@ -2094,12 +2069,14 @@ function setConnectionState(state) {
             "CONNECTING..."
         );
 
+
         setText(
             marketStatus,
             marketType === "OTC"
                 ? "OTC CONNECTING"
                 : "CONNECTING"
         );
+
 
         setText(
             statusText,
@@ -2108,6 +2085,7 @@ function setConnectionState(state) {
                 : "CONNECTING TO MARKET"
         );
 
+
         setText(
             confidenceText,
             marketType === "OTC"
@@ -2115,12 +2093,14 @@ function setConnectionState(state) {
                 : "Receiving live market data..."
         );
 
+
         setText(
             reasonBox,
             marketType === "OTC"
                 ? "Waking the OTC market connection..."
                 : "Establishing live market connection..."
         );
+
 
         return;
 
@@ -2140,9 +2120,7 @@ function setConnectionState(state) {
 
         setText(
             currentPrice,
-            marketType === "OTC"
-                ? "WAITING..."
-                : "WAITING..."
+            "WAITING..."
         );
 
 
@@ -2176,6 +2154,7 @@ function setConnectionState(state) {
                 ? "The backend is connected, but a fresh price has not arrived yet."
                 : "The market feed has not returned a valid price yet."
         );
+
 
         return;
 
@@ -2227,6 +2206,7 @@ function setConnectionState(state) {
             "Temporary connection delay detected. KURO AI is retrying automatically."
         );
 
+
         return;
 
     }
@@ -2252,6 +2232,12 @@ function setConnectionState(state) {
         );
 
 
+        /*
+         * IMPORTANT:
+         *
+         * Never overwrite the signal-generation
+         * status when generation is armed.
+         */
         if (
             currentSignal === "WAIT" &&
             !signalGenerationArmed
@@ -2277,13 +2263,6 @@ function setConnectionState(state) {
                 "Live market data received"
             );
 
-        }
-
-
-        if (
-            !signalGenerationArmed &&
-            currentSignal === "WAIT"
-        ) {
 
             setText(
                 reasonBox,
@@ -2621,8 +2600,10 @@ function resetMarketData() {
 
 function setMarketType(type) {
 
-    if (marketType === type &&
-        engineStarted) {
+    if (
+        marketType === type &&
+        engineStarted
+    ) {
 
         return;
 
@@ -2834,15 +2815,6 @@ async function configureOTCAsset() {
     }
 
 
-    /*
-     * IMPORTANT:
-     *
-     * Do NOT call /set-asset every 5 seconds.
-     *
-     * Only configure when the asset actually
-     * changes.
-     */
-
     if (
         otcConfiguredSymbol ===
         symbol
@@ -2974,9 +2946,8 @@ function updateLivePriceUI(price) {
 
 
     /*
-     * Do not overwrite active signal state.
+     * Never overwrite an active signal.
      */
-
     if (
         currentSignal !== "WAIT" &&
         signalExpiry &&
@@ -2988,6 +2959,9 @@ function updateLivePriceUI(price) {
     }
 
 
+    /*
+     * Generation is armed.
+     */
     if (signalGenerationArmed) {
 
         setText(
@@ -3055,11 +3029,6 @@ async function updatePrice() {
         }
 
 
-        /*
-         * Ignore old response if market/asset
-         * was changed while request was running.
-         */
-
         if (
             requestId !==
             activeRequestId
@@ -3085,9 +3054,12 @@ async function updatePrice() {
         });
 
 
+        /*
+         * Keep enough data for candle analysis.
+         */
         if (
             priceHistory.length >
-            60
+            120
         ) {
 
             priceHistory.shift();
@@ -3106,16 +3078,15 @@ async function updatePrice() {
         /*
          * Evaluate previous CALL/PUT first.
          */
-
         evaluatePreviousSignal(
             price
         );
 
 
         /*
-         * Manual generation engine.
+         * Process ONLY if generation
+         * was armed by the user.
          */
-
         processSignalGeneration();
 
     }
@@ -3128,11 +3099,6 @@ async function updatePrice() {
             error
         );
 
-
-        /*
-         * Do not show an error if another
-         * request has already replaced this one.
-         */
 
         if (
             requestId !==
@@ -3174,11 +3140,6 @@ function handleMarketError(error) {
     retryCount++;
 
 
-    /*
-     * First few attempts:
-     * tell user that data is being received.
-     */
-
     if (retryCount <= 2) {
 
         setConnectionState(
@@ -3194,10 +3155,6 @@ function handleMarketError(error) {
     }
 
 
-    /*
-     * Do not disturb an active signal.
-     */
-
     if (
         currentSignal !== "WAIT" &&
         signalExpiry &&
@@ -3208,12 +3165,6 @@ function handleMarketError(error) {
 
     }
 
-
-    /*
-     * Progressive retry.
-     *
-     * Maximum 8 seconds.
-     */
 
     const retryDelay =
         Math.min(
@@ -3249,27 +3200,27 @@ function handleMarketError(error) {
 
 
 /* =========================================================
-   PROCESS SIGNAL GENERATION
+   FIXED SIGNAL GENERATION ENGINE
    ========================================================= */
 
 function processSignalGeneration() {
 
-    if (
-        !signalGenerationArmed
-    ) {
-
+    /*
+     * IMPORTANT:
+     *
+     * No automatic signal generation.
+     * User must first click:
+     * ANALYZE ANOTHER CHART
+     */
+    if (!signalGenerationArmed) {
         return;
-
     }
 
 
     /*
-     * No generation without live price.
+     * Need live market price.
      */
-
-    if (
-        !Number.isFinite(lastPrice)
-    ) {
+    if (!Number.isFinite(lastPrice)) {
 
         setText(
             statusText,
@@ -3287,12 +3238,10 @@ function processSignalGeneration() {
      * Never generate while another
      * signal is active.
      */
-
     if (
         currentSignal !== "WAIT" &&
         signalExpiry &&
-        Date.now() <
-        signalExpiry
+        Date.now() < signalExpiry
     ) {
 
         return;
@@ -3300,20 +3249,30 @@ function processSignalGeneration() {
     }
 
 
+    const now =
+        new Date();
+
+
     const currentMinute =
-        getMinuteKey();
+        getMinuteKey(now);
 
 
     /*
-     * User clicked during current minute.
+     * User clicked during the current minute.
      *
-     * Therefore wait until next minute.
+     * NEVER analyze the same candle.
+     * Wait for the next candle.
      */
-
     if (
         generationStartMinute ===
         currentMinute
     ) {
+
+        setText(
+            signalBox,
+            "WAIT"
+        );
+
 
         setText(
             statusText,
@@ -3322,15 +3281,28 @@ function processSignalGeneration() {
                 : "WAITING FOR CANDLE START"
         );
 
+
+        setText(
+            confidenceText,
+            "Waiting for the next 1-Min candle"
+        );
+
+
+        setText(
+            reasonBox,
+            "Live market data is ready. Analysis will start at the next candle."
+        );
+
+
         return;
 
     }
 
 
     /*
-     * Prevent duplicate processing.
+     * Prevent duplicate analysis
+     * during the same candle.
      */
-
     if (
         lastProcessedGenerationMinute ===
         currentMinute
@@ -3341,31 +3313,27 @@ function processSignalGeneration() {
     }
 
 
-    lastProcessedGenerationMinute =
-        currentMinute;
-
-
     /*
-     * Exact start of current minute.
+     * Exact current candle start.
      */
+    const candleStart =
+        new Date(now);
 
-    const minuteStart =
-        new Date();
 
-    minuteStart.setSeconds(
+    candleStart.setSeconds(
         0,
         0
     );
 
 
     const candleStartTime =
-        minuteStart.getTime();
+        candleStart.getTime();
 
 
     /*
-     * Only completed data.
+     * Only use data collected BEFORE
+     * this candle started.
      */
-
     const completedPrices =
         priceHistory.filter(
             item =>
@@ -3374,20 +3342,15 @@ function processSignalGeneration() {
         );
 
 
+    /*
+     * Not enough completed data.
+     *
+     * Keep generation armed.
+     */
     if (
         completedPrices.length <
         12
     ) {
-
-        /*
-         * Not enough completed data.
-         *
-         * Keep generation armed.
-         */
-
-        lastProcessedGenerationMinute =
-            null;
-
 
         setText(
             signalBox,
@@ -3411,8 +3374,17 @@ function processSignalGeneration() {
 
         setText(
             reasonBox,
-            "Not enough completed market data yet. KURO AI will continue automatically."
+            "Not enough completed market data yet. KURO AI will continue collecting."
         );
+
+
+        /*
+         * DO NOT mark this minute as processed.
+         * It can be checked again when more
+         * data is available.
+         */
+        lastProcessedGenerationMinute =
+            null;
 
 
         return;
@@ -3421,9 +3393,16 @@ function processSignalGeneration() {
 
 
     /*
-     * Analyze at candle START.
+     * Mark this candle as processed
+     * BEFORE analysis.
      */
+    lastProcessedGenerationMinute =
+        currentMinute;
 
+
+    /*
+     * Analyze completed data.
+     */
     analyzeMarket(
         true,
         completedPrices
@@ -3696,11 +3675,15 @@ function analyzeMarket(
 
 
     /*
-     * WAIT result:
+     * =====================================================
+     * WAIT RESULT
+     * =====================================================
      *
-     * Keep the user request armed.
+     * IMPORTANT:
      *
-     * Next candle will be analyzed.
+     * WAIT does NOT end signal generation.
+     * The engine stays armed and the next candle
+     * will be analyzed automatically.
      */
 
     if (
@@ -3743,14 +3726,22 @@ function analyzeMarket(
         setText(
             statusText,
             marketType === "OTC"
-                ? "OTC WAITING FOR SIGNAL"
-                : "WAITING FOR SIGNAL"
+                ? "OTC CANDLE ANALYZED • WAIT"
+                : "CANDLE ANALYZED • WAIT"
         );
 
 
         setText(
             reasonBox,
             reason
+        );
+
+
+        setText(
+            analysisSub,
+            marketType === "OTC"
+                ? "Next OTC candle will be analyzed automatically"
+                : "Next 1-Min candle will be analyzed automatically"
         );
 
 
@@ -3882,6 +3873,11 @@ function analyzeMarket(
         );
 
 
+        /*
+         * VERY IMPORTANT:
+         *
+         * Keep the button in GENERATING state.
+         */
         setGenerateButtonState(
             "GENERATING"
         );
@@ -3893,7 +3889,9 @@ function analyzeMarket(
 
 
     /*
-     * SIGNAL UI
+     * =====================================================
+     * CALL / PUT SIGNAL
+     * =====================================================
      */
 
     setText(
@@ -3937,6 +3935,14 @@ function analyzeMarket(
     setText(
         reasonBox,
         reason
+    );
+
+
+    setText(
+        analysisSub,
+        marketType === "OTC"
+            ? "Structure • Momentum • OTC 1-Min"
+            : "Structure • Momentum • 1-Min"
     );
 
 
@@ -4079,11 +4085,19 @@ function analyzeMarket(
         getMinuteKey();
 
 
+    /*
+     * CALL/PUT created.
+     * Stop generation until this signal expires.
+     */
     signalGenerationArmed =
         false;
 
 
     generationStartMinute =
+        null;
+
+
+    lastProcessedGenerationMinute =
         null;
 
 
@@ -4108,6 +4122,13 @@ function createSignal(
         signal;
 
 
+    /*
+     * Keep this separate from currentSignal.
+     *
+     * currentSignal becomes WAIT after expiry,
+     * but accuracySignal must remain CALL/PUT
+     * until the 60-second result is evaluated.
+     */
     accuracySignal =
         signal;
 
@@ -4297,7 +4318,6 @@ function generateSignal() {
     /*
      * No market data = do not arm signal.
      */
-
     if (
         !Number.isFinite(
             lastPrice
@@ -4332,7 +4352,6 @@ function generateSignal() {
     /*
      * Active signal.
      */
-
     if (
         currentSignal !== "WAIT" &&
         signalExpiry &&
@@ -4348,7 +4367,6 @@ function generateSignal() {
     /*
      * Already armed.
      */
-
     if (
         signalGenerationArmed
     ) {
@@ -4359,15 +4377,20 @@ function generateSignal() {
 
 
     /*
-     * ARM.
+     * ARM SIGNAL GENERATION.
+     *
+     * IMPORTANT:
+     * We remember the exact minute when
+     * the user clicked.
      */
-
     signalGenerationArmed =
         true;
 
 
     generationStartMinute =
-        getMinuteKey();
+        getMinuteKey(
+            new Date()
+        );
 
 
     lastProcessedGenerationMinute =
@@ -4402,6 +4425,14 @@ function generateSignal() {
     setText(
         reasonBox,
         "Analysis is armed. KURO AI will generate at the next candle start."
+    );
+
+
+    setText(
+        analysisSub,
+        marketType === "OTC"
+            ? "Waiting for next OTC candle"
+            : "Waiting for next 1-Min candle"
     );
 
 }
@@ -4468,6 +4499,11 @@ function startCountdown() {
                         null;
 
 
+                    /*
+                     * Signal is visually expired.
+                     *
+                     * DO NOT clear accuracySignal here.
+                     */
                     currentSignal =
                         "WAIT";
 
@@ -4502,9 +4538,22 @@ function startCountdown() {
                     );
 
 
+                    setText(
+                        analysisSub,
+                        "Structure • Momentum • 1-Min"
+                    );
+
+
                     applySignalStyle(
                         "WAIT"
                     );
+
+
+                    /*
+                     * Ready for a completely new
+                     * manual generation request.
+                     */
+                    resetSignalGeneration();
 
 
                     setGenerateButtonState(
@@ -4880,7 +4929,9 @@ if (assetSelect) {
 
             setText(
                 statusText,
-                "CONNECTING TO MARKET"
+                marketType === "OTC"
+                    ? "CONNECTING TO OTC MARKET"
+                    : "CONNECTING TO MARKET"
             );
 
 
@@ -4914,13 +4965,6 @@ if (assetSelect) {
 
             updateAssetUI();
 
-
-            /*
-             * OTC:
-             *
-             * configureOTCAsset() will call
-             * /set-asset only once.
-             */
 
             updatePrice();
 
@@ -4987,10 +5031,6 @@ function unlockKURO() {
         keyInput.value.trim();
 
 
-    /*
-     * Invalid key.
-     */
-
     if (
         value !==
         KURO_ACCESS_KEY
@@ -5026,10 +5066,6 @@ function unlockKURO() {
     }
 
 
-    /*
-     * Correct key.
-     */
-
     if (keyError) {
 
         keyError.textContent =
@@ -5049,13 +5085,6 @@ function unlockKURO() {
     }
 
 
-    /*
-     * Hide key screen immediately.
-     *
-     * The dashboard can render while
-     * market connection starts.
-     */
-
     if (keyScreen) {
 
         keyScreen.style.display =
@@ -5067,10 +5096,6 @@ function unlockKURO() {
     engineStarted =
         true;
 
-
-    /*
-     * Start clean connection.
-     */
 
     resetMarketData();
 
@@ -5084,10 +5109,6 @@ function unlockKURO() {
         "DISABLED"
     );
 
-
-    /*
-     * Start first market request immediately.
-     */
 
     updatePrice();
 
