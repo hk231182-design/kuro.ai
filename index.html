@@ -735,7 +735,35 @@ button{cursor:pointer}
   font-size:10px;
 }
 
-/* ================= LOADING ================= */
+/* ================= CONNECTION UX ================= */
+
+.connection-pulse{
+  animation:connectionPulse 1.2s infinite ease-in-out;
+}
+
+@keyframes connectionPulse{
+  0%,100%{
+    opacity:.55;
+    transform:scale(.96);
+  }
+  50%{
+    opacity:1;
+    transform:scale(1);
+  }
+}
+
+.market-ready{
+  box-shadow:
+    0 0 0 1px rgba(0,255,150,.05),
+    0 18px 50px rgba(0,0,0,.28),
+    inset 0 1px rgba(255,255,255,.05);
+}
+
+.market-error{
+  border-color:rgba(255,70,80,.38);
+}
+
+/* ================= BUTTON LOADING ================= */
 
 .generate-loading{
   animation:generatePulse .8s infinite alternate;
@@ -1176,7 +1204,7 @@ OTC MARKET
 </div>
 
 
-<section class="market">
+<section class="market" id="marketCard">
 
 <div class="market-top">
 
@@ -1267,7 +1295,7 @@ WAIT
 </div>
 
 <div class="signal-status" id="status">
-Collecting 1-Min Data
+CONNECTING TO MARKET
 </div>
 
 </div>
@@ -1284,7 +1312,7 @@ CONFIDENCE
 </div>
 
 <div class="conf-note" id="confidenceText">
-Waiting for market data
+Connecting to market data...
 </div>
 
 </div>
@@ -1432,7 +1460,7 @@ CURRENT PRICE
 style="font-size:24px;font-weight:1000"
 id="currentPrice"
 >
-Loading...
+--
 </div>
 
 <div style="text-align:right">
@@ -1462,7 +1490,7 @@ MARKET ANALYSIS
 style="margin-top:8px;color:#8297aa;font-size:11px;line-height:1.55"
 id="reasonBox"
 >
-Collecting enough 1-minute market data to analyze momentum.
+Connecting to live market data...
 </div>
 
 
@@ -1636,9 +1664,11 @@ ENTER ACCESS KEY
 id="accessKey"
 type="password"
 placeholder="Enter your access key"
+autocomplete="off"
 >
 
 <button
+id="unlockButton"
 type="button"
 onclick="unlockKURO()"
 >
@@ -1654,9 +1684,23 @@ UNLOCK KURO AI
 
 <script>
 
+/* =========================================================
+   KURO AI
+   PREMIUM MARKET ENGINE
+   ========================================================= */
+
+
+/* ========================= */
+/* CONFIG */
+/* ========================= */
+
 const KURO_ACCESS_KEY = "KURO-2026";
 
-const OTC_BACKEND = "https://kuro-ai-2.onrender.com";
+const OTC_BACKEND =
+    "https://kuro-ai-2.onrender.com";
+
+
+const PRICE_REFRESH_MS = 5000;
 
 
 /* ========================= */
@@ -1664,11 +1708,13 @@ const OTC_BACKEND = "https://kuro-ai-2.onrender.com";
 /* ========================= */
 
 const symbols = {
+
     "EUR/USD": "EURUSD",
     "GBP/USD": "GBPUSD",
     "USD/JPY": "USDJPY",
     "AUD/USD": "AUDUSD",
     "USD/CAD": "USDCAD"
+
 };
 
 
@@ -1677,11 +1723,13 @@ const symbols = {
 /* ========================= */
 
 const otcSymbols = {
+
     "AUD/USD OTC": "AUDUSD_OTC",
     "EUR/USD OTC": "EURUSD_OTC",
     "GBP/USD OTC": "GBPUSD_OTC",
     "USD/JPY OTC": "USDJPY_OTC",
     "BTC/USD OTC": "BTCUSD_OTC"
+
 };
 
 
@@ -1731,63 +1779,48 @@ const otcAssetOptions = [
 let marketType = "REAL";
 
 let priceHistory = [];
+
 let lastPrice = null;
+
 let loading = false;
 
-/*
- * Last candle on which a signal was generated.
- */
+let engineStarted = false;
+
+let retryTimer = null;
+
+let retryCount = 0;
+
+let otcConfiguredSymbol = null;
+
+let activeRequestId = 0;
+
+
+/* SIGNAL STATE */
+
 let lastCandleMinute = null;
 
-/*
- * NEW:
- *
- * Signals are completely manual.
- *
- * false = system only collects price data.
- * true  = user clicked ANALYZE ANOTHER CHART
- *         and system is waiting for the next
- *         1-minute candle start.
- */
 let signalGenerationArmed = false;
 
-/*
- * NEW:
- *
- * Minute in which the user clicked the button.
- *
- * The signal will NOT be generated inside this
- * same minute. It waits for the next candle.
- */
 let generationStartMinute = null;
 
-/*
- * NEW:
- *
- * Prevents processing the same candle more than once.
- */
 let lastProcessedGenerationMinute = null;
 
 
 let totalWins = 0;
+
 let totalLosses = 0;
+
 let totalDraws = 0;
 
+
 let signalExpiry = null;
+
 let lastSignalPrice = null;
+
 let lastSignalTime = null;
 
 let currentSignal = "WAIT";
 
-/*
- * Keeps the original CALL/PUT for accuracy.
- *
- * currentSignal becomes WAIT after the
- * 60-second countdown expires.
- *
- * accuracySignal does NOT change until
- * that signal has been evaluated.
- */
 let accuracySignal = null;
 
 let countdownInterval = null;
@@ -1820,6 +1853,9 @@ const realMarketBtn =
 
 const otcMarketBtn =
     document.getElementById("otcMarketBtn");
+
+const marketCard =
+    document.getElementById("marketCard");
 
 const currentPrice =
     document.getElementById("currentPrice");
@@ -1887,74 +1923,17 @@ const drawsCount =
 const accuracyValue =
     document.getElementById("accuracyValue");
 
+const keyScreen =
+    document.getElementById("keyScreen");
 
-/* ========================= */
-/* BUTTON STATE */
-/* ========================= */
+const keyInput =
+    document.getElementById("accessKey");
 
-function setGenerateButtonState(state) {
+const keyError =
+    document.getElementById("keyError");
 
-    if (!generateBtn) {
-        return;
-    }
-
-    generateBtn.classList.remove(
-        "generate-loading"
-    );
-
-    generateBtn.disabled = false;
-
-
-    /*
-     * READY
-     */
-
-    if (state === "READY") {
-
-        generateBtn.innerHTML =
-            "↻ &nbsp; ANALYZE ANOTHER CHART";
-
-        return;
-
-    }
-
-
-    /*
-     * GENERATING
-     */
-
-    if (state === "GENERATING") {
-
-        generateBtn.textContent =
-            "SIGNALS GENERATING...";
-
-        generateBtn.disabled = true;
-
-        generateBtn.classList.add(
-            "generate-loading"
-        );
-
-        return;
-
-    }
-
-
-    /*
-     * RUNNING
-     */
-
-    if (state === "RUNNING") {
-
-        generateBtn.textContent =
-            "SIGNALS RUNNING";
-
-        generateBtn.disabled = true;
-
-        return;
-
-    }
-
-}
+const unlockButton =
+    document.getElementById("unlockButton");
 
 
 /* ========================= */
@@ -2014,9 +1993,313 @@ function formatPrice(price) {
 }
 
 
-/* ========================= */
-/* UPDATE ASSET UI */
-/* ========================= */
+/* =========================================================
+   BUTTON STATE
+   ========================================================= */
+
+function setGenerateButtonState(state) {
+
+    if (!generateBtn) {
+        return;
+    }
+
+
+    generateBtn.classList.remove(
+        "generate-loading"
+    );
+
+    generateBtn.disabled = false;
+
+
+    if (state === "READY") {
+
+        generateBtn.innerHTML =
+            "↻ &nbsp; ANALYZE ANOTHER CHART";
+
+        return;
+
+    }
+
+
+    if (state === "GENERATING") {
+
+        generateBtn.textContent =
+            "SIGNALS GENERATING...";
+
+        generateBtn.disabled = true;
+
+        generateBtn.classList.add(
+            "generate-loading"
+        );
+
+        return;
+
+    }
+
+
+    if (state === "RUNNING") {
+
+        generateBtn.textContent =
+            "SIGNALS RUNNING";
+
+        generateBtn.disabled = true;
+
+        return;
+
+    }
+
+
+    if (state === "DISABLED") {
+
+        generateBtn.textContent =
+            "MARKET DATA REQUIRED";
+
+        generateBtn.disabled = true;
+
+    }
+
+}
+
+
+/* =========================================================
+   CONNECTION UI
+   ========================================================= */
+
+function setConnectionState(state) {
+
+    if (!marketStatus ||
+        !currentPrice ||
+        !statusText ||
+        !confidenceText ||
+        !reasonBox) {
+
+        return;
+
+    }
+
+
+    if (state === "CONNECTING") {
+
+        marketCard?.classList.remove(
+            "market-error"
+        );
+
+        marketCard?.classList.add(
+            "connection-pulse"
+        );
+
+
+        setText(
+            currentPrice,
+            "CONNECTING..."
+        );
+
+        setText(
+            marketStatus,
+            marketType === "OTC"
+                ? "OTC CONNECTING"
+                : "CONNECTING"
+        );
+
+        setText(
+            statusText,
+            marketType === "OTC"
+                ? "CONNECTING TO OTC MARKET"
+                : "CONNECTING TO MARKET"
+        );
+
+        setText(
+            confidenceText,
+            marketType === "OTC"
+                ? "Connecting to KURO OTC backend..."
+                : "Receiving live market data..."
+        );
+
+        setText(
+            reasonBox,
+            marketType === "OTC"
+                ? "Waking the OTC market connection..."
+                : "Establishing live market connection..."
+        );
+
+        return;
+
+    }
+
+
+    if (state === "WAITING") {
+
+        marketCard?.classList.remove(
+            "market-error"
+        );
+
+        marketCard?.classList.add(
+            "connection-pulse"
+        );
+
+
+        setText(
+            currentPrice,
+            marketType === "OTC"
+                ? "WAITING..."
+                : "WAITING..."
+        );
+
+
+        setText(
+            marketStatus,
+            marketType === "OTC"
+                ? "OTC WAITING"
+                : "WAITING"
+        );
+
+
+        setText(
+            statusText,
+            marketType === "OTC"
+                ? "WAITING FOR OTC FEED"
+                : "WAITING FOR MARKET DATA"
+        );
+
+
+        setText(
+            confidenceText,
+            marketType === "OTC"
+                ? "Waiting for live OTC price..."
+                : "Waiting for live market price..."
+        );
+
+
+        setText(
+            reasonBox,
+            marketType === "OTC"
+                ? "The backend is connected, but a fresh price has not arrived yet."
+                : "The market feed has not returned a valid price yet."
+        );
+
+        return;
+
+    }
+
+
+    if (state === "RECONNECTING") {
+
+        marketCard?.classList.remove(
+            "market-ready"
+        );
+
+        marketCard?.classList.add(
+            "market-error",
+            "connection-pulse"
+        );
+
+
+        setText(
+            currentPrice,
+            "RECONNECTING..."
+        );
+
+
+        setText(
+            marketStatus,
+            marketType === "OTC"
+                ? "OTC RECONNECTING"
+                : "RECONNECTING"
+        );
+
+
+        setText(
+            statusText,
+            marketType === "OTC"
+                ? "RECONNECTING TO OTC"
+                : "RECONNECTING TO MARKET"
+        );
+
+
+        setText(
+            confidenceText,
+            "Trying the market feed again..."
+        );
+
+
+        setText(
+            reasonBox,
+            "Temporary connection delay detected. KURO AI is retrying automatically."
+        );
+
+        return;
+
+    }
+
+
+    if (state === "LIVE") {
+
+        marketCard?.classList.remove(
+            "market-error",
+            "connection-pulse"
+        );
+
+        marketCard?.classList.add(
+            "market-ready"
+        );
+
+
+        setText(
+            marketStatus,
+            marketType === "OTC"
+                ? "OTC LIVE"
+                : "REAL MARKET"
+        );
+
+
+        if (
+            currentSignal === "WAIT" &&
+            !signalGenerationArmed
+        ) {
+
+            setText(
+                statusText,
+                marketType === "OTC"
+                    ? "OTC CONNECTED"
+                    : "MARKET LIVE"
+            );
+
+        }
+
+
+        if (
+            !signalGenerationArmed &&
+            currentSignal === "WAIT"
+        ) {
+
+            setText(
+                confidenceText,
+                "Live market data received"
+            );
+
+        }
+
+
+        if (
+            !signalGenerationArmed &&
+            currentSignal === "WAIT"
+        ) {
+
+            setText(
+                reasonBox,
+                "Live market data is ready. Analyze another chart when you want the next signal."
+            );
+
+        }
+
+    }
+
+}
+
+
+/* =========================================================
+   ASSET UI
+   ========================================================= */
 
 function updateAssetUI() {
 
@@ -2024,8 +2307,10 @@ function updateAssetUI() {
         return;
     }
 
+
     const asset =
         assetSelect.value;
+
 
     if (marketType === "OTC") {
 
@@ -2033,6 +2318,7 @@ function updateAssetUI() {
             otcAssetOptions.find(
                 x => x.value === asset
             );
+
 
         if (item) {
 
@@ -2056,22 +2342,27 @@ function updateAssetUI() {
     } else {
 
         const flags = {
+
             "EUR/USD": "🇪🇺🇺🇸",
             "GBP/USD": "🇬🇧🇺🇸",
             "USD/JPY": "🇺🇸🇯🇵",
             "AUD/USD": "🇦🇺🇺🇸",
             "USD/CAD": "🇺🇸🇨🇦"
+
         };
+
 
         setText(
             assetFlags,
             flags[asset] || "🌐"
         );
 
+
         setText(
             selectedAssetName,
             asset
         );
+
 
         setText(
             assetDisplay,
@@ -2085,9 +2376,9 @@ function updateAssetUI() {
 }
 
 
-/* ========================= */
-/* BUILD OTC SELECT */
-/* ========================= */
+/* =========================================================
+   LOAD OTC ASSETS
+   ========================================================= */
 
 function loadOTCAssets() {
 
@@ -2095,33 +2386,43 @@ function loadOTCAssets() {
         return;
     }
 
+
     assetSelect.innerHTML = "";
 
-    otcAssetOptions.forEach(item => {
 
-        const option =
-            document.createElement("option");
+    otcAssetOptions.forEach(
+        item => {
 
-        option.value =
-            item.value;
+            const option =
+                document.createElement(
+                    "option"
+                );
 
-        option.textContent =
-            item.label;
 
-        assetSelect.appendChild(
-            option
-        );
+            option.value =
+                item.value;
 
-    });
+
+            option.textContent =
+                item.label;
+
+
+            assetSelect.appendChild(
+                option
+            );
+
+        }
+    );
+
 
     updateAssetUI();
 
 }
 
 
-/* ========================= */
-/* BUILD REAL SELECT */
-/* ========================= */
+/* =========================================================
+   LOAD REAL ASSETS
+   ========================================================= */
 
 function loadRealAssets() {
 
@@ -2129,41 +2430,54 @@ function loadRealAssets() {
         return;
     }
 
+
     assetSelect.innerHTML = "";
 
+
     const realAssets = [
+
         ["EUR/USD", "🇪🇺🇺🇸 EUR/USD"],
         ["GBP/USD", "🇬🇧🇺🇸 GBP/USD"],
         ["USD/JPY", "🇺🇸🇯🇵 USD/JPY"],
         ["AUD/USD", "🇦🇺🇺🇸 AUD/USD"],
         ["USD/CAD", "🇺🇸🇨🇦 USD/CAD"]
+
     ];
 
-    realAssets.forEach(item => {
 
-        const option =
-            document.createElement("option");
+    realAssets.forEach(
+        item => {
 
-        option.value =
-            item[0];
+            const option =
+                document.createElement(
+                    "option"
+                );
 
-        option.textContent =
-            item[1];
 
-        assetSelect.appendChild(
-            option
-        );
+            option.value =
+                item[0];
 
-    });
+
+            option.textContent =
+                item[1];
+
+
+            assetSelect.appendChild(
+                option
+            );
+
+        }
+    );
+
 
     updateAssetUI();
 
 }
 
 
-/* ========================= */
-/* RESET SIGNAL GENERATION */
-/* ========================= */
+/* =========================================================
+   RESET SIGNAL GENERATION
+   ========================================================= */
 
 function resetSignalGeneration() {
 
@@ -2176,41 +2490,50 @@ function resetSignalGeneration() {
     lastProcessedGenerationMinute =
         null;
 
-    setGenerateButtonState(
-        "READY"
-    );
+
+    if (
+        currentSignal === "WAIT" &&
+        !signalExpiry
+    ) {
+
+        setGenerateButtonState(
+            "READY"
+        );
+
+    }
 
 }
 
 
-/* ========================= */
-/* MARKET TYPE */
-/* ========================= */
+/* =========================================================
+   RESET MARKET DATA
+   ========================================================= */
 
-function setMarketType(type) {
-
-    marketType = type;
+function resetMarketData() {
 
     priceHistory = [];
+
     lastPrice = null;
+
     lastCandleMinute = null;
 
     signalExpiry = null;
+
     lastSignalPrice = null;
+
     lastSignalTime = null;
 
     currentSignal = "WAIT";
 
-    /*
-     * Reset manual generation.
-     */
+    accuracySignal = null;
+
+    otcConfiguredSymbol = null;
+
+    activeRequestId++;
+
+
     resetSignalGeneration();
 
-    /*
-     * Reset accuracy memory when switching
-     * between REAL and OTC.
-     */
-    accuracySignal = null;
 
     if (countdownInterval) {
 
@@ -2218,103 +2541,11 @@ function setMarketType(type) {
             countdownInterval
         );
 
-        countdownInterval = null;
+        countdownInterval =
+            null;
 
     }
 
-    if (marketType === "OTC") {
-
-        otcMarketBtn?.classList.add("active");
-        otcMarketBtn?.classList.add("otc-active");
-
-        realMarketBtn?.classList.remove("active");
-
-        loadOTCAssets();
-
-        setText(
-            marketSub,
-            "● OTC MARKET • 1 MIN"
-        );
-
-        setText(
-            livePill,
-            "↗ OTC"
-        );
-
-        livePill?.classList.add("otc");
-
-        setText(
-            marketStatus,
-            "OTC WAITING"
-        );
-
-        setText(
-            currentPrice,
-            "OTC OFFLINE"
-        );
-
-        setText(
-            statusText,
-            "WAITING FOR FEED"
-        );
-
-        setText(
-            confidenceText,
-            "Waiting for OTC price"
-        );
-
-        setText(
-            reasonBox,
-            "Connecting to KURO OTC backend..."
-        );
-
-    } else {
-
-        realMarketBtn?.classList.add("active");
-
-        otcMarketBtn?.classList.remove("active");
-        otcMarketBtn?.classList.remove("otc-active");
-
-        loadRealAssets();
-
-        setText(
-            marketSub,
-            "● REAL MARKET • 1 MIN"
-        );
-
-        setText(
-            livePill,
-            "↗ LIVE"
-        );
-
-        livePill?.classList.remove("otc");
-
-        setText(
-            marketStatus,
-            "CONNECTING"
-        );
-
-        setText(
-            currentPrice,
-            "Loading..."
-        );
-
-        setText(
-            statusText,
-            "CONNECTING"
-        );
-
-        setText(
-            confidenceText,
-            "Waiting for market data"
-        );
-
-        setText(
-            reasonBox,
-            "Waiting for live market data..."
-        );
-
-    }
 
     setText(
         signalBox,
@@ -2326,9 +2557,29 @@ function setMarketType(type) {
         "--%"
     );
 
+    setText(
+        confidenceText,
+        "Waiting for market data..."
+    );
+
+
     if (confidenceFill) {
-        confidenceFill.style.width = "0%";
+
+        confidenceFill.style.width =
+            "0%";
+
     }
+
+
+    setText(
+        supportValue,
+        "--"
+    );
+
+    setText(
+        resistanceValue,
+        "--"
+    );
 
     setText(
         trendValue,
@@ -2350,30 +2601,173 @@ function setMarketType(type) {
         "--"
     );
 
-    updateAssetUI();
 
-    updatePrice();
+    setText(
+        countdownTimer,
+        "--"
+    );
+
+
+    applySignalStyle(
+        "WAIT"
+    );
 
 }
 
 
-/* ========================= */
-/* REAL PRICE */
-/* ========================= */
+/* =========================================================
+   MARKET TYPE
+   ========================================================= */
+
+function setMarketType(type) {
+
+    if (marketType === type &&
+        engineStarted) {
+
+        return;
+
+    }
+
+
+    marketType =
+        type;
+
+
+    resetMarketData();
+
+
+    if (retryTimer) {
+
+        clearTimeout(
+            retryTimer
+        );
+
+        retryTimer =
+            null;
+
+    }
+
+
+    retryCount = 0;
+
+
+    if (marketType === "OTC") {
+
+        otcMarketBtn?.classList.add(
+            "active"
+        );
+
+        otcMarketBtn?.classList.add(
+            "otc-active"
+        );
+
+        realMarketBtn?.classList.remove(
+            "active"
+        );
+
+
+        loadOTCAssets();
+
+
+        setText(
+            marketSub,
+            "● OTC MARKET • 1 MIN"
+        );
+
+
+        setText(
+            livePill,
+            "↗ OTC"
+        );
+
+
+        livePill?.classList.add(
+            "otc"
+        );
+
+
+        setConnectionState(
+            "CONNECTING"
+        );
+
+
+    } else {
+
+        realMarketBtn?.classList.add(
+            "active"
+        );
+
+
+        otcMarketBtn?.classList.remove(
+            "active"
+        );
+
+        otcMarketBtn?.classList.remove(
+            "otc-active"
+        );
+
+
+        loadRealAssets();
+
+
+        setText(
+            marketSub,
+            "● REAL MARKET • 1 MIN"
+        );
+
+
+        setText(
+            livePill,
+            "↗ LIVE"
+        );
+
+
+        livePill?.classList.remove(
+            "otc"
+        );
+
+
+        setConnectionState(
+            "CONNECTING"
+        );
+
+    }
+
+
+    updateAssetUI();
+
+
+    if (engineStarted) {
+
+        updatePrice();
+
+    }
+
+}
+
+
+/* =========================================================
+   REAL PRICE
+   ========================================================= */
 
 async function getRealPrice() {
 
     const asset =
         assetSelect.value;
 
+
     const symbol =
         symbols[asset];
 
+
     if (!symbol) {
+
         throw new Error(
             "Invalid real asset"
         );
+
     }
+
 
     const response =
         await fetch(
@@ -2385,40 +2779,51 @@ async function getRealPrice() {
             }
         );
 
+
     if (!response.ok) {
+
         throw new Error(
             "Real market request failed"
         );
+
     }
+
 
     const data =
         await response.json();
 
+
     const price =
         Number(data.mid);
 
+
     if (!Number.isFinite(price)) {
+
         throw new Error(
             "Invalid real price"
         );
+
     }
+
 
     return price;
 
 }
 
 
-/* ========================= */
-/* OTC PRICE */
-/* ========================= */
+/* =========================================================
+   OTC ASSET SWITCH
+   ========================================================= */
 
-async function getOTCPrice() {
+async function configureOTCAsset() {
 
     const asset =
         assetSelect.value;
 
+
     const symbol =
         otcSymbols[asset];
+
 
     if (!symbol) {
 
@@ -2429,8 +2834,26 @@ async function getOTCPrice() {
     }
 
 
-    try {
+    /*
+     * IMPORTANT:
+     *
+     * Do NOT call /set-asset every 5 seconds.
+     *
+     * Only configure when the asset actually
+     * changes.
+     */
 
+    if (
+        otcConfiguredSymbol ===
+        symbol
+    ) {
+
+        return true;
+
+    }
+
+
+    const response =
         await fetch(
             OTC_BACKEND +
             "/set-asset/" +
@@ -2440,11 +2863,42 @@ async function getOTCPrice() {
             }
         );
 
-    } catch (switchError) {
 
-        console.log(
-            "OTC STREAM SWITCH:",
-            switchError
+    if (!response.ok) {
+
+        throw new Error(
+            "OTC asset switch failed"
+        );
+
+    }
+
+
+    otcConfiguredSymbol =
+        symbol;
+
+
+    return true;
+
+}
+
+
+/* =========================================================
+   OTC PRICE
+   ========================================================= */
+
+async function getOTCPrice() {
+
+    await configureOTCAsset();
+
+
+    const symbol =
+        otcConfiguredSymbol;
+
+
+    if (!symbol) {
+
+        throw new Error(
+            "OTC symbol unavailable"
         );
 
     }
@@ -2502,21 +2956,91 @@ async function getOTCPrice() {
 }
 
 
-/* ========================= */
-/* MAIN UPDATE */
-/* ========================= */
+/* =========================================================
+   UPDATE MARKET UI
+   ========================================================= */
+
+function updateLivePriceUI(price) {
+
+    setText(
+        currentPrice,
+        formatPrice(price)
+    );
+
+
+    setConnectionState(
+        "LIVE"
+    );
+
+
+    /*
+     * Do not overwrite active signal state.
+     */
+
+    if (
+        currentSignal !== "WAIT" &&
+        signalExpiry &&
+        Date.now() < signalExpiry
+    ) {
+
+        return;
+
+    }
+
+
+    if (signalGenerationArmed) {
+
+        setText(
+            statusText,
+            marketType === "OTC"
+                ? "OTC SIGNALS GENERATING..."
+                : "SIGNALS GENERATING..."
+        );
+
+
+        setText(
+            confidenceText,
+            "Waiting for the next 1-Min candle"
+        );
+
+
+        setText(
+            reasonBox,
+            "Live market data is ready. Waiting for the next candle start."
+        );
+
+    }
+
+}
+
+
+/* =========================================================
+   MAIN UPDATE
+   ========================================================= */
 
 async function updatePrice() {
+
+    if (!engineStarted) {
+        return;
+    }
+
 
     if (loading) {
         return;
     }
 
+
+    const requestId =
+        ++activeRequestId;
+
+
     loading = true;
+
 
     try {
 
         let price;
+
 
         if (marketType === "OTC") {
 
@@ -2531,92 +3055,67 @@ async function updatePrice() {
         }
 
 
-        /* STORE */
+        /*
+         * Ignore old response if market/asset
+         * was changed while request was running.
+         */
+
+        if (
+            requestId !==
+            activeRequestId
+        ) {
+
+            return;
+
+        }
+
+
+        retryCount = 0;
+
 
         lastPrice =
             price;
 
+
         priceHistory.push({
+
             price: price,
             time: Date.now()
+
         });
 
-        if (priceHistory.length > 60) {
+
+        if (
+            priceHistory.length >
+            60
+        ) {
+
             priceHistory.shift();
+
         }
 
 
-        /* PRICE UI */
-
-        setText(
-            currentPrice,
-            formatPrice(price)
+        updateLivePriceUI(
+            price
         );
 
 
-        if (marketType === "OTC") {
-
-            setText(
-                marketStatus,
-                "OTC LIVE"
-            );
-
-            /*
-             * Do not overwrite
-             * SIGNALS GENERATING / RUNNING.
-             */
-            if (!signalGenerationArmed &&
-                currentSignal === "WAIT") {
-
-                setText(
-                    statusText,
-                    "OTC CONNECTED"
-                );
-
-            }
-
-        } else {
-
-            setText(
-                marketStatus,
-                "REAL MARKET"
-            );
-
-            /*
-             * Do not overwrite
-             * SIGNALS GENERATING / RUNNING.
-             */
-            if (!signalGenerationArmed &&
-                currentSignal === "WAIT") {
-
-                setText(
-                    statusText,
-                    "MARKET LIVE"
-                );
-
-            }
-
-        }
-
-
-        /* ANALYSIS */
-
         updateMarketLevels();
 
-        /*
-         * Evaluate the old CALL/PUT before
-         * checking the next candle.
-         */
-        evaluatePreviousSignal(price);
 
         /*
-         * NEW:
-         *
-         * No automatic signal generation here.
-         *
-         * Signal generation is controlled only
-         * by the ANALYZE ANOTHER CHART button.
+         * Evaluate previous CALL/PUT first.
          */
+
+        evaluatePreviousSignal(
+            price
+        );
+
+
+        /*
+         * Manual generation engine.
+         */
+
         processSignalGeneration();
 
     }
@@ -2630,69 +3129,24 @@ async function updatePrice() {
         );
 
 
-        if (marketType === "OTC") {
+        /*
+         * Do not show an error if another
+         * request has already replaced this one.
+         */
 
-            setText(
-                currentPrice,
-                "OTC WAITING"
-            );
+        if (
+            requestId !==
+            activeRequestId
+        ) {
 
-            setText(
-                marketStatus,
-                "OTC CONNECTING"
-            );
-
-            if (!signalGenerationArmed) {
-
-                setText(
-                    statusText,
-                    "WAITING FOR LIVE FEED"
-                );
-
-            }
-
-            setText(
-                confidenceText,
-                "Waiting for OTC live price"
-            );
-
-            setText(
-                reasonBox,
-                "Connecting to the selected OTC market..."
-            );
-
-        } else {
-
-            setText(
-                currentPrice,
-                "UNAVAILABLE"
-            );
-
-            setText(
-                marketStatus,
-                "MARKET OFFLINE"
-            );
-
-            if (!signalGenerationArmed) {
-
-                setText(
-                    statusText,
-                    "PRICE UNAVAILABLE"
-                );
-
-            }
-
-            setText(
-                confidenceText,
-                "Real market feed unavailable"
-            );
-
-            setText(
-                reasonBox,
-                "Unable to receive real market data."
-            );
+            return;
 
         }
+
+
+        handleMarketError(
+            error
+        );
 
     }
 
@@ -2705,30 +3159,140 @@ async function updatePrice() {
 }
 
 
-/* ========================= */
-/* PROCESS SIGNAL GENERATION */
-/* ========================= */
+/* =========================================================
+   ERROR / RETRY UX
+   ========================================================= */
 
-function processSignalGeneration() {
+function handleMarketError(error) {
+
+    console.log(
+        "KURO MARKET ERROR:",
+        error
+    );
+
+
+    retryCount++;
+
 
     /*
-     * Nothing happens automatically.
-     *
-     * User MUST click the button first.
+     * First few attempts:
+     * tell user that data is being received.
      */
-    if (!signalGenerationArmed) {
-        return;
+
+    if (retryCount <= 2) {
+
+        setConnectionState(
+            "WAITING"
+        );
+
+    } else {
+
+        setConnectionState(
+            "RECONNECTING"
+        );
+
     }
 
 
     /*
-     * Never generate another signal while
-     * a CALL/PUT is active.
+     * Do not disturb an active signal.
      */
+
     if (
         currentSignal !== "WAIT" &&
         signalExpiry &&
         Date.now() < signalExpiry
+    ) {
+
+        return;
+
+    }
+
+
+    /*
+     * Progressive retry.
+     *
+     * Maximum 8 seconds.
+     */
+
+    const retryDelay =
+        Math.min(
+            8000,
+            2000 +
+            (retryCount * 1000)
+        );
+
+
+    if (retryTimer) {
+
+        clearTimeout(
+            retryTimer
+        );
+
+    }
+
+
+    retryTimer =
+        setTimeout(
+            () => {
+
+                retryTimer =
+                    null;
+
+                updatePrice();
+
+            },
+            retryDelay
+        );
+
+}
+
+
+/* =========================================================
+   PROCESS SIGNAL GENERATION
+   ========================================================= */
+
+function processSignalGeneration() {
+
+    if (
+        !signalGenerationArmed
+    ) {
+
+        return;
+
+    }
+
+
+    /*
+     * No generation without live price.
+     */
+
+    if (
+        !Number.isFinite(lastPrice)
+    ) {
+
+        setText(
+            statusText,
+            marketType === "OTC"
+                ? "WAITING FOR OTC DATA"
+                : "WAITING FOR MARKET DATA"
+        );
+
+        return;
+
+    }
+
+
+    /*
+     * Never generate while another
+     * signal is active.
+     */
+
+    if (
+        currentSignal !== "WAIT" &&
+        signalExpiry &&
+        Date.now() <
+        signalExpiry
     ) {
 
         return;
@@ -2741,14 +3305,22 @@ function processSignalGeneration() {
 
 
     /*
-     * The button was clicked during this minute.
+     * User clicked during current minute.
      *
-     * Wait for the NEXT minute/candle.
+     * Therefore wait until next minute.
      */
+
     if (
         generationStartMinute ===
         currentMinute
     ) {
+
+        setText(
+            statusText,
+            marketType === "OTC"
+                ? "OTC WAITING FOR CANDLE START"
+                : "WAITING FOR CANDLE START"
+        );
 
         return;
 
@@ -2756,8 +3328,9 @@ function processSignalGeneration() {
 
 
     /*
-     * Same generation candle already processed.
+     * Prevent duplicate processing.
      */
+
     if (
         lastProcessedGenerationMinute ===
         currentMinute
@@ -2768,33 +3341,32 @@ function processSignalGeneration() {
     }
 
 
-    /*
-     * Mark this candle as processed before
-     * analysis so repeated 5-second refreshes
-     * cannot create duplicate signals.
-     */
     lastProcessedGenerationMinute =
         currentMinute;
 
 
     /*
-     * At the start of a new minute, analyze
-     * ONLY data from the completed previous
-     * minute.
+     * Exact start of current minute.
      */
-    const now =
-        Date.now();
 
-    const currentMinuteStart =
+    const minuteStart =
         new Date();
 
-    currentMinuteStart.setSeconds(0, 0);
+    minuteStart.setSeconds(
+        0,
+        0
+    );
+
 
     const candleStartTime =
-        currentMinuteStart.getTime();
+        minuteStart.getTime();
 
 
-    const completedMinutePrices =
+    /*
+     * Only completed data.
+     */
+
+    const completedPrices =
         priceHistory.filter(
             item =>
                 item.time <
@@ -2802,27 +3374,26 @@ function processSignalGeneration() {
         );
 
 
-    /*
-     * Need the same minimum data requirement
-     * as the original engine.
-     */
     if (
-        completedMinutePrices.length <
+        completedPrices.length <
         12
     ) {
 
         /*
-         * Allow another attempt on the next
-         * candle because this candle did not
-         * have enough completed data.
+         * Not enough completed data.
+         *
+         * Keep generation armed.
          */
+
         lastProcessedGenerationMinute =
             null;
+
 
         setText(
             signalBox,
             "WAIT"
         );
+
 
         setText(
             statusText,
@@ -2831,15 +3402,18 @@ function processSignalGeneration() {
                 : "COLLECTING 1-MIN DATA"
         );
 
+
         setText(
             confidenceText,
-            "Waiting for completed 1-Min candle"
+            "Building completed 1-Min market data"
         );
+
 
         setText(
             reasonBox,
-            "Not enough completed 1-minute market data yet."
+            "Not enough completed market data yet. KURO AI will continue automatically."
         );
+
 
         return;
 
@@ -2847,41 +3421,56 @@ function processSignalGeneration() {
 
 
     /*
-     * Generate ONLY at candle start.
+     * Analyze at candle START.
      */
+
     analyzeMarket(
         true,
-        completedMinutePrices
+        completedPrices
     );
 
 }
 
 
-/* ========================= */
-/* MARKET LEVELS */
-/* ========================= */
+/* =========================================================
+   MARKET LEVELS
+   ========================================================= */
 
 function updateMarketLevels() {
 
-    if (priceHistory.length < 3) {
+    if (
+        priceHistory.length <
+        3
+    ) {
+
         return;
+
     }
+
 
     const prices =
         priceHistory.map(
             x => x.price
         );
 
+
     const low =
-        Math.min(...prices);
+        Math.min(
+            ...prices
+        );
+
 
     const high =
-        Math.max(...prices);
+        Math.max(
+            ...prices
+        );
+
 
     setText(
         supportValue,
         formatPrice(low)
     );
+
 
     setText(
         resistanceValue,
@@ -2891,36 +3480,25 @@ function updateMarketLevels() {
 }
 
 
-/* ========================= */
-/* SIGNAL ANALYSIS */
-/* ========================= */
+/* =========================================================
+   SIGNAL ANALYSIS
+   ========================================================= */
 
 function analyzeMarket(
     manual = false,
     suppliedHistory = null
 ) {
 
-    /*
-     * This function is now only used for
-     * a user-authorized generation cycle.
-     *
-     * manual=true means the candle-start
-     * generation process was armed by the user.
-     */
-
     if (!manual) {
         return;
     }
 
 
-    /*
-     * Never create a signal while another
-     * CALL/PUT is active.
-     */
     if (
         currentSignal !== "WAIT" &&
         signalExpiry &&
-        Date.now() < signalExpiry
+        Date.now() <
+        signalExpiry
     ) {
 
         return;
@@ -2935,20 +3513,9 @@ function analyzeMarket(
 
     if (
         !sourceHistory ||
-        sourceHistory.length < 12
+        sourceHistory.length <
+        12
     ) {
-
-        setText(
-            confidenceText,
-            "Collecting 1-Min Data"
-        );
-
-        setText(
-            statusText,
-            marketType === "OTC"
-                ? "OTC ANALYZING"
-                : "COLLECTING DATA"
-        );
 
         return;
 
@@ -2961,10 +3528,6 @@ function analyzeMarket(
         );
 
 
-    /*
-     * Analyze the last 12 samples from
-     * the COMPLETED candle.
-     */
     const c =
         prices.slice(-12);
 
@@ -2985,8 +3548,10 @@ function analyzeMarket(
     const candleMove =
         ((close - open) / open) * 100;
 
+
     const range =
         ((high - low) / open) * 100;
+
 
     const lastMove =
         c[c.length - 1] -
@@ -2996,22 +3561,34 @@ function analyzeMarket(
     let score = 0;
 
 
-    if (candleMove > 0.005) {
+    if (
+        candleMove >
+        0.005
+    ) {
 
         score += 2;
 
     }
 
-    else if (candleMove < -0.005) {
+    else if (
+        candleMove <
+        -0.005
+    ) {
 
         score -= 2;
 
     }
 
 
-    if (range > 0.01) {
+    if (
+        range >
+        0.01
+    ) {
 
-        if (close > open) {
+        if (
+            close >
+            open
+        ) {
 
             score += 1;
 
@@ -3024,65 +3601,93 @@ function analyzeMarket(
     }
 
 
-    if (lastMove > 0) {
+    if (
+        lastMove >
+        0
+    ) {
 
         score += 1;
 
     }
 
-    else if (lastMove < 0) {
+    else if (
+        lastMove <
+        0
+    ) {
 
         score -= 1;
 
     }
 
 
-    let signal = "WAIT";
-    let conf = 50;
+    let signal =
+        "WAIT";
+
+
+    let conf =
+        50;
+
 
     let status =
         marketType === "OTC"
             ? "OTC Market Unclear"
             : "Market Unclear";
 
+
     let reason =
         "No strong directional confirmation.";
 
 
-    if (score >= 3) {
+    if (
+        score >=
+        3
+    ) {
 
-        signal = "CALL";
+        signal =
+            "CALL";
+
 
         conf =
             Math.min(
                 95,
-                65 + score * 5
+                65 +
+                score * 5
             );
+
 
         status =
             marketType === "OTC"
                 ? "OTC Bullish"
                 : "1-Min Bullish";
 
+
         reason =
             "Short-term bullish momentum detected.";
 
     }
 
-    else if (score <= -3) {
+    else if (
+        score <=
+        -3
+    ) {
 
-        signal = "PUT";
+        signal =
+            "PUT";
+
 
         conf =
             Math.min(
                 95,
-                65 + Math.abs(score) * 5
+                65 +
+                Math.abs(score) * 5
             );
+
 
         status =
             marketType === "OTC"
                 ? "OTC Bearish"
                 : "1-Min Bearish";
+
 
         reason =
             "Short-term bearish momentum detected.";
@@ -3091,22 +3696,23 @@ function analyzeMarket(
 
 
     /*
-     * WAIT:
+     * WAIT result:
      *
-     * Keep the generation cycle active.
-     * The user does NOT need to click again.
+     * Keep the user request armed.
      *
-     * The next completed candle will be
-     * analyzed automatically because the
-     * current generation request is still armed.
+     * Next candle will be analyzed.
      */
 
-    if (signal === "WAIT") {
+    if (
+        signal ===
+        "WAIT"
+    ) {
 
         setText(
             signalBox,
             "WAIT"
         );
+
 
         setText(
             confidenceText,
@@ -3115,18 +3721,24 @@ function analyzeMarket(
             "%"
         );
 
+
         setText(
             confidence,
             conf +
             "%"
         );
 
-        if (confidenceFill) {
+
+        if (
+            confidenceFill
+        ) {
 
             confidenceFill.style.width =
-                conf + "%";
+                conf +
+                "%";
 
         }
+
 
         setText(
             statusText,
@@ -3135,15 +3747,17 @@ function analyzeMarket(
                 : "WAITING FOR SIGNAL"
         );
 
+
         setText(
             reasonBox,
             reason
         );
 
 
-        /* TREND */
-
-        if (score > 0) {
+        if (
+            score >
+            0
+        ) {
 
             setText(
                 trendValue,
@@ -3157,7 +3771,10 @@ function analyzeMarket(
 
         }
 
-        else if (score < 0) {
+        else if (
+            score <
+            0
+        ) {
 
             setText(
                 trendValue,
@@ -3186,9 +3803,10 @@ function analyzeMarket(
         }
 
 
-        /* PATTERN */
-
-        if (candleMove > 0.01) {
+        if (
+            candleMove >
+            0.01
+        ) {
 
             setText(
                 patternValue,
@@ -3197,7 +3815,10 @@ function analyzeMarket(
 
         }
 
-        else if (candleMove < -0.01) {
+        else if (
+            candleMove <
+            -0.01
+        ) {
 
             setText(
                 patternValue,
@@ -3216,12 +3837,16 @@ function analyzeMarket(
         }
 
 
-        /* TRAP RISK */
-
         const absoluteMove =
-            Math.abs(candleMove);
+            Math.abs(
+                candleMove
+            );
 
-        if (absoluteMove > 0.05) {
+
+        if (
+            absoluteMove >
+            0.05
+        ) {
 
             setText(
                 trapRisk,
@@ -3230,7 +3855,10 @@ function analyzeMarket(
 
         }
 
-        else if (absoluteMove > 0.02) {
+        else if (
+            absoluteMove >
+            0.02
+        ) {
 
             setText(
                 trapRisk,
@@ -3253,28 +3881,26 @@ function analyzeMarket(
             "WAIT"
         );
 
-        /*
-         * IMPORTANT:
-         *
-         * Keep SIGNALS GENERATING.
-         */
+
         setGenerateButtonState(
             "GENERATING"
         );
+
 
         return;
 
     }
 
 
-    /* ========================= */
-    /* SIGNAL UI */
-    /* ========================= */
+    /*
+     * SIGNAL UI
+     */
 
     setText(
         signalBox,
         signal
     );
+
 
     setText(
         confidenceText,
@@ -3283,23 +3909,30 @@ function analyzeMarket(
         "%"
     );
 
+
     setText(
         confidence,
         conf +
         "%"
     );
 
-    if (confidenceFill) {
+
+    if (
+        confidenceFill
+    ) {
 
         confidenceFill.style.width =
-            conf + "%";
+            conf +
+            "%";
 
     }
+
 
     setText(
         statusText,
         status
     );
+
 
     setText(
         reasonBox,
@@ -3307,11 +3940,10 @@ function analyzeMarket(
     );
 
 
-    /* ========================= */
-    /* TREND */
-    /* ========================= */
-
-    if (score > 0) {
+    if (
+        score >
+        0
+    ) {
 
         setText(
             trendValue,
@@ -3325,7 +3957,10 @@ function analyzeMarket(
 
     }
 
-    else if (score < 0) {
+    else if (
+        score <
+        0
+    ) {
 
         setText(
             trendValue,
@@ -3354,11 +3989,10 @@ function analyzeMarket(
     }
 
 
-    /* ========================= */
-    /* PATTERN */
-    /* ========================= */
-
-    if (candleMove > 0.01) {
+    if (
+        candleMove >
+        0.01
+    ) {
 
         setText(
             patternValue,
@@ -3367,7 +4001,10 @@ function analyzeMarket(
 
     }
 
-    else if (candleMove < -0.01) {
+    else if (
+        candleMove <
+        -0.01
+    ) {
 
         setText(
             patternValue,
@@ -3386,14 +4023,16 @@ function analyzeMarket(
     }
 
 
-    /* ========================= */
-    /* TRAP RISK */
-    /* ========================= */
-
     const absoluteMove =
-        Math.abs(candleMove);
+        Math.abs(
+            candleMove
+        );
 
-    if (absoluteMove > 0.05) {
+
+    if (
+        absoluteMove >
+        0.05
+    ) {
 
         setText(
             trapRisk,
@@ -3402,7 +4041,10 @@ function analyzeMarket(
 
     }
 
-    else if (absoluteMove > 0.02) {
+    else if (
+        absoluteMove >
+        0.02
+    ) {
 
         setText(
             trapRisk,
@@ -3426,10 +4068,6 @@ function analyzeMarket(
     );
 
 
-    /* ========================= */
-    /* CREATE NEW SIGNAL */
-    /* ========================= */
-
     createSignal(
         signal,
         conf,
@@ -3437,25 +4075,17 @@ function analyzeMarket(
     );
 
 
-    /*
-     * Candle has successfully generated
-     * a signal.
-     */
     lastCandleMinute =
         getMinuteKey();
 
 
-    /*
-     * Generation request is now consumed.
-     *
-     * The next signal requires another
-     * button click.
-     */
     signalGenerationArmed =
         false;
 
+
     generationStartMinute =
         null;
+
 
     setGenerateButtonState(
         "RUNNING"
@@ -3464,9 +4094,9 @@ function analyzeMarket(
 }
 
 
-/* ========================= */
-/* CREATE SIGNAL */
-/* ========================= */
+/* =========================================================
+   CREATE SIGNAL
+   ========================================================= */
 
 function createSignal(
     signal,
@@ -3477,30 +4107,29 @@ function createSignal(
     currentSignal =
         signal;
 
-    /*
-     * Save original CALL/PUT separately.
-     *
-     * This value stays unchanged when
-     * countdown changes currentSignal
-     * to WAIT after 60 seconds.
-     */
+
     accuracySignal =
         signal;
+
 
     lastSignalPrice =
         lastPrice;
 
+
     lastSignalTime =
         Date.now();
 
+
     signalExpiry =
-        Date.now() + 60000;
+        Date.now() +
+        60000;
 
 
     setText(
         signalBox,
         signal
     );
+
 
     setText(
         confidenceText,
@@ -3509,18 +4138,24 @@ function createSignal(
         "%"
     );
 
+
     setText(
         confidence,
         conf +
         "%"
     );
 
-    if (confidenceFill) {
+
+    if (
+        confidenceFill
+    ) {
 
         confidenceFill.style.width =
-            conf + "%";
+            conf +
+            "%";
 
     }
+
 
     setText(
         reasonBox,
@@ -3552,9 +4187,9 @@ function createSignal(
 }
 
 
-/* ========================= */
-/* SIGNAL STYLE */
-/* ========================= */
+/* =========================================================
+   SIGNAL STYLE
+   ========================================================= */
 
 function applySignalStyle(signal) {
 
@@ -3563,28 +4198,36 @@ function applySignalStyle(signal) {
             "signalPanel"
         );
 
+
     if (!panel) {
         return;
     }
 
 
-    if (signal === "CALL") {
+    const circle =
+        document.getElementById(
+            "signalCircle"
+        );
+
+
+    if (
+        signal ===
+        "CALL"
+    ) {
 
         panel.style.borderColor =
             "rgba(0,255,120,.55)";
 
+
         panel.style.background =
             "linear-gradient(115deg,#071f18,#07131a 48%,#040b11)";
 
-        const circle =
-            document.getElementById(
-                "signalCircle"
-            );
 
         if (circle) {
 
             circle.textContent =
                 "↑";
+
 
             circle.style.background =
                 "radial-gradient(circle at 40% 30%,#7cff48,#078d31 62%,#045c25)";
@@ -3593,23 +4236,24 @@ function applySignalStyle(signal) {
 
     }
 
-    else if (signal === "PUT") {
+    else if (
+        signal ===
+        "PUT"
+    ) {
 
         panel.style.borderColor =
             "rgba(255,55,75,.55)";
 
+
         panel.style.background =
             "linear-gradient(115deg,#210c12,#120a10 48%,#040b11)";
 
-        const circle =
-            document.getElementById(
-                "signalCircle"
-            );
 
         if (circle) {
 
             circle.textContent =
                 "↓";
+
 
             circle.style.background =
                 "radial-gradient(circle at 40% 30%,#ff5c69,#a20f22 62%,#610715)";
@@ -3623,18 +4267,16 @@ function applySignalStyle(signal) {
         panel.style.borderColor =
             "rgba(0,180,255,.35)";
 
+
         panel.style.background =
             "linear-gradient(115deg,#071822,#07131a 48%,#040b11)";
 
-        const circle =
-            document.getElementById(
-                "signalCircle"
-            );
 
         if (circle) {
 
             circle.textContent =
                 "•";
+
 
             circle.style.background =
                 "radial-gradient(circle at 40% 30%,#53cfff,#12669a 62%,#073b5c)";
@@ -3646,20 +4288,56 @@ function applySignalStyle(signal) {
 }
 
 
-/* ========================= */
-/* GENERATE BUTTON */
-/* ========================= */
+/* =========================================================
+   GENERATE BUTTON
+   ========================================================= */
 
 function generateSignal() {
 
     /*
-     * Do not allow another request while
-     * a signal is running.
+     * No market data = do not arm signal.
      */
+
+    if (
+        !Number.isFinite(
+            lastPrice
+        )
+    ) {
+
+        setText(
+            statusText,
+            marketType === "OTC"
+                ? "WAITING FOR OTC DATA"
+                : "WAITING FOR MARKET DATA"
+        );
+
+
+        setText(
+            confidenceText,
+            "Live price is required before analysis."
+        );
+
+
+        setText(
+            reasonBox,
+            "Please wait until the market status becomes LIVE."
+        );
+
+
+        return;
+
+    }
+
+
+    /*
+     * Active signal.
+     */
+
     if (
         currentSignal !== "WAIT" &&
         signalExpiry &&
-        Date.now() < signalExpiry
+        Date.now() <
+        signalExpiry
     ) {
 
         return;
@@ -3668,24 +4346,12 @@ function generateSignal() {
 
 
     /*
-     * Already waiting for the next candle.
+     * Already armed.
      */
-    if (signalGenerationArmed) {
-        return;
-    }
 
-
-    /*
-     * Need live price before starting.
-     */
-    if (!Number.isFinite(lastPrice)) {
-
-        setText(
-            statusText,
-            marketType === "OTC"
-                ? "OTC DATA WAITING"
-                : "PRICE WAITING"
-        );
+    if (
+        signalGenerationArmed
+    ) {
 
         return;
 
@@ -3693,19 +4359,13 @@ function generateSignal() {
 
 
     /*
-     * ARM THE GENERATION ENGINE.
+     * ARM.
      */
+
     signalGenerationArmed =
         true;
 
 
-    /*
-     * Save the current minute.
-     *
-     * This guarantees that the signal
-     * cannot be generated in the middle
-     * of the current candle.
-     */
     generationStartMinute =
         getMinuteKey();
 
@@ -3714,9 +4374,6 @@ function generateSignal() {
         null;
 
 
-    /*
-     * Button immediately changes.
-     */
     setGenerateButtonState(
         "GENERATING"
     );
@@ -3727,6 +4384,7 @@ function generateSignal() {
         "WAIT"
     );
 
+
     setText(
         statusText,
         marketType === "OTC"
@@ -3734,22 +4392,24 @@ function generateSignal() {
             : "SIGNALS GENERATING..."
     );
 
+
     setText(
         confidenceText,
         "Waiting for next 1-Min candle"
     );
 
+
     setText(
         reasonBox,
-        "Signal generation armed. Waiting for the next candle start."
+        "Analysis is armed. KURO AI will generate at the next candle start."
     );
 
 }
 
 
-/* ========================= */
-/* COUNTDOWN */
-/* ========================= */
+/* =========================================================
+   COUNTDOWN
+   ========================================================= */
 
 function startCountdown() {
 
@@ -3768,140 +4428,151 @@ function startCountdown() {
 
 
     countdownInterval =
-        setInterval(() => {
+        setInterval(
+            () => {
 
-            if (!signalExpiry) {
+                if (
+                    !signalExpiry
+                ) {
+
+                    setText(
+                        countdownTimer,
+                        "TIME LEFT: --:--"
+                    );
+
+                    return;
+
+                }
+
+
+                const remaining =
+                    signalExpiry -
+                    Date.now();
+
+
+                if (
+                    remaining <=
+                    0
+                ) {
+
+                    clearInterval(
+                        countdownInterval
+                    );
+
+
+                    countdownInterval =
+                        null;
+
+
+                    signalExpiry =
+                        null;
+
+
+                    currentSignal =
+                        "WAIT";
+
+
+                    setText(
+                        countdownTimer,
+                        "TIME LEFT: 00:00"
+                    );
+
+
+                    setText(
+                        signalBox,
+                        "WAIT"
+                    );
+
+
+                    setText(
+                        statusText,
+                        "SIGNAL EXPIRED"
+                    );
+
+
+                    setText(
+                        confidenceText,
+                        "Ready for next analysis"
+                    );
+
+
+                    setText(
+                        reasonBox,
+                        "1-minute signal completed. Analyze another chart for the next signal."
+                    );
+
+
+                    applySignalStyle(
+                        "WAIT"
+                    );
+
+
+                    setGenerateButtonState(
+                        "READY"
+                    );
+
+
+                    return;
+
+                }
+
+
+                const totalSeconds =
+                    Math.floor(
+                        remaining /
+                        1000
+                    );
+
+
+                const minutes =
+                    Math.floor(
+                        totalSeconds /
+                        60
+                    );
+
+
+                const seconds =
+                    totalSeconds %
+                    60;
+
 
                 setText(
                     countdownTimer,
-                    "TIME LEFT: --:--"
+                    "TIME LEFT: " +
+                    String(
+                        minutes
+                    ).padStart(
+                        2,
+                        "0"
+                    ) +
+                    ":" +
+                    String(
+                        seconds
+                    ).padStart(
+                        2,
+                        "0"
+                    )
                 );
 
-                return;
-
-            }
-
-
-            const remaining =
-                signalExpiry -
-                Date.now();
-
-
-            if (remaining <= 0) {
-
-                clearInterval(
-                    countdownInterval
-                );
-
-                countdownInterval =
-                    null;
-
-                signalExpiry =
-                    null;
-
-
-                /*
-                 * Display becomes WAIT after
-                 * expiry.
-                 *
-                 * accuracySignal is NOT changed.
-                 */
-                currentSignal =
-                    "WAIT";
-
-
-                setText(
-                    countdownTimer,
-                    "TIME LEFT: 00:00"
-                );
-
-                setText(
-                    signalBox,
-                    "WAIT"
-                );
-
-                setText(
-                    statusText,
-                    "SIGNAL EXPIRED"
-                );
-
-                setText(
-                    confidenceText,
-                    "Ready for next analysis"
-                );
-
-                setText(
-                    reasonBox,
-                    "1-minute signal completed. Analyze another chart for the next signal."
-                );
-
-                applySignalStyle(
-                    "WAIT"
-                );
-
-
-                /*
-                 * IMPORTANT:
-                 *
-                 * User must click again.
-                 * No automatic signal is allowed.
-                 */
-                setGenerateButtonState(
-                    "READY"
-                );
-
-                return;
-
-            }
-
-
-            const totalSeconds =
-                Math.floor(
-                    remaining / 1000
-                );
-
-            const minutes =
-                Math.floor(
-                    totalSeconds / 60
-                );
-
-            const seconds =
-                totalSeconds % 60;
-
-
-            setText(
-                countdownTimer,
-                "TIME LEFT: " +
-                String(minutes).padStart(2, "0") +
-                ":" +
-                String(seconds).padStart(2, "0")
-            );
-
-        }, 500);
+            },
+            500
+        );
 
 }
 
 
-/* ========================= */
-/* ACCURACY */
-/* ========================= */
+/* =========================================================
+   ACCURACY
+   ========================================================= */
 
 function evaluatePreviousSignal(
     currentPriceValue
 ) {
 
-    /*
-     * Do NOT use currentSignal here.
-     *
-     * currentSignal becomes WAIT when the
-     * countdown expires.
-     *
-     * accuracySignal keeps the original
-     * CALL / PUT until evaluation is done.
-     */
-
     if (
-        !Number.isFinite(lastSignalPrice) ||
+        !Number.isFinite(
+            lastSignalPrice
+        ) ||
         !lastSignalTime ||
         !accuracySignal
     ) {
@@ -3916,7 +4587,10 @@ function evaluatePreviousSignal(
         lastSignalTime;
 
 
-    if (elapsed < 60000) {
+    if (
+        elapsed <
+        60000
+    ) {
 
         return;
 
@@ -3927,16 +4601,18 @@ function evaluatePreviousSignal(
         "DRAW";
 
 
-    /* CALL */
-
-    if (accuracySignal === "CALL") {
+    if (
+        accuracySignal ===
+        "CALL"
+    ) {
 
         if (
             currentPriceValue >
             lastSignalPrice
         ) {
 
-            result = "WIN";
+            result =
+                "WIN";
 
         }
 
@@ -3945,23 +4621,26 @@ function evaluatePreviousSignal(
             lastSignalPrice
         ) {
 
-            result = "LOSS";
+            result =
+                "LOSS";
 
         }
 
     }
 
 
-    /* PUT */
-
-    else if (accuracySignal === "PUT") {
+    else if (
+        accuracySignal ===
+        "PUT"
+    ) {
 
         if (
             currentPriceValue <
             lastSignalPrice
         ) {
 
-            result = "WIN";
+            result =
+                "WIN";
 
         }
 
@@ -3970,22 +4649,27 @@ function evaluatePreviousSignal(
             lastSignalPrice
         ) {
 
-            result = "LOSS";
+            result =
+                "LOSS";
 
         }
 
     }
 
 
-    /* SAVE RESULT */
-
-    if (result === "WIN") {
+    if (
+        result ===
+        "WIN"
+    ) {
 
         totalWins++;
 
     }
 
-    else if (result === "LOSS") {
+    else if (
+        result ===
+        "LOSS"
+    ) {
 
         totalLosses++;
 
@@ -4001,14 +4685,13 @@ function evaluatePreviousSignal(
     updateAccuracy();
 
 
-    /*
-     * Clear only after evaluation.
-     */
     accuracySignal =
         null;
 
+
     lastSignalTime =
         null;
+
 
     lastSignalPrice =
         null;
@@ -4016,9 +4699,9 @@ function evaluatePreviousSignal(
 }
 
 
-/* ========================= */
-/* ACCURACY UI */
-/* ========================= */
+/* =========================================================
+   ACCURACY UI
+   ========================================================= */
 
 function updateAccuracy() {
 
@@ -4026,10 +4709,16 @@ function updateAccuracy() {
         totalWins +
         totalLosses;
 
+
     const accuracyPercent =
-        total > 0
+        total >
+        0
             ? Math.round(
-                (totalWins / total) * 100
+                (
+                    totalWins /
+                    total
+                ) *
+                100
             )
             : 0;
 
@@ -4039,27 +4728,31 @@ function updateAccuracy() {
         totalWins
     );
 
+
     setText(
         lossesCount,
         totalLosses
     );
+
 
     setText(
         drawsCount,
         totalDraws
     );
 
+
     setText(
         accuracyValue,
-        accuracyPercent + "%"
+        accuracyPercent +
+        "%"
     );
 
 }
 
 
-/* ========================= */
-/* RECENT SIGNALS */
-/* ========================= */
+/* =========================================================
+   RECENT SIGNALS
+   ========================================================= */
 
 function addRecentSignal(
     signal,
@@ -4076,7 +4769,8 @@ function addRecentSignal(
         "No signals yet"
     ) {
 
-        recentSignals.innerHTML = "";
+        recentSignals.innerHTML =
+            "";
 
     }
 
@@ -4084,13 +4778,19 @@ function addRecentSignal(
     const now =
         new Date();
 
+
     const time =
         now.toLocaleTimeString(
             [],
             {
-                hour: "2-digit",
-                minute: "2-digit",
-                second: "2-digit"
+                hour:
+                    "2-digit",
+
+                minute:
+                    "2-digit",
+
+                second:
+                    "2-digit"
             }
         );
 
@@ -4099,6 +4799,7 @@ function addRecentSignal(
         document.createElement(
             "div"
         );
+
 
     item.className =
         "history-item";
@@ -4126,7 +4827,8 @@ function addRecentSignal(
 
 
     while (
-        recentSignals.children.length > 10
+        recentSignals.children.length >
+        10
     ) {
 
         recentSignals.lastElementChild.remove();
@@ -4136,56 +4838,29 @@ function addRecentSignal(
 }
 
 
-/* ========================= */
-/* ASSET CHANGE */
-/* ========================= */
+/* =========================================================
+   ASSET CHANGE
+   ========================================================= */
 
 if (assetSelect) {
 
     assetSelect.addEventListener(
         "change",
-        () => {
+        async () => {
 
-            priceHistory = [];
-
-            lastPrice = null;
-
-            lastCandleMinute = null;
-
-            signalExpiry = null;
-
-            lastSignalPrice = null;
-
-            lastSignalTime = null;
-
-            currentSignal =
-                "WAIT";
+            resetMarketData();
 
 
-            /*
-             * Reset generation cycle.
-             *
-             * User must click the button again
-             * after changing the asset.
-             */
-            resetSignalGeneration();
+            retryCount = 0;
 
 
-            /*
-             * Forget the old signal when changing
-             * the selected asset.
-             */
-            accuracySignal =
-                null;
+            if (retryTimer) {
 
-
-            if (countdownInterval) {
-
-                clearInterval(
-                    countdownInterval
+                clearTimeout(
+                    retryTimer
                 );
 
-                countdownInterval =
+                retryTimer =
                     null;
 
             }
@@ -4193,35 +4868,48 @@ if (assetSelect) {
 
             setText(
                 currentPrice,
-                "--"
+                "CONNECTING..."
             );
+
 
             setText(
                 signalBox,
                 "WAIT"
             );
 
+
             setText(
                 statusText,
-                "WAITING FOR ANALYSIS"
+                "CONNECTING TO MARKET"
             );
+
 
             setText(
                 confidenceText,
                 marketType === "OTC"
-                    ? "Connecting selected OTC asset"
-                    : "Waiting for market data"
+                    ? "Connecting selected OTC asset..."
+                    : "Connecting selected market..."
             );
+
 
             setText(
                 confidence,
                 "--%"
             );
 
+
             if (confidenceFill) {
+
                 confidenceFill.style.width =
                     "0%";
+
             }
+
+
+            setText(
+                reasonBox,
+                "Switching to the selected asset..."
+            );
 
 
             updateAssetUI();
@@ -4229,40 +4917,10 @@ if (assetSelect) {
 
             /*
              * OTC:
-             * Immediately tell backend to switch
-             * to the newly selected asset.
+             *
+             * configureOTCAsset() will call
+             * /set-asset only once.
              */
-
-            if (marketType === "OTC") {
-
-                const symbol =
-                    otcSymbols[
-                        assetSelect.value
-                    ];
-
-                if (symbol) {
-
-                    fetch(
-                        OTC_BACKEND +
-                        "/set-asset/" +
-                        encodeURIComponent(symbol),
-                        {
-                            cache: "no-store"
-                        }
-                    )
-                    .then(() => {
-                        updatePrice();
-                    })
-                    .catch(() => {
-                        updatePrice();
-                    });
-
-                    return;
-
-                }
-
-            }
-
 
             updatePrice();
 
@@ -4272,9 +4930,9 @@ if (assetSelect) {
 }
 
 
-/* ========================= */
-/* GENERATE BUTTON CLICK */
-/* ========================= */
+/* =========================================================
+   GENERATE BUTTON
+   ========================================================= */
 
 if (generateBtn) {
 
@@ -4286,15 +4944,17 @@ if (generateBtn) {
 }
 
 
-/* ========================= */
-/* MARKET BUTTONS */
-/* ========================= */
+/* =========================================================
+   MARKET BUTTONS
+   ========================================================= */
 
 realMarketBtn?.addEventListener(
     "click",
     () => {
 
-        setMarketType("REAL");
+        setMarketType(
+            "REAL"
+        );
 
     }
 );
@@ -4304,76 +4964,184 @@ otcMarketBtn?.addEventListener(
     "click",
     () => {
 
-        setMarketType("OTC");
+        setMarketType(
+            "OTC"
+        );
 
     }
 );
 
 
-/* ========================= */
-/* ACCESS KEY */
-/* ========================= */
+/* =========================================================
+   ACCESS KEY
+   ========================================================= */
 
 function unlockKURO() {
 
-    const input =
-        document.getElementById(
-            "accessKey"
-        );
+    if (!keyInput) {
+        return;
+    }
 
-    const screen =
-        document.getElementById(
-            "keyScreen"
-        );
 
-    const error =
-        document.getElementById(
-            "keyError"
-        );
+    const value =
+        keyInput.value.trim();
 
+
+    /*
+     * Invalid key.
+     */
 
     if (
-        input &&
-        input.value ===
+        value !==
         KURO_ACCESS_KEY
     ) {
 
-        if (screen) {
-            screen.style.display =
-                "none";
-        }
+        if (keyError) {
 
-        if (error) {
-            error.textContent = "";
-        }
-
-    } else {
-
-        if (error) {
-
-            error.textContent =
+            keyError.textContent =
                 "Invalid access key";
 
         }
 
+
+        keyInput.classList.add(
+            "connection-pulse"
+        );
+
+
+        setTimeout(
+            () => {
+
+                keyInput.classList.remove(
+                    "connection-pulse"
+                );
+
+            },
+            700
+        );
+
+
+        return;
+
     }
+
+
+    /*
+     * Correct key.
+     */
+
+    if (keyError) {
+
+        keyError.textContent =
+            "";
+
+    }
+
+
+    if (unlockButton) {
+
+        unlockButton.disabled =
+            true;
+
+        unlockButton.textContent =
+            "CONNECTING...";
+
+    }
+
+
+    /*
+     * Hide key screen immediately.
+     *
+     * The dashboard can render while
+     * market connection starts.
+     */
+
+    if (keyScreen) {
+
+        keyScreen.style.display =
+            "none";
+
+    }
+
+
+    engineStarted =
+        true;
+
+
+    /*
+     * Start clean connection.
+     */
+
+    resetMarketData();
+
+
+    setConnectionState(
+        "CONNECTING"
+    );
+
+
+    setGenerateButtonState(
+        "DISABLED"
+    );
+
+
+    /*
+     * Start first market request immediately.
+     */
+
+    updatePrice();
 
 }
 
 
-/* ========================= */
-/* AUTO REFRESH */
-/* ========================= */
+/* =========================================================
+   ENTER KEY SUPPORT
+   ========================================================= */
+
+if (keyInput) {
+
+    keyInput.addEventListener(
+        "keydown",
+        event => {
+
+            if (
+                event.key ===
+                "Enter"
+            ) {
+
+                unlockKURO();
+
+            }
+
+        }
+    );
+
+}
+
+
+/* =========================================================
+   AUTO REFRESH
+   ========================================================= */
 
 setInterval(
-    updatePrice,
-    5000
+    () => {
+
+        if (
+            engineStarted
+        ) {
+
+            updatePrice();
+
+        }
+
+    },
+    PRICE_REFRESH_MS
 );
 
 
-/* ========================= */
-/* INITIAL UI */
-/* ========================= */
+/* =========================================================
+   INITIAL UI
+   ========================================================= */
 
 loadRealAssets();
 
@@ -4381,14 +5149,39 @@ updateAssetUI();
 
 updateAccuracy();
 
-resetSignalGeneration();
+setGenerateButtonState(
+    "DISABLED"
+);
 
-updatePrice();
+setText(
+    currentPrice,
+    "--"
+);
+
+setText(
+    marketStatus,
+    "LOCKED"
+);
+
+setText(
+    statusText,
+    "ENTER ACCESS KEY"
+);
+
+setText(
+    confidenceText,
+    "Unlock KURO AI to connect"
+);
+
+setText(
+    reasonBox,
+    "Your market connection will start immediately after unlock."
+);
 
 
-/* ========================= */
-/* GLOBAL FUNCTIONS */
-/* ========================= */
+/* =========================================================
+   GLOBAL FUNCTIONS
+   ========================================================= */
 
 window.generateSignal =
     generateSignal;
