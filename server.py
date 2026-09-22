@@ -24,11 +24,8 @@ app.add_middleware(
 
 @app.middleware("http")
 async def add_private_network_header(request, call_next):
-
     response = await call_next(request)
-
     response.headers["Access-Control-Allow-Private-Network"] = "true"
-
     return response
 
 
@@ -47,10 +44,12 @@ stream_stop_event = None
 
 stream_lock = threading.Lock()
 
+# Prevent multiple reconnect attempts
+stream_running = False
+
 
 # ==========================================
 # FREE OTCHARTS OTC SYMBOLS
-# EXACT OTCHARTS FORMAT
 # ==========================================
 
 OTC_SYMBOLS = {
@@ -73,6 +72,7 @@ async def home():
         "status": "KURO OTC backend is running",
         "source": "OTCharts",
         "active_asset": active_symbol,
+        "stream_running": stream_running,
         "prices": latest_prices,
     }
 
@@ -193,86 +193,91 @@ def handle_otc_price(symbol, price):
 def run_otc_stream(symbol, stop_event):
 
     global otc_client
+    global stream_running
 
     print(
         f"[STREAM] Starting {symbol}...",
         flush=True
     )
 
-    while not stop_event.is_set():
+    stream = None
 
-        stream = None
+    try:
 
-        try:
+        print(
+            f"[STREAM] Connecting {symbol}...",
+            flush=True
+        )
 
-            print(
-                f"[STREAM] Connecting {symbol}...",
-                flush=True
-            )
+        stream = otc_client.stream(
+            "quotex",
+            symbol,
+            reconnect=False
+        )
 
-            stream = otc_client.stream(
-               "quotex",
-                symbol,
-                reconnect=False
-            )
+        stream_running = True
 
-            print(
-                f"[STREAM] LIVE: {symbol}",
-                flush=True
-            )
+        print(
+            f"[STREAM] LIVE: {symbol}",
+            flush=True
+        )
 
-            for tick in stream:
+        for tick in stream:
 
-                if stop_event.is_set():
-
-                    try:
-                        stream.close()
-                    except Exception:
-                        pass
-
-                    break
-
-                try:
-
-                    price = tick.price
-
-                    handle_otc_price(
-                        symbol,
-                        price
-                    )
-
-                except Exception as e:
-
-                    print(
-                        f"[TICK ERROR] {symbol}: {e}",
-                        flush=True
-                    )
-
-        except Exception as e:
-
-            if not stop_event.is_set():
+            if stop_event.is_set():
 
                 print(
-                    f"[STREAM ERROR] {symbol}: {e}",
+                    f"[STREAM] Stop requested: {symbol}",
                     flush=True
                 )
 
-                time.sleep(3)
-
-        finally:
+                break
 
             try:
 
-                if stream is not None:
-                    stream.close()
+                price = tick.price
 
+                handle_otc_price(
+                    symbol,
+                    price
+                )
+
+            except Exception as e:
+
+                print(
+                    f"[TICK ERROR] {symbol}: {e}",
+                    flush=True
+                )
+
+    except Exception as e:
+
+        print(
+            f"[STREAM ERROR] {symbol}: {e}",
+            flush=True
+        )
+
+    finally:
+
+        stream_running = False
+
+        if stream is not None:
+
+            try:
+                stream.close()
             except Exception:
                 pass
 
-    print(
-        f"[STREAM] Stopped: {symbol}",
-        flush=True
-    )
+        print(
+            f"[STREAM] Closed: {symbol}",
+            flush=True
+        )
+
+    # IMPORTANT:
+    # Do NOT automatically reconnect here.
+    # Free OTCharts plan allows only one live stream.
+    #
+    # A failed stream must be manually restarted
+    # through switch_otc_stream().
 
 
 # ==========================================
@@ -296,6 +301,7 @@ def switch_otc_stream(symbol):
 
             return False
 
+        # Same stream already running
         if (
             active_symbol == symbol
             and stream_thread is not None
@@ -307,16 +313,13 @@ def switch_otc_stream(symbol):
         old_symbol = active_symbol
 
         print()
-        print(
-            "================================="
-        )
+        print("=================================")
         print(
             f"[SWITCH] {old_symbol} -> {symbol}"
         )
-        print(
-            "================================="
-        )
+        print("=================================")
 
+        # Stop previous stream
         if stream_stop_event is not None:
 
             stream_stop_event.set()
@@ -329,7 +332,12 @@ def switch_otc_stream(symbol):
             and old_thread is not threading.current_thread()
         ):
 
-            old_thread.join(timeout=3)
+            print(
+                "[STREAM] Waiting for previous stream...",
+                flush=True
+            )
+
+            old_thread.join(timeout=5)
 
         active_symbol = symbol
 
@@ -382,15 +390,9 @@ def connect_otcharts():
         )
 
         print()
-        print(
-            "================================="
-        )
-        print(
-            "OTCHARTS CONNECTED"
-        )
-        print(
-            "================================="
-        )
+        print("=================================")
+        print("OTCHARTS CONNECTED")
+        print("=================================")
 
         print(
             "[OTCHARTS] Free OTC mode enabled.",
@@ -430,6 +432,12 @@ async def startup():
     )
 
     if not connected:
+
+        print(
+            "[STARTUP] OTCharts connection failed.",
+            flush=True
+        )
+
         return
 
     await loop.run_in_executor(
@@ -440,23 +448,15 @@ async def startup():
     )
 
     print()
-    print(
-        "================================="
-    )
-    print(
-        "KURO AI OTC BACKEND READY"
-    )
-    print(
-        "================================="
-    )
+    print("=================================")
+    print("KURO AI OTC BACKEND READY")
+    print("=================================")
 
     print(
         f"ACTIVE: {active_symbol}"
     )
 
-    print(
-        "SUPPORTED:"
-    )
+    print("SUPPORTED:")
 
     for symbol in sorted(OTC_SYMBOLS):
 
@@ -464,8 +464,5 @@ async def startup():
             f"  - {symbol}"
         )
 
-    print(
-        "================================="
-    )
-
+    print("=================================")
     print()
