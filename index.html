@@ -2928,6 +2928,169 @@ async function getOTCPrice() {
 }
 
 
+
+/* =========================================================
+   UPDATE PRICE
+   ========================================================= */
+
+async function updatePrice() {
+
+    if (!engineStarted || loading) {
+        return;
+    }
+
+    loading = true;
+
+    const requestId = ++activeRequestId;
+
+    try {
+
+        const price =
+            marketType === "OTC"
+                ? await getOTCPrice()
+                : await getRealPrice();
+
+        if (requestId !== activeRequestId) {
+            return;
+        }
+
+        if (!Number.isFinite(price)) {
+            throw new Error("Invalid live price");
+        }
+
+        lastPrice = price;
+
+        const now = new Date();
+
+        priceHistory.push({
+            time: now.getTime(),
+            price: price
+        });
+
+        if (priceHistory.length > 120) {
+            priceHistory.shift();
+        }
+
+        updateLivePriceUI(price);
+        updateMarketLevels();
+
+        evaluatePreviousSignal(price);
+
+        /*
+         * Signal generation is manual only.
+         * The user must press ANALYZE ANOTHER CHART.
+         */
+        if (
+            signalGenerationArmed &&
+            currentSignal === "WAIT" &&
+            !signalExpiry
+        ) {
+
+            const currentMinute =
+                getMinuteKey(now);
+
+            if (!generationStartMinute) {
+                generationStartMinute =
+                    currentMinute;
+            }
+
+            /*
+             * Analyze only once when a new 1-minute
+             * candle begins.
+             */
+            if (
+                currentMinute !==
+                generationStartMinute &&
+                currentMinute !==
+                lastProcessedGenerationMinute
+            ) {
+
+                lastProcessedGenerationMinute =
+                    currentMinute;
+
+                if (priceHistory.length >= 13) {
+
+                    const historyForAnalysis =
+                        priceHistory.slice(
+                            0,
+                            -1
+                        );
+
+                    analyzeMarket(
+                        true,
+                        historyForAnalysis
+                    );
+
+                }
+
+            }
+
+        }
+
+    } catch (error) {
+
+        /*
+         * Do not destroy a running signal because
+         * one refresh failed.
+         */
+        if (
+            currentSignal !== "WAIT" &&
+            signalExpiry &&
+            Date.now() < signalExpiry
+        ) {
+            return;
+        }
+
+        setConnectionState(
+            "RECONNECTING"
+        );
+
+        /*
+         * Keep generation armed if the user already
+         * started it. The next successful tick resumes it.
+         */
+        if (signalGenerationArmed) {
+
+            setGenerateButtonState(
+                "GENERATING"
+            );
+
+            setText(
+                statusText,
+                marketType === "OTC"
+                    ? "OTC SIGNALS GENERATING..."
+                    : "SIGNALS GENERATING..."
+            );
+
+            setText(
+                confidenceText,
+                "Waiting for live market data..."
+            );
+
+            setText(
+                reasonBox,
+                marketType === "OTC"
+                    ? "Temporary OTC feed delay. KURO AI will continue automatically."
+                    : "Temporary market feed delay. KURO AI will continue automatically."
+            );
+
+        } else {
+
+            setGenerateButtonState(
+                "DISABLED"
+            );
+
+        }
+
+    } finally {
+
+        loading = false;
+
+    }
+
+}
+
+
 /* =========================================================
    UPDATE MARKET UI
    ========================================================= */
